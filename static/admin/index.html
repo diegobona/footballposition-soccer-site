@@ -7,17 +7,42 @@
 </head>
 <body>
     <div id="nc-root"></div>
+    <!-- 可选：给用户一个显式的注册/登录按钮 -->
+    <button id="openSignup" style="margin:16px;">注册 / 登录</button>
 
     <script>window.CMS_MANUAL_INIT = true;</script>
     <script src="/admin/decap-cms.js"></script>
+    <script src="/admin/netlify-identity-widget.js"></script>
     <script>
-      window.addEventListener('DOMContentLoaded', function () {
+      (function () {
+        if (window.netlifyIdentity) {
+          netlifyIdentity.init({
+            APIUrl: 'https://footballposition-soccer-identity.netlify.app/.netlify/identity'
+          });
+
+          var btn = document.getElementById('openSignup');
+          if (btn) {
+            btn.addEventListener('click', function () {
+              netlifyIdentity.open('signup');
+            });
+          }
+
+          netlifyIdentity.on('login', function () {
+            if (window.CMS && typeof CMS.init === 'function') {
+              CMS.init();
+            }
+          });
+
+          netlifyIdentity.on('logout', function () {
+            location.reload();
+          });
+        }
+
+        // 兜底：即使未登录也初始化，以便看到 UI
         if (window.CMS && typeof CMS.init === 'function') {
           CMS.init();
-        } else {
-          console.error('Decap CMS failed to load');
         }
-      });
+      })();
     </script>
 </body>
 </html>
