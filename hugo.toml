@@ -6,5 +6,24 @@ buildFuture = true
 paginate = 10
 
 [params]
-  # 明确首页展示的分区；可按需添加你的自定义分类
+  // 首页显示文章的分区；保留 posts 即可
   mainSections = ["posts"]
+
+  // 开启 PaperMod 的 Home Info 块（没有文章也能展示）
+  [params.homeInfoParams]
+    Title = "足球位置百科"
+    Content = "欢迎来到本站。浏览上方菜单的各个栏目，或从 CMS 新建内容后这里会显示最新文章。"
+
+[menu]
+  [[menu.main]]
+    name = "进攻位置"
+    url = "/attacking-positions/"
+    weight = 10
+  [[menu.main]]
+    name = "中场位置"
+    url = "/midfield-positions/"
+    weight = 20
+  [[menu.main]]
+    name = "防守位置"
+    url = "/defensive-positions/"
+    weight = 30
