@@ -25,12 +25,8 @@
     // 配置CMS后端设置
     window.CMS_ENV = "production";
     window.CMS_CONFIG = {
-      display_url: "https://footballposition-soccer.pages.dev/",
-      backend: {
-        name: "git-gateway",
-        identity_url: "https://footballposition-soccer-identity.netlify.app/.netlify/identity",
-        gateway_url: "https://footballposition-soccer-identity.netlify.app/.netlify/git"
-      }
+      config_path: "./config.yml",
+      display_url: "https://footballposition-soccer.pages.dev/"
     };
   </script>
 </head>
@@ -63,7 +59,14 @@
         }
 
         // 初始化 CMS，它将显示登录按钮
-        CMS.init(window.CMS_CONFIG);
+        try {
+          console.log('Initializing CMS with config:', window.CMS_CONFIG);
+          CMS.init(window.CMS_CONFIG);
+          console.log('CMS initialized successfully');
+        } catch (error) {
+          console.error('CMS initialization failed:', error);
+          console.error('Error details:', error.stack);
+        }
 
         // Identity 事件处理
         if (window.netlifyIdentity) {
