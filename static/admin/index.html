@@ -4,29 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
-  
+
   <!-- 1. 手动控制 CMS 初始化 -->
   <script>window.CMS_MANUAL_INIT = true;</script>
-  
+
   <!-- 2. 在 Netlify Identity 小部件加载前进行配置 -->
   <script>
-    // 设置全局API URL，覆盖默认行为
-    window.NETLIFY_API_URL = "https://footballposition-soccer-identity.netlify.app/.netlify/identity";
-
-    // 确保Netlify Identity Widget使用正确的API URL
-    window.netlifyIdentityWidget = {
-      APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
-    };
-
     window.netlifyIdentityConfig = {
       APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
-    };
-
-    // 配置CMS后端设置
-    window.CMS_ENV = "production";
-    window.CMS_CONFIG = {
-      config_path: "./config.yml",
-      display_url: "https://footballposition-soccer.pages.dev/"
     };
   </script>
 </head>
@@ -41,44 +26,18 @@
     <!-- 4. 初始化 CMS 和 Identity 事件监听器 -->
     <script>
       window.addEventListener('load', function () {
-        // 拦截fetch请求，将Identity请求重定向到Netlify
-        const originalFetch = window.fetch;
-        window.fetch = function(url, options) {
-          // 如果是本地Identity请求，重定向到Netlify
-          if (url && url.includes('/.netlify/identity')) {
-            url = url.replace(window.location.origin, 'https://footballposition-soccer-identity.netlify.app');
-          }
-          return originalFetch.apply(this, [url, options]);
-        };
-
-        // 强制设置Netlify Identity的API URL
-        if (window.netlifyIdentity) {
-          netlifyIdentity.init({
-            APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
-          });
-        }
-
         // 初始化 CMS，它将显示登录按钮
-        try {
-          console.log('Initializing CMS with config:', window.CMS_CONFIG);
-          CMS.init(window.CMS_CONFIG);
-          console.log('CMS initialized successfully');
-        } catch (error) {
-          console.error('CMS initialization failed:', error);
-          console.error('Error details:', error.stack);
-        }
+        CMS.init();
 
         // Identity 事件处理
         if (window.netlifyIdentity) {
           netlifyIdentity.on('login', function (user) {
             console.log('Login successful for user:', user.email);
-            // 登录后 CMS 通常会自动更新
             CMS.init();
           });
 
           netlifyIdentity.on('logout', function () {
             console.log('Logged out');
-            window.location.href = '/';
           });
 
           netlifyIdentity.on('error', function (err) {
