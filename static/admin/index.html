@@ -4,9 +4,20 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
-  <script src="https://unpkg.com/decap-cms@^3.0.0/dist/decap-cms.js"></script> 
 </head>
 <body>
     <div id="nc-root"></div>
+
+    <script>window.CMS_MANUAL_INIT = true;</script>
+    <script src="/admin/decap-cms.js"></script>
+    <script>
+      window.addEventListener('DOMContentLoaded', function () {
+        if (window.CMS && typeof CMS.init === 'function') {
+          CMS.init();
+        } else {
+          console.error('Decap CMS failed to load');
+        }
+      });
+    </script>
 </body>
 </html>

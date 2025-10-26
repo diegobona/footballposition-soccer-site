@@ -1,21 +1,31 @@
 backend:
   name: git-gateway
-  branch: main  # 确保与您的 GitHub 分支匹配
-
-publish_mode: editorial_workflow # 启用审核工作流（可选）
-
-media_folder: "static/images" # 图片上传路径 (相对根目录)
-public_folder: "/images"     # 访问图片的公共 URL
-
+  identity_url: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
+  branch: main
+publish_mode: editorial_workflow
+media_folder: "static/images"
+public_folder: "/images"
 collections:
-  # Level 3: 文章内容 (Post)
   - name: "posts"
     label: "长尾文章 (Level 3)"
-    folder: "content/posts"  # Hugo 文章存放的文件夹
+    folder: "content/posts"
     create: true
     slug: "{{slug}}"
     fields:
-      - {label: "文章标题 (Title)", name: "title", widget: "string"}
-      - {label: "发布日期 (Date)", name: "date", widget: "datetime"}
-      - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置"]}
-      - {label: "文章正文 (Body)", name: "body", widget: "markdown"}
+      # --- 字段 1：文章标题 ---
+      - label: "文章标题 (Title)"
+        name: "title"
+        widget: "string"
+      # --- 字段 2：发布日期 ---
+      - label: "发布日期 (Date)"
+        name: "date"
+        widget: "datetime"
+      # --- 字段 3：所属分类 ---
+      - label: "所属分类 (Level 2 Hub)"
+        name: "category"
+        widget: "select"
+        options: ["防守位置", "中场位置", "进攻位置"]
+      # --- 字段 4：文章正文 ---
+      - label: "文章正文 (Body)"
+        name: "body"
+        widget: "markdown"
