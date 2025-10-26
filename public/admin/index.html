@@ -4,6 +4,34 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
+  <script>
+    // 提前清理并设置目标 Netlify Identity 站点
+    (function () {
+      var IDENTITY_SITE = 'https://footballposition-soccer-identity.netlify.app';
+      // 清掉可能造成干扰的旧值
+      try {
+        localStorage.removeItem('netlifySiteURL');
+        localStorage.removeItem('gotrueUrl');
+      } catch (e) {}
+      // 设定站点 URL，并在全局暴露 APIUrl，向下传递给 init
+      try {
+        localStorage.setItem('netlifySiteURL', IDENTITY_SITE);
+      } catch (e) {}
+      window.__IDENTITY_API_URL__ = IDENTITY_SITE + '/.netlify/identity';
+    })();
+  </script>
+
+  <!-- 引入你本地的 Identity 小部件 -->
+  <script src="./netlify-identity-widget.js"></script>
+
+  <!-- 立即用正确 APIUrl 初始化（关键） -->
+  <script>
+    if (window.netlifyIdentity && window.__IDENTITY_API_URL__) {
+      window.netlifyIdentity.init({
+        APIUrl: window.__IDENTITY_API_URL__
+      });
+    }
+  </script>
 </head>
 <body>
     <div id="nc-root"></div>
