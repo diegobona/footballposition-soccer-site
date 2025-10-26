@@ -4,6 +4,10 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
+  
+  <!-- 关闭自动初始化，让我们手动控制 -->
+  <script>window.CMS_MANUAL_INIT = true;</script>
+  
   <script>
     // 提前清理并设置目标 Netlify Identity 站点
     (function () {
@@ -13,68 +17,53 @@
         localStorage.removeItem('netlifySiteURL');
         localStorage.removeItem('gotrueUrl');
       } catch (e) {}
-      // 设定站点 URL，并在全局暴露 APIUrl，向下传递给 init
+      // 设定站点 URL
       try {
         localStorage.setItem('netlifySiteURL', IDENTITY_SITE);
       } catch (e) {}
       window.__IDENTITY_API_URL__ = IDENTITY_SITE + '/.netlify/identity';
     })();
   </script>
-
-  <!-- 引入你本地的 Identity 小部件 -->
-  <script src="./netlify-identity-widget.js"></script>
-
-  <!-- 立即用正确 APIUrl 初始化（关键） -->
-  <script>
-    if (window.netlifyIdentity && window.__IDENTITY_API_URL__) {
-      window.netlifyIdentity.init({
-        APIUrl: window.__IDENTITY_API_URL__
-      });
-    }
-  </script>
 </head>
 <body>
     <div id="nc-root"></div>
     <button id="openSignup" style="margin:16px;">注册 / 登录</button>
 
-    <!-- 关闭自动初始化，让我们手动控制 -->
-    <script>window.CMS_MANUAL_INIT = true;</script>
-
-    <!-- 关键：在加载 Identity Widget 之前，写入正确的 Netlify 站点 URL -->
-    <script>
-      try {
-        // 让 Widget 在首次加载时就读取正确的站点，避免默认用 pages.dev 域
-        localStorage.setItem('netlifySiteURL', 'https://footballposition-soccer-identity.netlify.app');
-      } catch (e) {}
-    </script>
-
-    <!-- 本地化的 Identity Widget 与 CMS -->
-    <script src="/admin/netlify-identity-widget.js"></script>
-    <script src="/admin/decap-cms.js"></script>
+    <!-- 只加载一次本地化的脚本 -->
+    <script src="./netlify-identity-widget.js"></script>
+    <script src="./decap-cms.js"></script>
 
     <script>
       (function () {
-        if (window.netlifyIdentity) {
-          // 显式设置 Identity API 的最终端点
-          netlifyIdentity.init({
-            APIUrl: 'https://footballposition-soccer-identity.netlify.app/.netlify/identity'
-          });
+        // 等待 Identity Widget 加载完成
+        function initIdentity() {
+          if (window.netlifyIdentity && window.__IDENTITY_API_URL__) {
+            // 显式设置 Identity API 的端点
+            netlifyIdentity.init({
+              APIUrl: window.__IDENTITY_API_URL__
+            });
 
-          var btn = document.getElementById('openSignup');
-          if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('login'); });
+            var btn = document.getElementById('openSignup');
+            if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('login'); });
 
-          // 登录成功后再初始化 CMS
-          netlifyIdentity.on('login', function () {
-            if (window.CMS && typeof CMS.init === 'function') CMS.init();
-          });
+            // 登录成功后再初始化 CMS
+            netlifyIdentity.on('login', function () {
+              if (window.CMS && typeof CMS.init === 'function') CMS.init();
+            });
 
-          netlifyIdentity.on('logout', function () { location.reload(); });
+            netlifyIdentity.on('logout', function () { location.reload(); });
+            
+            // 兜底：即使未登录也初始化 UI（方便看到界面）
+            if (window.CMS && typeof CMS.init === 'function') {
+              CMS.init();
+            }
+          } else {
+            // 如果还没加载完，等一下再试
+            setTimeout(initIdentity, 100);
+          }
         }
-
-        // 兜底：即使未登录也初始化 UI（方便看到界面）
-        if (window.CMS && typeof CMS.init === 'function') {
-          CMS.init();
-        }
+        
+        initIdentity();
       })();
     </script>
 </body>
