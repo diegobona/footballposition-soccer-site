@@ -1,3 +1,6 @@
-# Netlify CMS redirects
-/admin/* https://footballposition-soccer-identity.netlify.app/.netlify/identity 200
-/.netlify/* https://footballposition-soccer-identity.netlify.app/.netlify/ 200
+# Netlify Identity and CMS redirects
+/.netlify/identity/* https://footballposition-soccer-identity.netlify.app/.netlify/identity/:splat 200
+/.netlify/* https://footballposition-soccer-identity.netlify.app/.netlify/:splat 200
+
+# Fallback for any remaining API requests
+/api/.netlify/* https://footballposition-soccer-identity.netlify.app/.netlify/:splat 200
