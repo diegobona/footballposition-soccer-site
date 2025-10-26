@@ -1,6 +1,6 @@
 backend:
   name: git-gateway
-  identity_url:"https://footballposition-soccer-identity.netlify.app/.netlify/identity"
+  identity_url: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
   branch: main  # 确保与您的 GitHub 分支匹配
 
 publish_mode: editorial_workflow # 启用审核工作流（可选）
