@@ -1,0 +1,7 @@
+[build]
+  command = "hugo --minify"
+  publish = "public"
+
+[build.environment]
+  # 请将这里的版本号替换为你本地运行的实际版本号 (例如: 0.128.0, 0.115.2 等)
+  HUGO_VERSION = "0.152.2"
