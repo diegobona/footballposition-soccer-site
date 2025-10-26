@@ -3,6 +3,7 @@ backend:
   identity_url: https://footballposition-soccer-identity.netlify.app/.netlify/identity
   gateway_url: https://footballposition-soccer-identity.netlify.app/.netlify/git
 site_url: https://footballposition-soccer.pages.dev/
+display_url: https://footballposition-soccer.pages.dev/
 publish_mode: editorial_workflow
 media_folder: "static/images"
 public_folder: "/images"

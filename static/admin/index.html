@@ -13,6 +13,16 @@
     window.netlifyIdentityConfig = {
       APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
     };
+
+    // 配置跨域CORS支持
+    window.CMS_CONFIG = {
+      display_url: "https://footballposition-soccer.pages.dev/",
+      backend: {
+        name: "git-gateway",
+        identity_url: "https://footballposition-soccer-identity.netlify.app/.netlify/identity",
+        gateway_url: "https://footballposition-soccer-identity.netlify.app/.netlify/git"
+      }
+    };
   </script>
 </head>
 <body>
@@ -27,7 +37,7 @@
     <script>
       window.addEventListener('load', function () {
         // 初始化 CMS，它将显示登录按钮
-        CMS.init();
+        CMS.init(window.CMS_CONFIG);
 
         // Identity 小部件已通过 netlifyIdentityConfig 完成配置
         // 我们只需要处理事件

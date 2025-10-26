@@ -1,0 +1,3 @@
+# Netlify CMS redirects
+/admin/* https://footballposition-soccer-identity.netlify.app/.netlify/identity 200
+/.netlify/* https://footballposition-soccer-identity.netlify.app/.netlify/ 200
