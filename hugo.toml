@@ -2,3 +2,9 @@ baseURL = 'https://footballposition-soccer.pages.dev/'
 languageCode = 'en-us'
 title = 'My New Hugo Site'
 theme = "PaperMod"
+buildFuture = true
+paginate = 10
+
+[params]
+  # 明确首页展示的分区；可按需添加你的自定义分类
+  mainSections = ["posts"]
