@@ -5,66 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
   
-  <!-- 关闭自动初始化，让我们手动控制 -->
+  <!-- 1. 手动控制 CMS 初始化 -->
   <script>window.CMS_MANUAL_INIT = true;</script>
   
+  <!-- 2. 在 Netlify Identity 小部件加载前进行配置 -->
   <script>
-    // 提前清理并设置目标 Netlify Identity 站点
-    (function () {
-      var IDENTITY_SITE = 'https://footballposition-soccer-identity.netlify.app';
-      // 清掉可能造成干扰的旧值
-      try {
-        localStorage.removeItem('netlifySiteURL');
-        localStorage.removeItem('gotrueUrl');
-      } catch (e) {}
-      // 设定站点 URL
-      try {
-        localStorage.setItem('netlifySiteURL', IDENTITY_SITE);
-      } catch (e) {}
-      window.__IDENTITY_API_URL__ = IDENTITY_SITE + '/.netlify/identity';
-    })();
+    window.netlifyIdentityConfig = {
+      APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
+    };
   </script>
 </head>
 <body>
+    <!-- Decap CMS 的根元素 -->
     <div id="nc-root"></div>
-    <button id="openSignup" style="margin:16px;">注册 / 登录</button>
 
-    <!-- 只加载一次本地化的脚本 -->
+    <!-- 3. 加载脚本 -->
     <script src="./netlify-identity-widget.js"></script>
     <script src="./decap-cms.js"></script>
 
+    <!-- 4. 初始化 CMS 和 Identity 事件监听器 -->
     <script>
-      (function () {
-        // 等待 Identity Widget 加载完成
-        function initIdentity() {
-          if (window.netlifyIdentity && window.__IDENTITY_API_URL__) {
-            // 显式设置 Identity API 的端点
-            netlifyIdentity.init({
-              APIUrl: window.__IDENTITY_API_URL__
-            });
+      window.addEventListener('load', function () {
+        // 初始化 CMS，它将显示登录按钮
+        CMS.init();
 
-            var btn = document.getElementById('openSignup');
-            if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('login'); });
+        // Identity 小部件已通过 netlifyIdentityConfig 完成配置
+        // 我们只需要处理事件
+        if (window.netlifyIdentity) {
+          netlifyIdentity.on('login', function (user) {
+            console.log('Login successful for user:', user.email);
+            // 登录后 Decap CMS 通常会自动更新
+            // 再次调用 init() 可以确保同步
+            CMS.init();
+          });
 
-            // 登录成功后再初始化 CMS
-            netlifyIdentity.on('login', function () {
-              if (window.CMS && typeof CMS.init === 'function') CMS.init();
-            });
+          netlifyIdentity.on('logout', function () {
+            console.log('Logged out');
+          });
 
-            netlifyIdentity.on('logout', function () { location.reload(); });
-            
-            // 兜底：即使未登录也初始化 UI（方便看到界面）
-            if (window.CMS && typeof CMS.init === 'function') {
-              CMS.init();
-            }
-          } else {
-            // 如果还没加载完，等一下再试
-            setTimeout(initIdentity, 100);
-          }
+          netlifyIdentity.on('error', function (err) {
+            console.error('Identity error:', err);
+          });
         }
-        
-        initIdentity();
-      })();
+      });
     </script>
 </body>
 </html>
