@@ -21,27 +21,18 @@
           });
 
           var btn = document.getElementById('openSignup');
-          if (btn) {
-            btn.addEventListener('click', function () {
-              netlifyIdentity.open('signup');
-            });
-          }
+          if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('signup'); });
 
           netlifyIdentity.on('login', function () {
-            if (window.CMS && typeof CMS.init === 'function') {
-              CMS.init();
-            }
+            if (window.CMS && typeof CMS.init === 'function') CMS.init();
           });
 
           netlifyIdentity.on('logout', function () {
             location.reload();
           });
         }
-
-        // 兜底：即使未登录也初始化，以便看到 UI
-        if (window.CMS && typeof CMS.init === 'function') {
-          CMS.init();
-        }
+        // 兜底：即使未登录也初始化 UI
+        if (window.CMS && typeof CMS.init === 'function') CMS.init();
       })();
     </script>
 </body>
