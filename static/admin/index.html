@@ -7,32 +7,46 @@
 </head>
 <body>
     <div id="nc-root"></div>
-    <!-- 可选：给用户一个显式的注册/登录按钮 -->
     <button id="openSignup" style="margin:16px;">注册 / 登录</button>
 
+    <!-- 关闭自动初始化，让我们手动控制 -->
     <script>window.CMS_MANUAL_INIT = true;</script>
-    <script src="/admin/decap-cms.js"></script>
+
+    <!-- 关键：在加载 Identity Widget 之前，写入正确的 Netlify 站点 URL -->
+    <script>
+      try {
+        // 让 Widget 在首次加载时就读取正确的站点，避免默认用 pages.dev 域
+        localStorage.setItem('netlifySiteURL', 'https://footballposition-soccer-identity.netlify.app');
+      } catch (e) {}
+    </script>
+
+    <!-- 本地化的 Identity Widget 与 CMS -->
     <script src="/admin/netlify-identity-widget.js"></script>
+    <script src="/admin/decap-cms.js"></script>
+
     <script>
       (function () {
         if (window.netlifyIdentity) {
+          // 显式设置 Identity API 的最终端点
           netlifyIdentity.init({
             APIUrl: 'https://footballposition-soccer-identity.netlify.app/.netlify/identity'
           });
 
           var btn = document.getElementById('openSignup');
-          if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('signup'); });
+          if (btn) btn.addEventListener('click', function () { netlifyIdentity.open('login'); });
 
+          // 登录成功后再初始化 CMS
           netlifyIdentity.on('login', function () {
             if (window.CMS && typeof CMS.init === 'function') CMS.init();
           });
 
-          netlifyIdentity.on('logout', function () {
-            location.reload();
-          });
+          netlifyIdentity.on('logout', function () { location.reload(); });
         }
-        // 兜底：即使未登录也初始化 UI
-        if (window.CMS && typeof CMS.init === 'function') CMS.init();
+
+        // 兜底：即使未登录也初始化 UI（方便看到界面）
+        if (window.CMS && typeof CMS.init === 'function') {
+          CMS.init();
+        }
       })();
     </script>
 </body>
