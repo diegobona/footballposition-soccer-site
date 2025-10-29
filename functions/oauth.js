@@ -10,7 +10,7 @@ export async function onRequestGet({ request, env }) {
   const authorizeUrl = new URL('https://github.com/login/oauth/authorize');
   authorizeUrl.searchParams.set('client_id', env.OAUTH_GITHUB_CLIENT_ID);
   authorizeUrl.searchParams.set('redirect_uri', callback);
-  authorizeUrl.searchParams.set('scope', 'repo');
+  authorizeUrl.searchParams.set('scope', 'repo read:user user:email');
   authorizeUrl.searchParams.set('state', state);
 
   // 将 state 写入 Cookie 用于校验

@@ -44,9 +44,9 @@ export async function onRequestGet({ request, env }) {
   (function () {
     try {
       if (window.opener && window.opener.postMessage) {
-        // 兼容旧版流程的握手消息（可选）
+        // 兼容握手
         try { window.opener.postMessage("authorizing:github", "*"); } catch (e) {}
-        // 发送登录成功消息（使用 * 以兼容预览域/自定义域）
+        // 登录成功消息，用 * 兼容不同来源
         window.opener.postMessage(${JSON.stringify(message)}, "*");
       }
     } catch (e) {}
