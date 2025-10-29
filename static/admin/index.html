@@ -22,8 +22,22 @@
     <!-- 初始化 CMS -->
     <script>
       window.addEventListener('load', function () {
-        // 初始化 CMS，将自动处理 GitHub OAuth 登录
-        CMS.init();
+        // 先加载配置文件检查
+        fetch('./config.yml?' + Date.now())
+          .then(response => response.text())
+          .then(configText => {
+            console.log('=== CMS CONFIG DEBUG ===');
+            console.log('Raw config:', configText);
+            console.log('Backend line:', configText.split('\n').find(line => line.includes('backend:')));
+            console.log('======================');
+
+            // 初始化 CMS，将自动处理 GitHub OAuth 登录
+            CMS.init();
+          })
+          .catch(error => {
+            console.error('Failed to load config:', error);
+            CMS.init();
+          });
       });
     </script>
 </body>
