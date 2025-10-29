@@ -5,83 +5,57 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
 
-  <!-- GitHub 后端不需要 Identity 小部件 -->
+  <!-- 在 CMS 加载前设置配置 -->
   <script>
     window.CMS_MANUAL_INIT = true;
-    // 添加版本号强制浏览器重新加载配置
-    console.log('CMS v2.0 - GitHub Backend');
+
+    // 设置全局配置 - 这是正确的方式
+    window.CMS_CONFIG = {
+      backend: {
+        name: 'github',
+        repo: 'diegobona/footballposition-soccer-site',
+        branch: 'main',
+        api_root: 'https://api.github.com'
+      },
+      site_url: 'https://footballposition-soccer.pages.dev/',
+      publish_mode: 'simple',
+      media_folder: 'static/images',
+      public_folder: '/images',
+      collections: [
+        {
+          name: 'posts',
+          label: '长尾文章 (Level 3)',
+          folder: 'content/posts',
+          create: true,
+          slug: '{{slug}}',
+          fields: [
+            {label: '文章标题 (Title)', name: 'title', widget: 'string'},
+            {label: '发布日期 (Date)', name: 'date', widget: 'datetime'},
+            {label: '所属分类 (Level 2 Hub)', name: 'category', widget: 'select', options: ['防守位置', '中场位置', '进攻位置']},
+            {label: '文章正文 (Body)', name: 'body', widget: 'markdown'}
+          ]
+        }
+      ]
+    };
   </script>
 </head>
 <body>
     <!-- Decap CMS 的根元素 -->
     <div id="nc-root"></div>
 
-    <!-- 只需要加载 Decap CMS -->
+    <!-- 加载 Decap CMS -->
     <script src="./decap-cms.js"></script>
 
     <!-- 初始化 CMS -->
     <script>
       window.addEventListener('load', function () {
-        // 先加载配置文件检查
-        fetch('./config.yml?' + Date.now())
-          .then(response => response.text())
-          .then(configText => {
-            console.log('=== CMS CONFIG DEBUG ===');
-            console.log('Raw config:', configText);
-            console.log('Backend line:', configText.split('\n').find(line => line.includes('backend:')));
-            console.log('======================');
+        console.log('=== FINAL CONFIG DEBUG ===');
+        console.log('CMS_CONFIG:', window.CMS_CONFIG);
+        console.log('Backend:', window.CMS_CONFIG?.backend);
+        console.log('==========================');
 
-            // 初始化 CMS 并直接传递配置
-            CMS.init({
-              load_config_file: false,
-              config: {
-                backend: {
-                  name: 'github',
-                  repo: 'diegobona/footballposition-soccer-site',
-                  branch: 'main',
-                  api_root: 'https://api.github.com'
-                },
-                site_url: 'https://footballposition-soccer.pages.dev/',
-                publish_mode: 'simple',
-                media_folder: 'static/images',
-                public_folder: '/images',
-                collections: [
-                  {
-                    name: 'posts',
-                    label: '长尾文章 (Level 3)',
-                    folder: 'content/posts',
-                    create: true,
-                    slug: '{{slug}}',
-                    fields: [
-                      {label: '文章标题 (Title)', name: 'title', widget: 'string'},
-                      {label: '发布日期 (Date)', name: 'date', widget: 'datetime'},
-                      {label: '所属分类 (Level 2 Hub)', name: 'category', widget: 'select', options: ['防守位置', '中场位置', '进攻位置']},
-                      {label: '文章正文 (Body)', name: 'body', widget: 'markdown'}
-                    ]
-                  }
-                ]
-              }
-            });
-
-            // 检查 CMS 初始化后的配置
-            setTimeout(() => {
-              console.log('=== CONFIG DEBUG ===');
-              console.log('Global CMS_CONFIG:', window.CMS_CONFIG);
-              console.log('CMS_CONFIG backend:', window.CMS_CONFIG?.backend);
-              console.log('======================');
-
-              if (window.CMS) {
-                console.log('=== CMS INTERNAL CONFIG ===');
-                console.log('CMS backend:', window.CMS.config?.backend);
-                console.log('CMS repo:', window.CMS.config?.backend?.repo);
-                console.log('============================');
-              }
-            }, 2000);
-          })
-          .catch(error => {
-            console.error('Failed to load config:', error);
-            CMS.init();
-          });
+        // 简单初始化
+        CMS.init();
       });
     </script>
 </body>
