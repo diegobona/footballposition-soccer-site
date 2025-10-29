@@ -1,12 +1,16 @@
 export async function onRequestGet({ request, env }) {
   const origin = new URL(request.url).origin;
 
+  if (!env.OAUTH_GITHUB_CLIENT_ID) {
+    return new Response('Missing OAUTH_GITHUB_CLIENT_ID', { status: 500 });
+  }
+
   const state = crypto.randomUUID();
   const callback = `${origin}/oauth/callback`;
   const authorizeUrl = new URL('https://github.com/login/oauth/authorize');
   authorizeUrl.searchParams.set('client_id', env.OAUTH_GITHUB_CLIENT_ID);
   authorizeUrl.searchParams.set('redirect_uri', callback);
-  authorizeUrl.searchParams.set('scope', 'repo'); // 可按需缩小为 "public_repo"
+  authorizeUrl.searchParams.set('scope', 'repo');
   authorizeUrl.searchParams.set('state', state);
 
   // 将 state 写入 Cookie 用于校验

@@ -12,13 +12,14 @@ export async function onRequestGet({ request, env }) {
     return new Response('Invalid OAuth state', { status: 400 });
   }
 
+  if (!env.OAUTH_GITHUB_CLIENT_ID || !env.OAUTH_GITHUB_CLIENT_SECRET) {
+    return new Response('Missing GitHub OAuth env vars', { status: 500 });
+  }
+
   // 兑换 access_token
   const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
-    headers: {
-      Accept: 'application/json',
-      'Content-Type': 'application/json',
-    },
+    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
     body: JSON.stringify({
       client_id: env.OAUTH_GITHUB_CLIENT_ID,
       client_secret: env.OAUTH_GITHUB_CLIENT_SECRET,
@@ -33,15 +34,21 @@ export async function onRequestGet({ request, env }) {
   }
 
   const { access_token } = await tokenResp.json();
+  const message = 'authorization:github:success:' + JSON.stringify({
+    token: access_token,
+    provider: 'github',
+  });
   const html = `<!doctype html>
 <html><body>
 <script>
   (function () {
     try {
       if (window.opener && window.opener.postMessage) {
-        window.opener.postMessage({ token: "${access_token}" }, "${origin}");
+        // 将 Decap 期望的格式发回父窗口
+        window.opener.postMessage(${JSON.stringify(message)}, "${origin}");
       }
     } catch (e) {}
+    // 关闭弹窗
     window.close();
   })();
 </script>
