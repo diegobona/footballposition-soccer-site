@@ -1,5 +1,6 @@
 backend:
   name: git-gateway
+  branch: main
   identity_url: https://footballposition-soccer-identity.netlify.app/.netlify/identity
   gateway_url: https://footballposition-soccer-identity.netlify.app/.netlify/git
 site_url: https://footballposition-soccer.pages.dev/
