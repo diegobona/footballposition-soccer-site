@@ -6,7 +6,11 @@
   <title>Content Manager</title>
 
   <!-- GitHub 后端不需要 Identity 小部件 -->
-  <script>window.CMS_MANUAL_INIT = true;</script>
+  <script>
+    window.CMS_MANUAL_INIT = true;
+    // 添加版本号强制浏览器重新加载配置
+    console.log('CMS v2.0 - GitHub Backend');
+  </script>
 </head>
 <body>
     <!-- Decap CMS 的根元素 -->
