@@ -32,7 +32,45 @@
             console.log('======================');
 
             // 初始化 CMS，将自动处理 GitHub OAuth 登录
-            CMS.init();
+            CMS.init({
+              config: {
+                backend: {
+                  name: 'github',
+                  repo: 'diegobona/footballposition-soccer-site',
+                  branch: 'main',
+                  api_root: 'https://api.github.com'
+                },
+                site_url: 'https://footballposition-soccer.pages.dev/',
+                publish_mode: 'simple',
+                media_folder: 'static/images',
+                public_folder: '/images',
+                collections: [
+                  {
+                    name: 'posts',
+                    label: '长尾文章 (Level 3)',
+                    folder: 'content/posts',
+                    create: true,
+                    slug: '{{slug}}',
+                    fields: [
+                      {label: '文章标题 (Title)', name: 'title', widget: 'string'},
+                      {label: '发布日期 (Date)', name: 'date', widget: 'datetime'},
+                      {label: '所属分类 (Level 2 Hub)', name: 'category', widget: 'select', options: ['防守位置', '中场位置', '进攻位置']},
+                      {label: '文章正文 (Body)', name: 'body', widget: 'markdown'}
+                    ]
+                  }
+                ]
+              }
+            });
+
+            // 检查 CMS 初始化后的配置
+            setTimeout(() => {
+              if (window.CMS) {
+                console.log('=== CMS INTERNAL CONFIG ===');
+                console.log('CMS backend:', window.CMS.config?.backend);
+                console.log('CMS repo:', window.CMS.config?.backend?.repo);
+                console.log('============================');
+              }
+            }, 2000);
           })
           .catch(error => {
             console.error('Failed to load config:', error);
