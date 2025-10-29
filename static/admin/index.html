@@ -16,7 +16,7 @@
         repo: 'diegobona/footballposition-soccer-site',
         branch: 'main',
         api_root: 'https://api.github.com',
-        open_authoring: false
+        // open_authoring: false
       },
       site_url: 'https://footballposition-soccer.pages.dev/',
       publish_mode: 'simple',
@@ -55,8 +55,10 @@
         console.log('Backend:', window.CMS_CONFIG?.backend);
         console.log('==========================');
 
-        // 简单初始化
-        CMS.init();
+        // 强制使用我们的配置，不加载任何文件
+        CMS.init({
+          load_config_file: false
+        });
       });
     </script>
 </body>
