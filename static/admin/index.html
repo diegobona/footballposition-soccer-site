@@ -5,61 +5,17 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
 
-  <!-- 在 CMS 加载前设置配置 -->
-  <script>
-    window.CMS_MANUAL_INIT = true;
-
-    // 设置全局配置 - 这是正确的方式
-    window.CMS_CONFIG = {
-      backend: {
-        name: 'github',
-        repo: 'diegobona/footballposition-soccer-site',
-        branch: 'main',
-        api_root: 'https://api.github.com',
-        // open_authoring: false
-      },
-      site_url: 'https://footballposition-soccer.pages.dev/',
-      publish_mode: 'simple',
-      media_folder: 'static/images',
-      public_folder: '/images',
-      collections: [
-        {
-          name: 'posts',
-          label: '长尾文章 (Level 3)',
-          folder: 'content/posts',
-          create: true,
-          slug: '{{slug}}',
-          fields: [
-            {label: '文章标题 (Title)', name: 'title', widget: 'string'},
-            {label: '发布日期 (Date)', name: 'date', widget: 'datetime'},
-            {label: '所属分类 (Level 2 Hub)', name: 'category', widget: 'select', options: ['防守位置', '中场位置', '进攻位置']},
-            {label: '文章正文 (Body)', name: 'body', widget: 'markdown'}
-          ]
-        }
-      ]
-    };
-  </script>
+  <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
 <body>
-    <!-- Decap CMS 的根元素 -->
-    <div id="nc-root"></div>
+  <div id="nc-root"></div>
 
-    <!-- 加载 Decap CMS -->
-    <script src="./decap-cms.js"></script>
+  <script src="./decap-cms.js"></script>
 
-    <!-- 初始化 CMS -->
-    <script>
-      window.addEventListener('load', function () {
-        console.log('=== FINAL CONFIG DEBUG ===');
-        console.log('CMS_CONFIG:', window.CMS_CONFIG);
-        console.log('Backend:', window.CMS_CONFIG?.backend);
-        console.log('==========================');
-
-        // 强制使用我们的配置，不加载任何文件
-        CMS.init({
-          load_config_file: false
-        });
-      });
-    </script>
+  <script>
+    window.addEventListener('load', function () {
+      CMS.init();
+    });
+  </script>
 </body>
 </html>
