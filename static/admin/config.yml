@@ -1,9 +1,8 @@
 backend:
-  name: git-gateway
-  # branch: main
-  # repo: diegobona/footballposition-soccer-site
-  identity_url: https://footballposition-soccer-identity.netlify.app/.netlify/identity
-  gateway_url: https://footballposition-soccer-identity.netlify.app/.netlify/git
+  name: github
+  repo: diegobona/footballposition-soccer-site
+  branch: main
+  api_root: https://api.github.com
 site_url: https://footballposition-soccer.pages.dev/
 display_url: https://footballposition-soccer.pages.dev/
 publish_mode: simple

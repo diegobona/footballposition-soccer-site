@@ -5,45 +5,21 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
 
-  <!-- 1. 手动控制 CMS 初始化 -->
+  <!-- GitHub 后端不需要 Identity 小部件 -->
   <script>window.CMS_MANUAL_INIT = true;</script>
-
-  <!-- 2. 在 Netlify Identity 小部件加载前进行配置 -->
-  <script>
-    window.netlifyIdentityConfig = {
-      APIUrl: "https://footballposition-soccer-identity.netlify.app/.netlify/identity"
-    };
-  </script>
 </head>
 <body>
     <!-- Decap CMS 的根元素 -->
     <div id="nc-root"></div>
 
-    <!-- 3. 加载脚本 -->
-    <script src="./netlify-identity-widget.js"></script>
+    <!-- 只需要加载 Decap CMS -->
     <script src="./decap-cms.js"></script>
 
-    <!-- 4. 初始化 CMS 和 Identity 事件监听器 -->
+    <!-- 初始化 CMS -->
     <script>
       window.addEventListener('load', function () {
-        // 初始化 CMS，它将显示登录按钮
+        // 初始化 CMS，将自动处理 GitHub OAuth 登录
         CMS.init();
-
-        // Identity 事件处理
-        if (window.netlifyIdentity) {
-          netlifyIdentity.on('login', function (user) {
-            console.log('Login successful for user:', user.email);
-            CMS.init();
-          });
-
-          netlifyIdentity.on('logout', function () {
-            console.log('Logged out');
-          });
-
-          netlifyIdentity.on('error', function (err) {
-            console.error('Identity error:', err);
-          });
-        }
       });
     </script>
 </body>
