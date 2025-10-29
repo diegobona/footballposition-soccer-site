@@ -44,11 +44,12 @@ export async function onRequestGet({ request, env }) {
   (function () {
     try {
       if (window.opener && window.opener.postMessage) {
-        // 将 Decap 期望的格式发回父窗口
-        window.opener.postMessage(${JSON.stringify(message)}, "${origin}");
+        // 兼容旧版流程的握手消息（可选）
+        try { window.opener.postMessage("authorizing:github", "*"); } catch (e) {}
+        // 发送登录成功消息（使用 * 以兼容预览域/自定义域）
+        window.opener.postMessage(${JSON.stringify(message)}, "*");
       }
     } catch (e) {}
-    // 关闭弹窗
     window.close();
   })();
 </script>
