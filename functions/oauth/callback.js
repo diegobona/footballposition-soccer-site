@@ -16,16 +16,18 @@ export async function onRequestGet({ request, env }) {
     return new Response('Missing GitHub OAuth env vars', { status: 500 });
   }
 
-  // 兑换 access_token
+  // 兑换 access_token（使用 x-www-form-urlencoded 更可靠）
+  const body = new URLSearchParams({
+    client_id: env.OAUTH_GITHUB_CLIENT_ID,
+    client_secret: env.OAUTH_GITHUB_CLIENT_SECRET,
+    code,
+    redirect_uri: `${origin}/oauth/callback`,
+  });
+
   const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
-    headers: { Accept: 'application/json', 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      client_id: env.OAUTH_GITHUB_CLIENT_ID,
-      client_secret: env.OAUTH_GITHUB_CLIENT_SECRET,
-      code,
-      redirect_uri: `${origin}/oauth/callback`,
-    }),
+    headers: { Accept: 'application/json' },
+    body,
   });
 
   if (!tokenResp.ok) {
@@ -33,20 +35,27 @@ export async function onRequestGet({ request, env }) {
     return new Response(`Token exchange failed: ${text}`, { status: 500 });
   }
 
-  const { access_token } = await tokenResp.json();
+  const data = await tokenResp.json();
+  if (!data.access_token) {
+    // 返回错误详情，方便定位（如 bad_verification_code / redirect_uri mismatch 等）
+    return new Response(`Token missing: ${JSON.stringify(data)}`, { status: 500 });
+  }
+
+  const access_token = data.access_token;
   const message = 'authorization:github:success:' + JSON.stringify({
     token: access_token,
     provider: 'github',
   });
+
   const html = `<!doctype html>
 <html><body>
 <script>
   (function () {
     try {
       if (window.opener && window.opener.postMessage) {
-        // 兼容旧流程的握手消息
+        // 兼容握手
         try { window.opener.postMessage("authorizing:github", "*"); } catch (e) {}
-        // 登录成功消息（使用 * 兼容不同来源）
+        // 发送登录成功消息（包含 token）
         window.opener.postMessage(${JSON.stringify(message)}, "*");
       }
     } catch (e) {}

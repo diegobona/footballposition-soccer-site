@@ -10,10 +10,10 @@ export async function onRequestGet({ request, env }) {
   const authorizeUrl = new URL('https://github.com/login/oauth/authorize');
   authorizeUrl.searchParams.set('client_id', env.OAUTH_GITHUB_CLIENT_ID);
   authorizeUrl.searchParams.set('redirect_uri', callback);
+  // 扩展权限，防止 /user 读取受限
   authorizeUrl.searchParams.set('scope', 'repo read:user user:email');
   authorizeUrl.searchParams.set('state', state);
 
-  // 将 state 写入 Cookie 用于校验
   const headers = new Headers({
     Location: authorizeUrl.toString(),
     'Set-Cookie': `decap_oauth_state=${state}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=300`,
