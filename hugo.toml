@@ -17,14 +17,18 @@ buildFuture = true
 
 [menu]
   [[menu.main]]
-    name = "attacking-positions"
+    name = "AttackingPositions"
     url = "/attacking-positions/"
     weight = 10
   [[menu.main]]
-    name = "midfield-positions"
+    name = "MidfieldPositions"
     url = "/midfield-positions/"
     weight = 20
   [[menu.main]]
-    name = "defensive-positions"
+    name = "DefensivePositions"
     url = "/defensive-positions/"
     weight = 30
+  [[menu.main]]
+    name = "Overview"
+    url = "/overview/"
+    weight = 5

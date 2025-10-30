@@ -1,0 +1,16 @@
+{{- $cat := .Get 0 -}}
+{{- $pages := site.RegularPages -}}
+{{- $byCategories := where $pages "Params.categories" "!=" nil -}}
+{{- $matchByCategories := where $byCategories "Params.categories" "intersect" (slice $cat) -}}
+{{- $matchByCategory := where $pages "Params.category" $cat -}}
+{{- $list := union $matchByCategories $matchByCategory -}}
+
+{{- if gt (len $list) 0 -}}
+<ul>
+{{- range $list }}
+  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <small>{{ .Date.Format "2006-01-02" }}</small></li>
+{{- end }}
+</ul>
+{{- else -}}
+<p>暂无“{{ $cat }}”分类的文章。</p>
+{{- end -}}
