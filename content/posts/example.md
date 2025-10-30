@@ -1,7 +1,7 @@
 ---
-title: "测试进攻位置文章"
-date: 2024-10-26T10:00:00Z
+title: "Full-backs vs wing-backs: Key Differences Explained (with Diagrams)"
+date: 2025-10-30T10:18:00.000+08:00
 draft: false
+category: 防守位置
 ---
-
-这是一个测试文章，用于验证进攻位置分类的CMS配置。
+Full-backs vs wing-backs: Key Differences Explained (with Diagrams)
