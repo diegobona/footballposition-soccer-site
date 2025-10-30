@@ -3,7 +3,7 @@ title: what position should a fast kid play in soccer
 date: 2025-10-29T17:49:00.000+08:00
 category: 防守位置
 ---
-![](/images/t0126d3b16ad8b087b9.jpg)
+![111](/images/t0126d3b16ad8b087b9.jpg "ddd")
 
 decap-cms.js:8   GET https://footballposition-soccer-identity.netlify.app/.netlify/git/github/git/trees/master:content%2Fposts 404 (Not Found)
 
