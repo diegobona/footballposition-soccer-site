@@ -1,5 +1,7 @@
 ---
-title: "进攻位置"
-description: "进攻位置的介绍与文章列表"
+title: Attacking Positions
+description: attacking-positions
 ---
-这里是进攻位置的栏目介绍。下面会列出属于该分区的文章。
+Here is the content related to the attacking positions.
+
+{{< list-by-category "进攻位置" >}}

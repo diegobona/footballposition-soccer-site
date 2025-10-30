@@ -3,6 +3,6 @@ title: Overview
 slug: overview
 ---
 
-这里是跨位置的综述与通用话题汇总。下面会列出属于该分类的文章。
+Here is a cross-position overview and a summary of general topics.
 
 {{< list-by-category "综述" >}}

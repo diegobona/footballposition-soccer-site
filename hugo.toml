@@ -1,6 +1,6 @@
 baseURL = 'https://footballposition-soccer.pages.dev/'
 languageCode = 'en-us'
-title = 'My New Hugo Site'
+title = 'FootballPosition.soccer'
 theme = "PaperMod"
 buildFuture = true
 [pagination]
@@ -12,10 +12,14 @@ buildFuture = true
 
   #开启 PaperMod 的 Home Info 块（没有文章也能展示）
   [params.homeInfoParams]
-    Title = "Test"
-    Content = "Welcome"
+    Title = " FootballPosition.soccer – Master Every Role on the Pitch | Position Guides, Drills & Pro Tips"
+    Content = "From goalkeeper to false nine, FootballPosition.soccer breaks down every football position’s duties, skill-set, tactical role and weekly training plans. Learn how to read the game, choose your gear and level up with position-specific drills used by pro clubs—all in clear, concise language for players, coaches and fans."
 
 [menu]
+  [[menu.main]]
+    name = "Overview"
+    url = "/overview/"
+    weight = 5
   [[menu.main]]
     name = "AttackingPositions"
     url = "/attacking-positions/"
@@ -28,7 +32,4 @@ buildFuture = true
     name = "DefensivePositions"
     url = "/defensive-positions/"
     weight = 30
-  [[menu.main]]
-    name = "Overview"
-    url = "/overview/"
-    weight = 5
+
