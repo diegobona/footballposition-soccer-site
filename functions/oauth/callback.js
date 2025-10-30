@@ -16,17 +16,21 @@ export async function onRequestGet({ request, env }) {
     return new Response('Missing GitHub OAuth env vars', { status: 500 });
   }
 
-  // 兑换 access_token（使用 x-www-form-urlencoded 更可靠）
+  // 使用 x-www-form-urlencoded 提交，避免 GitHub 解析异常
   const body = new URLSearchParams({
     client_id: env.OAUTH_GITHUB_CLIENT_ID,
     client_secret: env.OAUTH_GITHUB_CLIENT_SECRET,
     code,
+    // 可留空使用注册的默认回调；保留也可，但需与注册一致
     redirect_uri: `${origin}/oauth/callback`,
   });
 
   const tokenResp = await fetch('https://github.com/login/oauth/access_token', {
     method: 'POST',
-    headers: { Accept: 'application/json' },
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
     body,
   });
 
@@ -37,8 +41,13 @@ export async function onRequestGet({ request, env }) {
 
   const data = await tokenResp.json();
   if (!data.access_token) {
-    // 返回错误详情，方便定位（如 bad_verification_code / redirect_uri mismatch 等）
-    return new Response(`Token missing: ${JSON.stringify(data)}`, { status: 500 });
+    // 脱敏调试：仅输出长度与是否存在，帮助确认变量已被读取并提交
+    const clientIdLen = String(env.OAUTH_GITHUB_CLIENT_ID || '').length;
+    const clientSecretLen = String(env.OAUTH_GITHUB_CLIENT_SECRET || '').length;
+    return new Response(
+      `Token missing: ${JSON.stringify(data)} | debug: client_id_len=${clientIdLen}, client_secret_len=${clientSecretLen}`,
+      { status: 500 }
+    );
   }
 
   const access_token = data.access_token;
@@ -46,16 +55,13 @@ export async function onRequestGet({ request, env }) {
     token: access_token,
     provider: 'github',
   });
-
   const html = `<!doctype html>
 <html><body>
 <script>
   (function () {
     try {
       if (window.opener && window.opener.postMessage) {
-        // 兼容握手
         try { window.opener.postMessage("authorizing:github", "*"); } catch (e) {}
-        // 发送登录成功消息（包含 token）
         window.opener.postMessage(${JSON.stringify(message)}, "*");
       }
     } catch (e) {}
