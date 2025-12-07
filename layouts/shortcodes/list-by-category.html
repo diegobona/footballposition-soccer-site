@@ -8,7 +8,7 @@
 {{- if gt (len $list) 0 -}}
 <div class="grid-container">
 {{- range $list }}
-  <article class="post-entry">
+  <article class="post-entry grid-entry">
     {{- if .Params.cover.image }}
     <figure class="entry-cover">
         <img loading="lazy" src="{{ .Params.cover.image | absURL }}" alt="{{ .Params.cover.alt | default .Title }}">

@@ -11,9 +11,6 @@
         grid-column: 1 / -1;
     }
 
-    /* Make First Entry (Featured) span full width if you want, or remove this to make it part of grid */
-    /* .first-entry { grid-column: 1 / -1; } */
-
     /* Make Pagination span full width */
     .pagination {
         grid-column: 1 / -1;
@@ -57,15 +54,43 @@
     grid-template-columns: 1fr; /* Mobile default */
     gap: 30px;
     margin-top: 30px;
+    width: 100%;
 }
 
-@media screen and (min-width: 960px) {
+@media screen and (min-width: 768px) {
     .grid-container {
         grid-template-columns: repeat(2, 1fr);
     }
 }
 
+/* Specific styles for grid entries in shortcodes to ensure they behave */
+.grid-entry {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-bottom: 0 !important;
+    width: 100% !important;
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.grid-entry .entry-cover {
+    width: 100%;
+    margin-bottom: 15px;
+    display: block; /* Ensure it's not inline */
+}
+
+.grid-entry .entry-cover img {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
 /* Dark mode adjustments if needed */
-.dark .post-entry:hover {
+.dark .post-entry:hover, .dark .grid-entry:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
