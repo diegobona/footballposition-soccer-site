@@ -2,6 +2,8 @@
 title: What's the Difference Between a False 9 and Number 10?
 date: 2025-12-07T21:18:00.000+08:00
 category: 进攻位置
+cover:
+  image: /images/a31f1ed0c392c131468275f558d1ce09d0dc56a7009db09f05568871f1bcf17e.png
 ---
 In modern football, tactical terminology can be confusing, especially when two positions seem similar but have fundamentally different roles. Among the most commonly misunderstood concepts are the **false 9 vs number 10** positions. While both roles involve creative, technically gifted players operating in advanced areas of the pitch, understanding the **difference between false 9 and number 10** is crucial for anyone looking to grasp modern football tactics.
 
@@ -11,8 +13,7 @@ This comprehensive guide will break down each position, explain their tactical p
 
 The **traditional number 10 position** in soccer is one of the most revered roles in the game. Often called a "classic playmaker" or "attacking midfielder," the number 10 operates in the space between the midfield and forward lines—an area tacticians call "the hole."
 
-
-
+![](/images/497c4e386cc3be7b248b0c35caff76aa7bd3c1706392654504fd4e1c3db4fc66.jpg)
 
 ### Characteristics of a Traditional Number 10
 
@@ -26,11 +27,13 @@ A **number 10 role explained** reveals a player whose primary responsibility is 
 
 ### Famous Number 10s
 
-Throughout football history, legendary players have defined this position. Juan Román Riquelme exemplified the classic number 10 with his languid style and magical passing for Argentina and Villarreal. Zinedine Zidane dominated this role for France and Real Madrid with elegance and vision. Diego Maradona, Pelé, and more recently players like Mesut Özil and James Rodríguez have all worn the number 10 shirt and fulfilled this creative mandate. [citation](https://www.reddit.com/r/soccer/comments/1u2yjt/positional_difference_between_a_false_nine_and_no/)
+Throughout football history, legendary players have defined this position. Juan Román Riquelme exemplified the classic number 10 with his languid style and magical passing for Argentina and Villarreal. Zinedine Zidane dominated this role for France and Real Madrid with elegance and vision. Diego Maradona, Pelé, and more recently players like Mesut Özil and James Rodríguez have all worn the number 10 shirt and fulfilled this creative mandate. [](https://www.reddit.com/r/soccer/comments/1u2yjt/positional_difference_between_a_false_nine_and_no/)
 
 ## What is a False 9 in Soccer?
 
 The **false 9 tactical role** represents a more recent innovation, though its roots trace back decades. Unlike a traditional number 9 (center forward), **what is a false 9 in soccer** describes a striker who deliberately drops deep into midfield rather than staying high near the opponent's goal.
+
+![](/images/3362b41774564bed8caf62d2bbb1c3a26e269fbd9c32f780de05c06840ebc675.jpg)
 
 ### The False 9 Revolution
 
@@ -52,8 +55,7 @@ Roberto Firmino at Liverpool perfectly exemplified this under Jürgen Klopp, ena
 
 While both positions involve creative players in advanced positions, the **difference between false 9 and attacking midfielder** becomes clear when examining several factors:
 
-
-
+![](/images/a31f1ed0c392c131468275f558d1ce09d0dc56a7009db09f05568871f1bcf17e.png)
 
 ### 1. Starting Position
 
