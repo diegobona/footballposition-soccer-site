@@ -96,6 +96,18 @@
 }
 
 
+/* Custom CSS */
+
+/* Override main width for list pages (categories) to allow wider content */
+body.list {
+    --main-width: 1200px;
+}
+
+/* Ensure main container respects the new width variable */
+.main {
+    max-width: calc(var(--main-width) + var(--gap) * 2);
+}
+
 /* Category List Layout (Full Width, Horizontal Image+Text) */
 .category-list-container {
     display: flex;
@@ -140,6 +152,7 @@
     display: flex;
     flex-direction: column;
     justify-content: center; /* Center vertically if needed, or flex-start */
+    min-width: 0; /* Prevent flex child from overflowing parent */
 }
 
 /* Mobile Responsive: Stack vertically on small screens */
@@ -160,7 +173,7 @@
     }
 }
 
-/* Dark mode hover effect */
-.dark .category-list-entry:hover {
+/* Dark mode adjustments if needed */
+.dark .post-entry:hover, .dark .grid-entry:hover, .dark .category-list-entry:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
