@@ -15,19 +15,21 @@
     </figure>
     {{- end }}
     
-    <header class="entry-header">
-      <h2>{{ .Title }}</h2>
-    </header>
-    
-    <div class="entry-content">
-      <p>{{ .Summary | plainify | htmlUnescape | truncate 120 }}...</p>
+    <div class="entry-info">
+      <header class="entry-header">
+        <h2>{{ .Title }}</h2>
+      </header>
+      
+      <div class="entry-content">
+        <p>{{ .Summary | plainify | htmlUnescape | truncate 120 }}...</p>
+      </div>
+      
+      <footer class="entry-footer">
+        <span title='{{ .Date.Format "2006-01-02 15:04:05 MST" }}'>
+          {{ .Date.Format "January 2, 2006" }}
+        </span>
+      </footer>
     </div>
-    
-    <footer class="entry-footer">
-      <span title='{{ .Date.Format "2006-01-02 15:04:05 MST" }}'>
-        {{ .Date.Format "January 2, 2006" }}
-      </span>
-    </footer>
     
     <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
   </article>
