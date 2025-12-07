@@ -20,4 +20,11 @@ collections:
       - {label: "文章标题 (Title)", name: "title", widget: "string"}
       - {label: "发布日期 (Date)", name: "date", widget: "datetime"}
       - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置", "综述"]}
+      - label: "封面图设置 (Cover)"
+        name: "cover"
+        widget: "object"
+        fields:
+          - {label: "封面图片 (Image)", name: "image", widget: "image", required: false}
+          - {label: "图片描述 (Alt Text)", name: "alt", widget: "string", required: false}
+          - {label: "图片标题 (Caption)", name: "caption", widget: "string", required: false}
       - {label: "文章正文 (Body)", name: "body", widget: "markdown"}
