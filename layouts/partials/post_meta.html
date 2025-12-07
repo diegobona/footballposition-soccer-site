@@ -1,0 +1,56 @@
+{{- $scratch := newScratch }}
+
+{{- if not .Date.IsZero -}}
+{{- $scratch.Add "meta" (slice (printf "<span title='%s'>%s</span>" (.Date) (.Date | time.Format (default ":date_long" site.Params.DateFormat)))) }}
+{{- end }}
+
+{{- if (.Param "ShowReadingTime") -}}
+{{- $scratch.Add "meta" (slice (printf "<span>%s</span>" (i18n "read_time" .ReadingTime | default (printf "%d min" .ReadingTime)))) }}
+{{- end }}
+
+{{- if (.Param "ShowWordCount") -}}
+{{- $scratch.Add "meta" (slice (printf "<span>%s</span>" (i18n "words" .WordCount | default (printf "%d words" .WordCount)))) }}
+{{- end }}
+
+{{- if not (.Param "hideAuthor") -}}
+{{- with (partial "author.html" .) }}
+{{- $scratch.Add "meta" (slice (printf "<span>%s</span>" .)) }}
+{{- end }}
+{{- end }}
+
+{{- /* 读取 Front Matter 分类 */ -}}
+{{- $cat := .Params.category -}}
+{{- if not $cat -}}
+  {{- with .Params.categories -}}
+    {{- $cat = index . 0 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- /* 映射为英文显示并附上分区链接 */ -}}
+{{- if $cat -}}
+  {{- $name := $cat -}}
+  {{- $url := "" -}}
+  {{- if eq $cat "进攻位置" -}}
+    {{- $name = "AttackingPositions" -}}
+    {{- $url = "/attacking-positions/" -}}
+  {{- else if eq $cat "中场位置" -}}
+    {{- $name = "MidfieldPositions" -}}
+    {{- $url = "/midfield-positions/" -}}
+  {{- else if eq $cat "防守位置" -}}
+    {{- $name = "DefensivePositions" -}}
+    {{- $url = "/defensive-positions/" -}}
+  {{- else if eq $cat "综述" -}}
+    {{- $name = "Overview" -}}
+    {{- $url = "/overview/" -}}
+  {{- end -}}
+
+  {{- if $url -}}
+    {{- $scratch.Add "meta" (slice (printf "<span><a href='%s'>%s</a></span>" $url $name)) }}
+  {{- else -}}
+    {{- $scratch.Add "meta" (slice (printf "<span class='meta-category'>%s</span>" $name)) }}
+  {{- end -}}
+{{- end -}}
+
+{{- with ($scratch.Get "meta") }}
+{{- delimit . "&nbsp;·&nbsp;" | safeHTML -}}
+{{- end -}}

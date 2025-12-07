@@ -1,4 +1,4 @@
-baseURL = 'https://footballposition-soccer.pages.dev/'
+baseURL = 'https://footballposition.soccer/'
 languageCode = 'en-us'
 title = 'FootballPosition.soccer'
 theme = "PaperMod"
@@ -33,3 +33,4 @@ buildFuture = true
     url = "/defensive-positions/"
     weight = 30
 
+
