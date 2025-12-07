@@ -1,23 +1,23 @@
 /* Custom CSS for Grid Layout on Homepage */
 @media screen and (min-width: 960px) {
-    .main {
+    body.home .main {
         display: grid;
         grid-template-columns: repeat(2, 1fr); /* 2 columns */
         gap: 30px; /* Gap between cards */
     }
 
     /* Make Header span full width */
-    .page-header {
+    body.home .page-header {
         grid-column: 1 / -1;
     }
 
     /* Make Pagination span full width */
-    .pagination {
+    body.home .pagination {
         grid-column: 1 / -1;
     }
 
-    /* Card Styling */
-    .post-entry {
+    /* Card Styling - Homepage Only */
+    body.home .post-entry {
         margin-bottom: 0 !important;
         background: var(--entry);
         border: 1px solid var(--border);
@@ -29,17 +29,17 @@
         height: 100%;
     }
 
-    .post-entry:hover {
+    body.home .post-entry:hover {
         transform: translateY(-2px);
         box-shadow: 0 4px 10px rgba(0,0,0,0.1);
     }
     
-    /* Adjust image within card */
-    .entry-cover {
+    /* Adjust image within card - Homepage Only */
+    body.home .entry-cover {
         margin-bottom: 15px;
     }
     
-    .entry-cover img {
+    body.home .entry-cover img {
         border-radius: var(--radius);
         pointer-events: none;
         width: 100%;
@@ -99,6 +99,7 @@
 /* Custom CSS */
 
 /* Override main width for list pages (categories) to allow wider content */
+/* Also apply to home if we want wider grid, but user asked for category specifically */
 body.list {
     --main-width: 1200px;
 }
@@ -108,69 +109,82 @@ body.list {
     max-width: calc(var(--main-width) + var(--gap) * 2);
 }
 
-/* Category List Layout (Full Width, Horizontal Image+Text) */
-.category-list-container {
+/* Category List Layout (Full Width, Horizontal Image+Text) - For Non-Home List Pages */
+body.list:not(.home) .post-entry {
+    /* Default for no image: standard vertical or block */
     display: flex;
     flex-direction: column;
-    gap: 30px;
-    margin-top: 30px;
     width: 100%;
-}
-
-.category-list-entry {
-    display: flex;
-    flex-direction: row; /* Horizontal layout: Image Left, Text Right */
-    width: 100%;
-    margin-bottom: 0 !important;
+    margin-bottom: 30px !important;
     background: var(--entry);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 20px;
     box-sizing: border-box;
-    align-items: flex-start; /* Align top */
+}
+
+/* If it has an image, use Grid for Horizontal Layout */
+body.list:not(.home) .post-entry:has(.entry-cover) {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    grid-template-rows: auto auto 1fr; /* Header, Content, Footer */
+    gap: 0 30px;
+    align-items: start;
 }
 
 /* Left side: Image */
-.category-list-entry .entry-cover {
-    width: 320px; /* Fixed width for image container */
-    flex-shrink: 0; /* Prevent shrinking */
+body.list:not(.home) .post-entry .entry-cover {
+    grid-column: 1;
+    grid-row: 1 / 5; /* Span all rows */
+    width: 100%; /* Fill the grid cell */
     margin-bottom: 0;
-    margin-right: 30px; /* Space between image and text */
-    display: block;
+    margin-right: 0;
 }
 
-.category-list-entry .entry-cover img {
+body.list:not(.home) .post-entry .entry-cover img {
     width: 100%;
-    height: 200px; /* Fixed height for consistency */
+    height: 200px; /* Fixed height */
     object-fit: cover;
     border-radius: var(--radius);
 }
 
 /* Right side: Text Content */
-.category-list-entry .entry-info {
-    flex: 1; /* Take remaining width */
-    display: flex;
-    flex-direction: column;
-    justify-content: center; /* Center vertically if needed, or flex-start */
-    min-width: 0; /* Prevent flex child from overflowing parent */
+body.list:not(.home) .post-entry .entry-header {
+    grid-column: 2;
+    grid-row: 1;
+    margin-bottom: 10px;
 }
 
-/* Mobile Responsive: Stack vertically on small screens */
+body.list:not(.home) .post-entry .entry-content {
+    grid-column: 2;
+    grid-row: 2;
+    margin-bottom: 10px;
+}
+
+body.list:not(.home) .post-entry .entry-footer {
+    grid-column: 2;
+    grid-row: 3;
+    margin-top: auto; /* Push to bottom if needed */
+}
+
+/* Reset for Mobile */
 @media screen and (max-width: 768px) {
-    .category-list-entry {
+    body.list:not(.home) .post-entry:has(.entry-cover) {
+        display: flex;
         flex-direction: column;
     }
     
-    .category-list-entry .entry-cover {
+    body.list:not(.home) .post-entry .entry-cover {
         width: 100%;
-        margin-right: 0;
         margin-bottom: 20px;
     }
 
-    .category-list-entry .entry-cover img {
+    body.list:not(.home) .post-entry .entry-cover img {
         height: auto;
         max-height: 250px;
     }
+    
+    /* Reset grid placements are not needed for flex, but good to be safe */
 }
 
 /* Dark mode adjustments if needed */
