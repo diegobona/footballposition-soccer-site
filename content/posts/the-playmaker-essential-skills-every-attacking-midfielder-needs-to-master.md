@@ -97,7 +97,7 @@ How to be a creative midfielder requires confidence to take on defenders in cruc
 
 ·               **1v1 Moves**: Mastering 3-4 reliable moves to beat defenders consistently
 
-Diego Maradona and Lionel Messi both used their low center of gravity and exceptional close control to dribble through multiple defenders in confined spaces—a skill that turned them into legends. [citation](file:///https://www.coachup.com/nation/articles/the-number-10-in-soccer)
+Diego Maradona and Lionel Messi both used their low center of gravity and exceptional close control to dribble through multiple defenders in confined spaces—a skill that turned them into legends. [](file:///https://www.coachup.com/nation/articles/the-number-10-in-soccer)
 
 **Training Dribbling**: Set up a narrow corridor (2-3 yards wide) and practice dribbling through it at varying speeds. Add defenders to simulate game pressure and force quick direction changes.
 
