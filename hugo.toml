@@ -1,6 +1,6 @@
 baseURL = 'https://footballposition.soccer/'
 languageCode = 'en-us'
-title = 'FootballPosition.soccer'
+title = 'Football Position Soccer'
 theme = "PaperMod"
 buildFuture = true
 [pagination]
@@ -33,4 +33,4 @@ buildFuture = true
     url = "/defensive-positions/"
     weight = 30
 
-
+
