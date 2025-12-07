@@ -6,9 +6,9 @@
 {{- $list := union $matchByCategories $matchByCategory -}}
 
 {{- if gt (len $list) 0 -}}
-<div class="grid-container">
+<div class="category-list-container">
 {{- range $list }}
-  <article class="post-entry grid-entry">
+  <article class="post-entry category-list-entry">
     {{- if .Params.cover.image }}
     <figure class="entry-cover">
         <img loading="lazy" src="{{ .Params.cover.image | absURL }}" alt="{{ .Params.cover.alt | default .Title }}">

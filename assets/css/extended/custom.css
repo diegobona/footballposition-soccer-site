@@ -94,3 +94,43 @@
 .dark .post-entry:hover, .dark .grid-entry:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+
+/* Category List Layout (Full Width) */
+.category-list-container {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin-top: 30px;
+    width: 100%;
+}
+
+.category-list-entry {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin-bottom: 0 !important;
+    background: var(--entry);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 25px;
+    box-sizing: border-box;
+}
+
+.category-list-entry .entry-cover {
+    width: 100%;
+    margin-bottom: 20px;
+    display: block;
+}
+
+.category-list-entry .entry-cover img {
+    width: 100%;
+    height: 300px; /* Taller image for full width card */
+    object-fit: cover;
+    border-radius: var(--radius);
+}
+
+/* Dark mode hover effect */
+.dark .category-list-entry:hover {
+    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+}
