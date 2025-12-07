@@ -6,11 +6,33 @@
 {{- $list := union $matchByCategories $matchByCategory -}}
 
 {{- if gt (len $list) 0 -}}
-<ul>
+<div class="grid-container">
 {{- range $list }}
-  <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> <small>{{ .Date.Format "2006-01-02" }}</small></li>
+  <article class="post-entry">
+    {{- if .Params.cover.image }}
+    <figure class="entry-cover">
+        <img loading="lazy" src="{{ .Params.cover.image | absURL }}" alt="{{ .Params.cover.alt | default .Title }}">
+    </figure>
+    {{- end }}
+    
+    <header class="entry-header">
+      <h2>{{ .Title }}</h2>
+    </header>
+    
+    <div class="entry-content">
+      <p>{{ .Summary | plainify | htmlUnescape | truncate 120 }}...</p>
+    </div>
+    
+    <footer class="entry-footer">
+      <span title='{{ .Date.Format "2006-01-02 15:04:05 MST" }}'>
+        {{ .Date.Format "January 2, 2006" }}
+      </span>
+    </footer>
+    
+    <a class="entry-link" aria-label="post link to {{ .Title | plainify }}" href="{{ .Permalink }}"></a>
+  </article>
 {{- end }}
-</ul>
+</div>
 {{- else -}}
 <p>暂无“{{ $cat }}”分类的文章。</p>
 {{- end -}}

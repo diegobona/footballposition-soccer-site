@@ -51,6 +51,20 @@
     }
 }
 
+/* Grid Container for Shortcodes (e.g., in category pages) */
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr; /* Mobile default */
+    gap: 30px;
+    margin-top: 30px;
+}
+
+@media screen and (min-width: 960px) {
+    .grid-container {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 /* Dark mode adjustments if needed */
 .dark .post-entry:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
