@@ -56,29 +56,7 @@ Understanding these differences is crucial for tactical awareness:
 
 ### Foot Placement and Positioning
 
-**Aspect**
-
-**Traditional Winger**
-
-**Inverted Winger**
-
-Foot preference
-
-Strong foot on same side
-
-Strong foot on opposite side
-
-Starting position
-
-Wide, near touchline
-
-Wide, but prepares to move inside
-
-Ball-receiving zone
-
-Near the sideline
-
-Between the lines
+![](/images/screenshot_2025-12-14_192741_741.png)
 
 ### Movement Patterns
 
@@ -98,7 +76,7 @@ Traditional wingers stretch defenses horizontally, creating gaps between center-
 
 ## Tactical Advantages of Each Style
 
-\    Benefits of Traditional Wingers
+### Benefits of Traditional Wingers
 
 1.       **Natural width without fullback support**: They can stretch defenses independently, freeing fullbacks to stay back
 
