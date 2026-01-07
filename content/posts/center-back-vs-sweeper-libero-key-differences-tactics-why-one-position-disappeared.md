@@ -3,6 +3,8 @@ title: "Center Back vs Sweeper (Libero): Key Differences, Tactics & Why One
   Position Disappeared"
 date: 2026-01-07T22:34:00.000+08:00
 category: 防守位置
+cover:
+  image: /images/新建-doc-文档-5-.jpg
 ---
 ## The Death of the Free Defender: What Happened to Football's Most Creative Defensive Role?
 
@@ -31,6 +33,8 @@ Their primary duties include:
 ·               **Blocking shots**: Throwing bodies in the way when opponents get a shooting opportunity
 
 ·               **Organizing the defensive line**: Communicating constantly to maintain shape and coordinate the offside trap
+
+![](/images/新建-doc-文档-5-.jpg)
 
 ### The Modern Center Back: More Than Just a Defender
 
@@ -87,6 +91,8 @@ No discussion of the libero is complete without Franz Beckenbauer, the player wh
 During the 1974 World Cup final, Beckenbauer played as a libero in Germany's victory over the Netherlands. He didn't just organize the defense—he orchestrated entire passages of play, stepping into midfield with elegance, playing defense-splitting passes, and demonstrating that a defender could be the most influential player on the pitch.
 
 His innovation inspired a generation of brilliant sweepers, most notably Franco Baresi at AC Milan. Under coach Arrigo Sacchi, Baresi became the heartbeat of one of football's greatest-ever defenses, combining defensive mastery with playmaking genius.
+
+![](/images/新建-doc-文档-6-.jpg)
 
 ## Center Back vs Libero: The Key Differences Breakdown
 
