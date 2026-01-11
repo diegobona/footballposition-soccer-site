@@ -8,6 +8,8 @@ category: 中场位置
 
 The term "box-to-box midfielder" isn't just catchy jargon—it's a literal description of the role. These players operate from their own penalty box to the opposition's penalty box, covering the entire length of the pitch throughout a 90-minute match. If you watch elite B2B midfielders like Jude Bellingham or Federico Valverde, you'll notice them making goal-line clearances one moment and arriving in the penalty area for a scoring opportunity the next.
 
+![](/images/新建-doc-文档-10-.jpg)
+
 The position emerged from tactical evolution. Traditional formations featured holding midfielders who rarely ventured forward and attacking midfielders who contributed little defensively. As football became more dynamic and physically demanding, teams needed players capable of bridging this gap. The box-to-box midfielder was born—a hybrid role requiring excellence in both attacking and defensive phases.
 
 **How B2B Differs from Other Midfield Roles:**
@@ -70,9 +72,15 @@ Steven Gerrard epitomized this leadership aspect. Beyond his technical abilities
 
 The demanding nature of the box-to-box role requires a unique combination of physical, technical, and mental attributes. No player excels equally in every area, but the best B2B midfielders achieve high standards across the entire spectrum.
 
+![](/images/新建-doc-文档-110-.jpg)
+
+![](/images/screenshot_2026-01-11_102314_255.png)
+
 The stamina requirement cannot be overstated. Research shows B2B midfielders cover 10-12 kilometers per match—significantly more than most positions. Jude Bellingham's 10.5km average, including those 2,526 intensive runs, represents world-class endurance. These aren't leisurely jogs either—they're high-intensity efforts repeated throughout the match. [citation](file:///https://www.bundesliga.com/en/bundesliga/news/is-england-s-jude-bellingham-the-world-s-best-midfielder-dortmund-real-madrid-transfer-22027)
 
 Leon Goretzka's physical transformation at Bayern Munich became legendary. He deliberately added significant muscle mass through dedicated gym work to better compete physically in the Bundesliga's demanding midfield battles. This strength allows him to shield the ball, win duels, and resist opposition pressing—all crucial for a B2B midfielder operating in congested spaces.
+
+![](/images/技术技巧.png)
 
 Bellingham's 84.9% pass completion rate in the Bundesliga demonstrates the technical precision required. When you're making 50-70 passes per match while under constant pressure, maintaining that accuracy becomes incredibly difficult. Yet elite B2B midfielders must do exactly that—receive the ball in tight spaces, shield it from opponents, and execute accurate passes to maintain team possession. [citation](file:///https://www.bundesliga.com/en/bundesliga/news/is-england-s-jude-bellingham-the-world-s-best-midfielder-dortmund-real-madrid-transfer-22027)
 
@@ -93,6 +101,8 @@ The most overlooked aspect of elite B2B midfielders is their mental capacity. Ph
 ## Modern B2B Midfielders: Case Studies of Excellence
 
 Examining specific players reveals how different physical and technical profiles can succeed in the B2B role, provided they share the essential mental attributes and work ethic.
+
+![](/images/新建-doc-文档-120-.jpg)
 
 ### Jude Bellingham: The Complete Modern Package
 
@@ -122,6 +132,8 @@ Rice's transformation demonstrates that B2B midfielders can develop throughout t
 
 Understanding how B2B midfielders differ from other central positions clarifies their unique value and tactical deployment.
 
+![](/images/aspect.png)
+
 The table reveals how B2B midfielders occupy a middle ground in terms of specialized output (goals, tackles) but exceed both other positions in overall ground coverage and versatility requirements. They don't make as many tackles as pure defensive midfielders, nor do they create as many chances as attacking midfielders, but they contribute meaningfully to both areas while covering more distance than either specialist position. [citation](file:///https://betcity.co.uk/box-to-box-midfielders-unveiled-key-roles-skills-tactical-impact/)
 
 **Shuttlers vs Box-to-Box: A Subtle Distinction**
@@ -131,6 +143,8 @@ Within the broad B2B category, analysts sometimes differentiate "shuttlers" from
 ## Best Formations for Box-to-Box Midfielders
 
 Tactical systems significantly influence how effectively B2B midfielders can operate. Certain formations naturally accommodate and maximize their unique skill set.
+
+![](/images/新建-doc-文档-130-.jpg)
 
 ### 4-3-3 Formation: The Modern Standard
 
