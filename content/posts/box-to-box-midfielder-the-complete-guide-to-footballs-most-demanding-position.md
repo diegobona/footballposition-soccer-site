@@ -3,6 +3,8 @@ title: "Box-to-Box Midfielder: The Complete Guide to Football's Most Demanding
   Position"
 date: 2026-01-11T10:21:00.000+08:00
 category: 中场位置
+cover:
+  image: /images/新建-doc-文档-130-.jpg
 ---
 ## What Exactly Is a Box-to-Box Midfielder?
 
