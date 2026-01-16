@@ -3,6 +3,12 @@ languageCode = 'en-us'
 title = 'Football Position Soccer'
 theme = "PaperMod"
 buildFuture = true
+
+[sitemap]
+  changefreq = 'weekly'
+  filename = 'sitemap.xml'
+  priority = 0.5
+
 [pagination]
   pagerSize = 10
 
