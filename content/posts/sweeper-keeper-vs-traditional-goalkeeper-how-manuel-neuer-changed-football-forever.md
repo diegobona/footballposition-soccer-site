@@ -4,7 +4,7 @@ title: "Sweeper Keeper vs Traditional Goalkeeper: How Manuel Neuer Changed
 date: 2026-01-28T22:45:00.000+08:00
 category: 防守位置
 cover:
-  image: /images/新建-doc-文档-5-.jpg
+  image: https://img2.baidu.com/it/u=2267431110,3182440219&fm=253&fmt=auto&app=138&f=JPEG?w=600&h=380
 ---
 ## When Staying on Your Line Became Obsolete: The Goalkeeper Revolution
 
