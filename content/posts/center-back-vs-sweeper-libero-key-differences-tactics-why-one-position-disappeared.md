@@ -4,7 +4,7 @@ title: "Center Back vs Sweeper (Libero): Key Differences, Tactics & Why One
 date: 2026-01-07T22:34:00.000+08:00
 category: 防守位置
 cover:
-  image: /images/新建-doc-文档-5-.jpg
+  image: https://i.ytimg.com/vi/AfqYAjolevw/maxresdefault.jpg
 ---
 ## The Death of the Free Defender: What Happened to Football's Most Creative Defensive Role?
 
