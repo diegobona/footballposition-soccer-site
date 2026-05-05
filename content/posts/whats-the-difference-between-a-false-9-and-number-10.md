@@ -9,6 +9,20 @@ date: 2025-12-07T21:18:00.000+08:00
 category: 进攻位置
 cover:
   image: /images/uploads/hq720.jpg
+faq:
+  - question: What is the difference between a False 9 and a Number 10?
+    answer: A False 9 starts as a striker and drops into midfield to create space,
+      while a Number 10 starts in the hole behind the striker and focuses on
+      chance creation.
+  - question: What is a False 10 in soccer?
+    answer: A False 10 is a hybrid role where an attacking midfielder plays deeper
+      and wider than expected, drifting into half-spaces and cutting inside to
+      dictate play. Learn more at
+      https://footballposition.soccer/posts/false-10-explained/.
+  - question: How is a False 10 different from a False 9?
+    answer: A False 9 drops from the striker position into midfield, while a False
+      10 drops from the attacking midfield line even deeper and often moves
+      wider before cutting in.
 ---
 
 In modern soccer tactics, few roles are as romanticized as the Number 10 
