@@ -1,5 +1,6 @@
 ---
 title: "False 10 in Soccer Explained: Why Messi’s Role Confuses Even Analysts"
+slug: false-10-explained
 date: 2026-05-05T20:48:00.000+08:00
 category: 中场位置
 cover:
