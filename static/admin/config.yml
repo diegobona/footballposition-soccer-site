@@ -18,6 +18,8 @@ collections:
     slug: "{{slug}}"
     fields:
       - {label: "文章标题 (Title)", name: "title", widget: "string"}
+      - {label: "SEO 标题标签（Title Tag，可选）", name: "seo_title", widget: "string", required: false, hint: "例如：False 9 vs Number 10: Key Differences & What About the False 10?"}
+      - {label: "元描述（Meta Description，可选）", name: "meta_description", widget: "text", required: false, hint: "建议 120-160 个字符；不填则继续使用默认摘要逻辑"}
       - {label: "自定义 URL Slug（可选）", name: "slug", widget: "string", required: false, hint: "只填写 URL 最后一段，例如 false-10-role；不填则按标题自动生成"}
       - {label: "发布日期 (Date)", name: "date", widget: "datetime"}
       - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置", "综述"]}
