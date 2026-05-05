@@ -1,13 +1,11 @@
 ---
-title: "False 10 in Soccer Explained: Why Messi’s Role Confuses Even Analysts"
+title: "False 10 in Soccer Explained: The Hybrid Role Between a 9 and a 10"
 slug: false-10-explained
 date: 2026-05-05T20:48:00.000+08:00
 category: 中场位置
 cover:
   image: /images/uploads/hq720.jpg
 ---
-# False 10 in Soccer Explained: The Hybrid Role Between a 9 and a 10
-
 ## Quick Definition
 
 A False 10 in soccer is a hybrid attacking role that sits between a traditional
