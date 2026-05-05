@@ -39,7 +39,7 @@ This created overloads in central areas and allowed midfielders like Xavi and In
 
 👉 In these moments, Messi functioned more like a hybrid playmaker than a traditional forward or Number 10.
 
-
+![](/images/uploads/screenshot_2026-05-05_211646_969.png)
 
 - - -
 
