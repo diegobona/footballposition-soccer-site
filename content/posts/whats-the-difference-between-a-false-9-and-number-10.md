@@ -143,3 +143,5 @@ wider before cutting in.
 > Götze, Messi), and how it compares to related roles in our dedicated 
 > article:\
 > 👉 **[False 10 in Soccer Explained: The Hybrid Role Between a 9 and a 10](/posts/false-10-explained/)**
+
+![screenshot 2026 05 06 012226 400](/images/uploads/2026/05/20260506-064453-47cdef5b-screenshot-2026-05-06-012226-400.png)
