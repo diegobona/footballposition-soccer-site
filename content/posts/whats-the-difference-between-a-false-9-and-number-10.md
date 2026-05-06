@@ -61,8 +61,6 @@ onrushing midfielders to exploit.
 * **Iconic players**: Lionel Messi (under Guardiola), Roberto Firmino, 
   Francesco Totti
 
-![8a4cc2dc75a81d5f5cfd35219d7a1023](https://media.footballposition.soccer/uploads/2026/05/20260506-090411-f001f2a4-8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
-
 ## Quick Comparison Table
 
 | Aspect             | Number 10                                | False 9                          |
@@ -100,6 +98,8 @@ overcomes this by refusing to stay in one place. By dropping deeper
 and drifting wider, they find new angles to receive the ball and 
 create overloads, making them highly effective against organized 
 defenses.
+
+![screenshot 2026 05 06 012226 400 1](https://media.footballposition.soccer/uploads/2026/05/20260506-090736-1ec7e4f1-screenshot-2026-05-06-012226-400-1.png)
 
 
 ## Who Should You Use in Your Tactics?
