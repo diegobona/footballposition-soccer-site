@@ -61,6 +61,8 @@ onrushing midfielders to exploit.
 * **Iconic players**: Lionel Messi (under Guardiola), Roberto Firmino, 
   Francesco Totti
 
+![8a4cc2dc75a81d5f5cfd35219d7a1023](https://media.footballposition.soccer/uploads/2026/05/20260506-152304-9bd84ee1-8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
+
 ## Quick Comparison Table
 
 | Aspect             | Number 10                                | False 9                          |
