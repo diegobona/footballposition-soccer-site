@@ -44,7 +44,7 @@ the ball in advanced areas and create chances for the striker and wingers.
   when out of possession
 * **Iconic players**: Zinedine Zidane, Diego Maradona, Juan Román Riquelme
 
-  ![](/images/uploads/697ff1a9a926adf7b0b5b4b9f473c559.gif)
+![697ff1a9a926adf7b0b5b4b9f473c559](https://media.footballposition.soccer/uploads/2026/05/20260506-085931-88617003-697ff1a9a926adf7b0b5b4b9f473c559.gif)
 
 ## The False 9: The Space Creator
 
@@ -61,7 +61,7 @@ onrushing midfielders to exploit.
 * **Iconic players**: Lionel Messi (under Guardiola), Roberto Firmino, 
   Francesco Totti
 
-  ![](/images/uploads/8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
+![8a4cc2dc75a81d5f5cfd35219d7a1023](https://media.footballposition.soccer/uploads/2026/05/20260506-090411-f001f2a4-8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
 
 ## Quick Comparison Table
 
@@ -100,6 +100,7 @@ overcomes this by refusing to stay in one place. By dropping deeper
 and drifting wider, they find new angles to receive the ball and 
 create overloads, making them highly effective against organized 
 defenses.
+
 
 ## Who Should You Use in Your Tactics?
 
@@ -143,5 +144,3 @@ wider before cutting in.
 > Götze, Messi), and how it compares to related roles in our dedicated 
 > article:\
 > 👉 **[False 10 in Soccer Explained: The Hybrid Role Between a 9 and a 10](/posts/false-10-explained/)**
-
-![screenshot 2026 05 06 012226 400](/images/uploads/2026/05/20260506-064453-47cdef5b-screenshot-2026-05-06-012226-400.png)
