@@ -21,6 +21,7 @@ collections:
       - {label: "SEO 标题标签（Title Tag，可选）", name: "seo_title", widget: "string", required: false, hint: "例如：False 9 vs Number 10: Key Differences & What About the False 10?"}
       - {label: "元描述（Meta Description，可选）", name: "meta_description", widget: "text", required: false, hint: "建议 120-160 个字符；不填则继续使用默认摘要逻辑"}
       - {label: "自定义 URL Slug（可选）", name: "slug", widget: "string", required: false, hint: "只填写 URL 最后一段，例如 false-10-role；不填则按标题自动生成"}
+      - {label: "编辑器内部版本（隐藏）", name: "_editor_revision", widget: "hidden", required: false, default: ""}
       - {label: "发布日期 (Date)", name: "date", widget: "datetime"}
       - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置", "综述"]}
       - label: "封面图设置 (Cover)"
@@ -30,4 +31,13 @@ collections:
           - {label: "封面图片 (Image)", name: "image", widget: "image", required: false}
           - {label: "图片描述 (Alt Text)", name: "alt", widget: "string", required: false}
           - {label: "图片标题 (Caption)", name: "caption", widget: "string", required: false}
+      - label: "FAQ（可选，用于页面展示和 FAQ Schema）"
+        name: "faq"
+        widget: "list"
+        required: false
+        summary: "{{fields.question}}"
+        collapsed: true
+        fields:
+          - {label: "问题", name: "question", widget: "string"}
+          - {label: "答案", name: "answer", widget: "text"}
       - {label: "文章正文 (Body，可直接粘贴/拖拽图片)", name: "body", widget: "markdown"}

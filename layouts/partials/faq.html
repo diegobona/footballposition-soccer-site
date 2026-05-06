@@ -1,0 +1,17 @@
+{{- with .Params.faq }}
+{{- if gt (len .) 0 }}
+<section class="post-content faq-section">
+  <h2>Frequently Asked Questions</h2>
+  <div class="faq-list">
+    {{- range . }}
+    <details class="faq-item">
+      <summary>{{ .question }}</summary>
+      <div class="faq-answer">
+        {{ .answer | markdownify }}
+      </div>
+    </details>
+    {{- end }}
+  </div>
+</section>
+{{- end }}
+{{- end }}

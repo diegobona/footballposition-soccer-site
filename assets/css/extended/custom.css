@@ -191,3 +191,30 @@ body.list:not(.home) .post-entry .entry-footer {
 .dark .post-entry:hover, .dark .grid-entry:hover, .dark .category-list-entry:hover {
     box-shadow: 0 4px 10px rgba(0,0,0,0.3);
 }
+
+/* FAQ section on post pages */
+.faq-section {
+    margin-top: 36px;
+}
+
+.faq-list {
+    display: grid;
+    gap: 14px;
+}
+
+.faq-item {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--entry);
+    padding: 14px 18px;
+}
+
+.faq-item summary {
+    cursor: pointer;
+    font-weight: 700;
+    list-style-position: outside;
+}
+
+.faq-answer {
+    margin-top: 12px;
+}

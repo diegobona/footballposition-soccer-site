@@ -17,6 +17,12 @@ buildFuture = true
   keywords = ["football positions", "soccer positions", "tactical roles", "position guides", "training drills", "player development", "defensive positions in soccer", "defensive positions"]
   mainSections = ["posts"]
 
+  [params.assets]
+    favicon = "icon.png"
+    favicon16x16 = "icon.png"
+    favicon32x32 = "icon.png"
+    apple_touch_icon = "icon.png"
+
   #开启 PaperMod 的 Home Info 块（没有文章也能展示）
   [params.homeInfoParams]
     Title = " FootballPosition.soccer – Master Every Role on the Pitch | Position Guides, Drills & Pro Tips"

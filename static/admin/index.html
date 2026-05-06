@@ -1,14 +1,15 @@
 <!doctype html>
-<html>
+<html translate="no" class="notranslate">
 <head>
   <meta charset="utf-8" />
+  <meta name="google" content="notranslate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
 
   <script>window.CMS_MANUAL_INIT = true;</script>
 </head>
-<body>
-  <div id="nc-root"></div>
+<body translate="no" class="notranslate">
+  <div id="nc-root" translate="no" class="notranslate"></div>
 
   <script src="./decap-cms.js"></script>
   <script>
@@ -17,10 +18,13 @@
       repoName: "footballposition-soccer-site",
       branch: "main",
       mediaFolder: "static/images/uploads",
-      publicFolder: "/images/uploads"
+      publicFolder: "/images/uploads",
+      mediaUploadEndpoint: "https://cms-upload.footballposition.soccer/upload",
+      mediaPublicBaseUrl: "https://media.footballposition.soccer",
+      mediaObjectFolder: "uploads"
     };
   </script>
-  <script src="./custom.js"></script>
+  <script src="./custom.js?v=20260506-r2-upload"></script>
 
   <script>
     window.addEventListener('load', function () {

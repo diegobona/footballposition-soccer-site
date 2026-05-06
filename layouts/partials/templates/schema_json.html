@@ -125,6 +125,29 @@
   }
 }
 </script>
+{{- with .Params.faq }}
+{{- if gt (len .) 0 }}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {{- range $index, $item := . }}
+    {{- if $index }},{{ end }}
+    {
+      "@type": "Question",
+      "name": {{ $item.question | plainify }},
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": {{ $item.answer | markdownify | plainify | htmlUnescape | chomp }}
+      }
+    }
+    {{- end }}
+  ]
+}
+</script>
+{{- end }}
+{{- end }}
 {{- end }}{{/* .IsPage end */}}
 
 {{- end -}}

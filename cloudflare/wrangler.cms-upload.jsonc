@@ -1,0 +1,22 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "footballposition-cms-upload",
+  "main": "./cms-upload-worker.mjs",
+  "compatibility_date": "2026-05-06",
+  "observability": {
+    "enabled": true
+  },
+  "vars": {
+    "MEDIA_PUBLIC_BASE_URL": "https://media.footballposition.soccer",
+    "GITHUB_REPO": "diegobona/footballposition-soccer-site",
+    "ALLOWED_ORIGINS": "https://footballposition.soccer,http://localhost:1313",
+    "MEDIA_OBJECT_FOLDER": "uploads",
+    "MAX_UPLOAD_BYTES": "10485760"
+  },
+  "r2_buckets": [
+    {
+      "binding": "MEDIA_BUCKET",
+      "bucket_name": "footballposition-media"
+    }
+  ]
+}

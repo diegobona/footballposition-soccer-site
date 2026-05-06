@@ -8,6 +8,9 @@
   var mediaFolder = enhancerConfig.mediaFolder || "static/images/uploads";
   var publicFolder = enhancerConfig.publicFolder || "/images/uploads";
   var githubApiRoot = enhancerConfig.githubApiRoot || "https://api.github.com";
+  var mediaUploadEndpoint = enhancerConfig.mediaUploadEndpoint || "";
+  var mediaPublicBaseUrl = enhancerConfig.mediaPublicBaseUrl || "";
+  var mediaObjectFolder = enhancerConfig.mediaObjectFolder || "uploads";
   var maxFileSize = enhancerConfig.maxFileSize || 10 * 1024 * 1024;
   var toastTimer = null;
 
@@ -56,6 +59,94 @@
     toastTimer = window.setTimeout(function () {
       toast.hidden = true;
     }, type === "error" ? 5000 : 2500);
+  }
+
+  function markNodeNoTranslate(node) {
+    if (!node || !node.setAttribute) {
+      return;
+    }
+
+    node.setAttribute("translate", "no");
+    if (node.classList) {
+      node.classList.add("notranslate");
+    }
+  }
+
+  function protectEditorDomFromTranslation(root) {
+    var scope = root || document;
+    markNodeNoTranslate(document.documentElement);
+    markNodeNoTranslate(document.body);
+    Array.prototype.forEach.call(
+      scope.querySelectorAll('[data-slate-editor], [data-slate-node], [contenteditable="true"], textarea, .CodeMirror, #nc-root'),
+      markNodeNoTranslate
+    );
+  }
+
+  function startTranslationProtection() {
+    protectEditorDomFromTranslation(document);
+
+    if (typeof MutationObserver !== "function" || !document.body) {
+      return;
+    }
+
+    var observer = new MutationObserver(function (mutations) {
+      for (var i = 0; i < mutations.length; i += 1) {
+        for (var index = 0; index < mutations[i].addedNodes.length; index += 1) {
+          var node = mutations[i].addedNodes[index];
+          if (node && node.nodeType === 1) {
+            protectEditorDomFromTranslation(node);
+          }
+        }
+      }
+    });
+
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+
+  function registerMediaFallbackServiceWorker() {
+    if (typeof navigator === "undefined" || !("serviceWorker" in navigator)) {
+      return;
+    }
+
+    var params = new URLSearchParams({
+      owner: repoOwner,
+      repo: repoName,
+      branch: branch,
+      mediaFolder: mediaFolder,
+      publicFolder: publicFolder
+    });
+
+    navigator.serviceWorker
+      .register("/cms-media-sw.js?" + params.toString(), { scope: "/" })
+      .then(function (registration) {
+        registration.update();
+        if (!navigator.serviceWorker.controller) {
+          console.info("CMS media fallback service worker registered; reload once if local preview images still miss.");
+        }
+      })
+      .catch(function (error) {
+        console.warn("CMS media fallback service worker registration failed", error);
+      });
+  }
+
+  async function cacheImageForLocalPreview(publicUrl, file) {
+    if (!publicUrl || !file || typeof caches === "undefined" || typeof Response === "undefined" || typeof Request === "undefined") {
+      return;
+    }
+
+    try {
+      var cache = await caches.open("cms-pasted-media-v1");
+      var request = new Request(new URL(publicUrl, window.location.origin).toString(), { method: "GET" });
+      var response = new Response(file, {
+        headers: {
+          "Content-Type": file.type || "application/octet-stream",
+          "Cache-Control": "no-store"
+        }
+      });
+      await cache.put(request, response);
+    } catch (error) {
+      console.warn("CMS image paste warning: unable to cache pasted image for local preview", error);
+    }
   }
 
   function readStoredUser(storage, key) {
@@ -148,6 +239,13 @@
     return "\n![" + getAltText(file) + "](" + publicUrl + ")\n";
   }
 
+  async function buildInlineMarkdown(file) {
+    var buffer = await file.arrayBuffer();
+    var mimeType = file.type || "image/png";
+    var dataUrl = "data:" + mimeType + ";base64," + arrayBufferToBase64(buffer);
+    return buildMarkdown(file, dataUrl);
+  }
+
   function sanitizeFileName(name) {
     return (
       String(name || "image")
@@ -175,7 +273,8 @@
 
     return {
       repoPath: mediaFolder + "/" + year + "/" + month + "/" + fileName,
-      publicUrl: publicFolder + "/" + year + "/" + month + "/" + fileName
+      publicUrl: publicFolder + "/" + year + "/" + month + "/" + fileName,
+      objectKey: mediaObjectFolder.replace(/^\/+|\/+$/g, "") + "/" + year + "/" + month + "/" + fileName
     };
   }
 
@@ -201,97 +300,514 @@
     return window.btoa(binary);
   }
 
-  function getEditorTarget(candidate) {
-    var node = candidate;
-
-    if (node && node.nodeType === Node.TEXT_NODE) {
-      node = node.parentElement;
+  function isVisibleElement(element) {
+    if (!element) {
+      return false;
     }
 
-    var possibilities = [node, document.activeElement];
+    var style = window.getComputedStyle(element);
+    return style.display !== "none" && style.visibility !== "hidden" && element.getBoundingClientRect().height > 0;
+  }
 
-    for (var i = 0; i < possibilities.length; i += 1) {
-      var element = possibilities[i];
-      if (!element || !element.closest) {
-        continue;
+  function dispatchChangeEvents(target) {
+    if (!target) {
+      return;
+    }
+
+    try {
+      target.dispatchEvent(new InputEvent("input", { bubbles: true, data: null, inputType: "insertText" }));
+    } catch (error) {
+      target.dispatchEvent(new Event("input", { bubbles: true }));
+    }
+    target.dispatchEvent(new Event("change", { bubbles: true }));
+    try {
+      target.dispatchEvent(new FocusEvent("blur", { bubbles: true }));
+    } catch (error) {
+      target.dispatchEvent(new Event("blur", { bubbles: true }));
+    }
+  }
+
+  function findBodyFieldRoot() {
+    var labelNode = Array.prototype.find.call(document.querySelectorAll("label, div, span"), function (node) {
+      var text = (node.textContent || "").trim();
+      return /^文章正文\b|^Body\b/i.test(text);
+    });
+
+    if (!labelNode || !labelNode.closest) {
+      return null;
+    }
+
+    return labelNode.closest('[data-testid], [class*="EditorControl"], [class*="Widget"], section, article, div');
+  }
+
+  function closestEditorCandidate(node) {
+    if (!node || !node.closest) {
+      return null;
+    }
+
+    return (
+      node.closest(".CodeMirror") ||
+      node.closest('[contenteditable="true"]') ||
+      node.closest("textarea") ||
+      null
+    );
+  }
+
+  function getEventPathCandidates(sourceEvent) {
+    if (!sourceEvent || typeof sourceEvent.composedPath !== "function") {
+      return [];
+    }
+
+    return sourceEvent.composedPath().filter(function (node) {
+      return node && node.nodeType === 1;
+    });
+  }
+
+  function claimImageEvent(event) {
+    event.preventDefault();
+    if (typeof event.stopPropagation === "function") {
+      event.stopPropagation();
+    }
+    if (typeof event.stopImmediatePropagation === "function") {
+      event.stopImmediatePropagation();
+    }
+  }
+
+  function buildEditorCandidates(sourceContext) {
+    var candidates = [];
+    var activeElement = sourceContext && sourceContext.activeElement ? sourceContext.activeElement : document.activeElement;
+    var sourceNode = sourceContext && sourceContext.sourceNode ? sourceContext.sourceNode : null;
+    var eventPath = sourceContext && sourceContext.path ? sourceContext.path : [];
+    var bodyFieldRoot = findBodyFieldRoot();
+
+    function pushIfExists(value) {
+      if (value && candidates.indexOf(value) === -1) {
+        candidates.push(value);
       }
+    }
 
-      var codeMirrorHost = element.closest(".CodeMirror");
-      if (codeMirrorHost) {
-        return codeMirrorHost;
+    pushIfExists(closestEditorCandidate(sourceNode));
+    pushIfExists(closestEditorCandidate(activeElement));
+
+    for (var pathIndex = 0; pathIndex < eventPath.length; pathIndex += 1) {
+      pushIfExists(closestEditorCandidate(eventPath[pathIndex]));
+    }
+
+    if (sourceNode && sourceNode.querySelector) {
+      pushIfExists(sourceNode.querySelector(".CodeMirror"));
+      pushIfExists(sourceNode.querySelector('[contenteditable="true"]'));
+      pushIfExists(sourceNode.querySelector("textarea"));
+    }
+
+    if (bodyFieldRoot && bodyFieldRoot.querySelector) {
+      pushIfExists(bodyFieldRoot.querySelector(".CodeMirror"));
+      pushIfExists(bodyFieldRoot.querySelector('[contenteditable="true"]'));
+      pushIfExists(bodyFieldRoot.querySelector("textarea"));
+    }
+
+    pushIfExists(Array.prototype.find.call(document.querySelectorAll(".CodeMirror"), function (node) {
+      return isVisibleElement(node);
+    }));
+
+    return candidates.filter(Boolean);
+  }
+
+  function findAssociatedTextareas(wrapper) {
+    var candidates = [];
+
+    function pushIfExists(value) {
+      if (value && candidates.indexOf(value) === -1) {
+        candidates.push(value);
       }
+    }
 
-      var textarea = element.closest("textarea");
-      if (textarea) {
-        return textarea;
+    if (!wrapper) {
+      return candidates;
+    }
+
+    Array.prototype.forEach.call(wrapper.querySelectorAll("textarea"), pushIfExists);
+
+    if (wrapper.nextElementSibling && wrapper.nextElementSibling.tagName === "TEXTAREA") {
+      pushIfExists(wrapper.nextElementSibling);
+    }
+
+    var fieldRoot = wrapper.closest('[data-testid], [class*="EditorControl"], [class*="Widget"], section, article, div');
+    if (fieldRoot) {
+      Array.prototype.forEach.call(fieldRoot.querySelectorAll("textarea"), pushIfExists);
+    }
+
+    return candidates;
+  }
+
+  function setNativeValue(element, value) {
+    if (!element) {
+      return;
+    }
+
+    var prototype = Object.getPrototypeOf(element);
+    var descriptor = prototype && Object.getOwnPropertyDescriptor(prototype, "value");
+
+    if (descriptor && typeof descriptor.set === "function") {
+      descriptor.set.call(element, value);
+    } else {
+      element.value = value;
+    }
+  }
+
+  function getReactFiber(node) {
+    if (!node) {
+      return null;
+    }
+
+    var keys = Object.getOwnPropertyNames(node);
+    for (var i = 0; i < keys.length; i += 1) {
+      if (keys[i].indexOf("__reactFiber$") === 0 || keys[i].indexOf("__reactInternalInstance$") === 0) {
+        return node[keys[i]];
       }
-
-      var editable = element.closest('[contenteditable="true"]');
-      if (editable) {
-        return editable;
+      if (keys[i].indexOf("__reactProps$") === 0) {
+        return { memoizedProps: node[keys[i]], return: null };
       }
     }
 
     return null;
   }
 
-  function setTextareaValue(textarea, text) {
-    var start = textarea.selectionStart || 0;
-    var end = textarea.selectionEnd || 0;
-    var currentValue = textarea.value || "";
-    var nextValue = currentValue.slice(0, start) + text + currentValue.slice(end);
+  function getFieldName(field) {
+    if (!field) {
+      return "";
+    }
 
-    textarea.value = nextValue;
-    textarea.selectionStart = textarea.selectionEnd = start + text.length;
-    textarea.dispatchEvent(new Event("input", { bubbles: true }));
-    textarea.dispatchEvent(new Event("change", { bubbles: true }));
-    textarea.focus();
+    if (typeof field.get === "function") {
+      return field.get("name") || "";
+    }
+
+    return field.name || "";
   }
 
-  function insertIntoContentEditable(editable, text) {
-    editable.focus();
+  function getFiberProps(fiber) {
+    if (!fiber) {
+      return null;
+    }
 
-    if (document.queryCommandSupported && document.queryCommandSupported("insertText")) {
+    return fiber.memoizedProps || fiber.pendingProps || (fiber.stateNode && fiber.stateNode.props) || null;
+  }
+
+  function findCmsFieldController(sourceContext) {
+    var nodes = [];
+
+    function pushNode(node) {
+      if (node && nodes.indexOf(node) === -1) {
+        nodes.push(node);
+      }
+    }
+
+    if (sourceContext) {
+      pushNode(sourceContext.sourceNode);
+      pushNode(sourceContext.activeElement);
+      if (sourceContext.path) {
+        for (var pathIndex = 0; pathIndex < sourceContext.path.length; pathIndex += 1) {
+          pushNode(sourceContext.path[pathIndex]);
+        }
+      }
+    }
+
+    for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex += 1) {
+      var node = nodes[nodeIndex];
+      var nodeDepth = 0;
+
+      while (node && nodeDepth < 20) {
+        var fiber = getReactFiber(node);
+        var fiberDepth = 0;
+
+        while (fiber && fiberDepth < 100) {
+          var props = getFiberProps(fiber);
+          if (props && typeof props.onChange === "function" && getFieldName(props.field) === "body") {
+            return {
+              onChange: props.onChange,
+              value: typeof props.value === "string" ? props.value : ""
+            };
+          }
+
+          fiber = fiber.return;
+          fiberDepth += 1;
+        }
+
+        node = node.parentElement;
+        nodeDepth += 1;
+      }
+    }
+
+    return null;
+  }
+
+  function insertViaCmsFieldChange(text, sourceContext) {
+    var controller = findCmsFieldController(sourceContext);
+    if (!controller) {
+      return false;
+    }
+
+    var currentValue = controller.value || "";
+    var separator = currentValue && !/\n$/.test(currentValue) && !/^\n/.test(text) ? "\n" : "";
+    controller.onChange(currentValue + separator + text);
+    return true;
+  }
+
+  function isSlateRawTextNode(node) {
+    return node && typeof node.text === "string";
+  }
+
+  function isSlateRawBlock(node) {
+    return (
+      node &&
+      node.type === "paragraph" &&
+      Array.isArray(node.children) &&
+      node.children.length >= 1 &&
+      node.children.every(isSlateRawTextNode)
+    );
+  }
+
+  function isSlateRawValue(value) {
+    return Array.isArray(value) && value.length >= 1 && value.every(isSlateRawBlock);
+  }
+
+  function slateRawValueToText(value) {
+    return value
+      .map(function (node) {
+        return node.children
+          .map(function (child) {
+            return child.text || "";
+          })
+          .join("");
+      })
+      .join("\n");
+  }
+
+  function textToSlateRawValue(value) {
+    return String(value || "")
+      .split("\n")
+      .map(function (line) {
+        return {
+          type: "paragraph",
+          children: [{ text: line }]
+        };
+      });
+  }
+
+  function findSlateRawController(sourceContext) {
+    var nodes = [];
+
+    function pushNode(node) {
+      if (node && nodes.indexOf(node) === -1) {
+        nodes.push(node);
+      }
+    }
+
+    if (sourceContext) {
+      pushNode(sourceContext.sourceNode);
+      pushNode(sourceContext.activeElement);
+      if (sourceContext.path) {
+        for (var pathIndex = 0; pathIndex < sourceContext.path.length; pathIndex += 1) {
+          pushNode(sourceContext.path[pathIndex]);
+        }
+      }
+    }
+
+    for (var nodeIndex = 0; nodeIndex < nodes.length; nodeIndex += 1) {
+      var node = nodes[nodeIndex];
+      var nodeDepth = 0;
+
+      while (node && nodeDepth < 20) {
+        var fiber = getReactFiber(node);
+        var fiberDepth = 0;
+
+        while (fiber && fiberDepth < 100) {
+          var props = getFiberProps(fiber);
+          if (props && typeof props.onChange === "function" && isSlateRawValue(props.value)) {
+            return {
+              onChange: props.onChange,
+              value: props.value
+            };
+          }
+
+          fiber = fiber.return;
+          fiberDepth += 1;
+        }
+
+        node = node.parentElement;
+        nodeDepth += 1;
+      }
+    }
+
+    return null;
+  }
+
+  function insertViaSlateRawEditor(text, sourceContext) {
+    var controller = findSlateRawController(sourceContext);
+    if (!controller) {
+      return false;
+    }
+
+    var currentValue = slateRawValueToText(controller.value);
+    var separator = currentValue && !/\n$/.test(currentValue) && !/^\n/.test(text) ? "\n" : "";
+    controller.onChange(textToSlateRawValue(currentValue + separator + text));
+    return true;
+  }
+
+  function notifyCmsFieldChange(sourceNode, value) {
+    var node = sourceNode;
+    var nodeDepth = 0;
+
+    while (node && nodeDepth < 20) {
+      var fiber = getReactFiber(node);
+      var fiberDepth = 0;
+
+      while (fiber && fiberDepth < 100) {
+        var props = getFiberProps(fiber);
+        if (props && typeof props.onChange === "function" && getFieldName(props.field) === "body") {
+          props.onChange(value);
+          return true;
+        }
+
+        fiber = fiber.return;
+        fiberDepth += 1;
+      }
+
+      node = node.parentElement;
+      nodeDepth += 1;
+    }
+
+    console.warn("CMS image paste debug: unable to notify Decap body field change");
+    return false;
+  }
+
+  function buildRevisionValue() {
+    return String(Date.now()) + "-" + Math.random().toString(16).slice(2, 8);
+  }
+
+  function updateRevisionField() {
+    var selectors = [
+      'input[name*="_editor_revision"]',
+      'input[id*="_editor_revision"]',
+      'input[type="hidden"][value]'
+    ];
+
+    for (var i = 0; i < selectors.length; i += 1) {
+      var fields = document.querySelectorAll(selectors[i]);
+      for (var index = 0; index < fields.length; index += 1) {
+        var field = fields[index];
+        var name = (field.getAttribute("name") || "") + " " + (field.getAttribute("id") || "");
+        if (selectors[i] === 'input[type="hidden"][value]' && name.indexOf("_editor_revision") === -1) {
+          continue;
+        }
+
+        setNativeValue(field, buildRevisionValue());
+        dispatchChangeEvents(field);
+        return true;
+      }
+    }
+
+    console.debug("CMS image paste debug: revision field not found");
+    return false;
+  }
+
+  function insertWithCodeMirror(host, text) {
+    if (!host || !host.CodeMirror) {
+      return false;
+    }
+
+    var codeMirror = host.CodeMirror;
+    var wrapper = codeMirror.getWrapperElement();
+    var textareas = findAssociatedTextareas(wrapper);
+
+    codeMirror.focus();
+    codeMirror.replaceSelection(text, "around");
+    codeMirror.save();
+    var value = codeMirror.getValue();
+    notifyCmsFieldChange(wrapper, value);
+    for (var i = 0; i < textareas.length; i += 1) {
+      setNativeValue(textareas[i], value);
+      dispatchChangeEvents(textareas[i]);
+    }
+    dispatchChangeEvents(wrapper);
+    return true;
+  }
+
+  function insertWithTextarea(textarea, text) {
+    if (!textarea) {
+      return false;
+    }
+
+    var start = typeof textarea.selectionStart === "number" ? textarea.selectionStart : textarea.value.length;
+    var end = typeof textarea.selectionEnd === "number" ? textarea.selectionEnd : textarea.value.length;
+    var nextValue = textarea.value.slice(0, start) + text + textarea.value.slice(end);
+
+    textarea.focus();
+    setNativeValue(textarea, nextValue);
+    textarea.selectionStart = textarea.selectionEnd = start + text.length;
+    notifyCmsFieldChange(textarea, nextValue);
+    dispatchChangeEvents(textarea);
+    return true;
+  }
+
+  function insertWithContentEditable(editable, text) {
+    if (!editable || !editable.isContentEditable) {
+      return false;
+    }
+
+    editable.focus();
+    try {
       document.execCommand("insertText", false, text);
-    } else {
+    } catch (error) {
       var selection = window.getSelection();
-      if (!selection || selection.rangeCount === 0) {
-        editable.appendChild(document.createTextNode(text));
-      } else {
+      if (selection && selection.rangeCount > 0) {
         var range = selection.getRangeAt(0);
         range.deleteContents();
         range.insertNode(document.createTextNode(text));
         range.collapse(false);
         selection.removeAllRanges();
         selection.addRange(range);
+      } else {
+        editable.appendChild(document.createTextNode(text));
       }
     }
 
-    editable.dispatchEvent(new Event("input", { bubbles: true }));
+    dispatchChangeEvents(editable);
+    return true;
   }
 
-  function insertMarkdown(target, text) {
-    if (!target) {
-      return false;
+  function insertMarkdownIntoCms(text, sourceContext) {
+    var candidates = buildEditorCandidates(sourceContext);
+
+    for (var i = 0; i < candidates.length; i += 1) {
+      var candidate = candidates[i];
+      if (candidate.classList && candidate.classList.contains("CodeMirror") && insertWithCodeMirror(candidate, text)) {
+        return true;
+      }
+
+      if (candidate.tagName === "TEXTAREA" && insertWithTextarea(candidate, text)) {
+        return true;
+      }
+
+      if (candidate.isContentEditable) {
+        continue;
+      }
     }
 
-    if (target.classList && target.classList.contains("CodeMirror") && target.CodeMirror) {
-      target.CodeMirror.focus();
-      target.CodeMirror.replaceSelection(text, "around");
+    if (insertViaSlateRawEditor(text, sourceContext)) {
       return true;
     }
 
-    if (target.matches && target.matches("textarea, input")) {
-      setTextareaValue(target, text);
+    if (insertViaCmsFieldChange(text, sourceContext)) {
       return true;
     }
 
-    if (target.isContentEditable) {
-      insertIntoContentEditable(target, text);
-      return true;
-    }
-
-    return false;
+    console.warn("CMS image paste debug: unable to resolve editor target", {
+      sourceNode: sourceContext && sourceContext.sourceNode,
+      activeElement: sourceContext && sourceContext.activeElement,
+      path: sourceContext && sourceContext.path,
+      candidates: candidates
+    });
+    throw new Error("未找到正文编辑器，请先点击文章正文区域后再粘贴图片。");
   }
 
   function collectPastedImages(event) {
@@ -328,10 +844,6 @@
       throw new Error("未读取到 CMS 登录 token，请先重新登录后台后再粘贴图片。");
     }
 
-    if (!repoOwner || !repoName) {
-      throw new Error("CMS 图片上传配置缺失，请检查仓库配置。");
-    }
-
     if (!file || !file.type || file.type.indexOf("image/") !== 0) {
       throw new Error("只支持上传图片文件。");
     }
@@ -341,6 +853,41 @@
     }
 
     var pathInfo = buildFilePath(file);
+
+    if (mediaUploadEndpoint) {
+      var formData = new FormData();
+      formData.append("file", file, file.name || "image." + getFileExtension(file));
+      formData.append("key", pathInfo.objectKey);
+      formData.append("publicBaseUrl", mediaPublicBaseUrl);
+
+      var uploadResponse = await fetch(mediaUploadEndpoint, {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + token
+        },
+        body: formData
+      });
+
+      if (!uploadResponse.ok) {
+        var uploadErrorText = await uploadResponse.text();
+        throw new Error(uploadErrorText || "图片上传到 R2 失败，请稍后重试。");
+      }
+
+      var uploadData = await uploadResponse.json();
+      if (!uploadData || !uploadData.url) {
+        throw new Error("R2 上传接口没有返回图片 URL。");
+      }
+
+      return {
+        publicUrl: uploadData.url,
+        repoPath: uploadData.key || pathInfo.objectKey
+      };
+    }
+
+    if (!repoOwner || !repoName) {
+      throw new Error("CMS 图片上传配置缺失，请检查仓库配置。");
+    }
+
     var buffer = await file.arrayBuffer();
     var response = await fetch(githubApiRoot + "/repos/" + repoOwner + "/" + repoName + "/contents/" + encodeRepoPath(pathInfo.repoPath), {
       method: "PUT",
@@ -368,13 +915,8 @@
     };
   }
 
-  async function handleImageInsert(files, target) {
+  async function handleImageInsert(files, sourceContext) {
     if (!files.length) {
-      return;
-    }
-
-    if (!target) {
-      showToast("请先把光标放到文章正文里，再粘贴或拖拽图片。", "error");
       return;
     }
 
@@ -382,17 +924,30 @@
 
     try {
       var markdownChunks = [];
+      var uploadFailures = [];
       for (var i = 0; i < files.length; i += 1) {
-        var result = await uploadImage(files[i]);
-        markdownChunks.push(buildMarkdown(files[i], result.publicUrl));
+        try {
+          var result = await uploadImage(files[i]);
+          await cacheImageForLocalPreview(result.publicUrl, files[i]);
+          markdownChunks.push(buildMarkdown(files[i], result.publicUrl));
+        } catch (uploadError) {
+          uploadFailures.push(uploadError);
+          console.warn("CMS image paste warning: GitHub upload failed, using inline image fallback", uploadError);
+          markdownChunks.push(await buildInlineMarkdown(files[i]));
+        }
       }
 
-      var inserted = insertMarkdown(target, markdownChunks.join("\n"));
+      var inserted = insertMarkdownIntoCms(markdownChunks.join("\n"), sourceContext);
       if (!inserted) {
         throw new Error("未找到可写入内容的编辑器区域。");
       }
 
-      showToast("图片已上传并插入正文。", "success");
+      updateRevisionField();
+      if (uploadFailures.length) {
+        showToast("GitHub 上传失败，已改为内联图片写入 Markdown。内联图片可发布，但会增加文章文件大小。", "error");
+      } else {
+        showToast("图片已上传并写入 Markdown 正文，请点击保存或发布。", "success");
+      }
     } catch (error) {
       console.error(error);
       showToast(error.message || "图片上传失败，请查看控制台日志。", "error");
@@ -407,9 +962,13 @@
         return;
       }
 
-      var target = getEditorTarget(event.target);
-      event.preventDefault();
-      handleImageInsert(files, target);
+      var sourceContext = {
+        sourceNode: event.target,
+        activeElement: document.activeElement,
+        path: getEventPathCandidates(event)
+      };
+      claimImageEvent(event);
+      handleImageInsert(files, sourceContext);
     },
     true
   );
@@ -422,9 +981,7 @@
         return;
       }
 
-      if (getEditorTarget(event.target)) {
-        event.preventDefault();
-      }
+      claimImageEvent(event);
     },
     true
   );
@@ -437,14 +994,17 @@
         return;
       }
 
-      var target = getEditorTarget(event.target);
-      if (!target) {
-        return;
-      }
-
-      event.preventDefault();
-      handleImageInsert(files, target);
+      var sourceContext = {
+        sourceNode: event.target,
+        activeElement: document.activeElement,
+        path: getEventPathCandidates(event)
+      };
+      claimImageEvent(event);
+      handleImageInsert(files, sourceContext);
     },
     true
   );
+
+  startTranslationProtection();
+  registerMediaFallbackServiceWorker();
 })();
