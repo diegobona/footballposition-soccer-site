@@ -4,7 +4,7 @@ slug: false-10-explained
 date: 2026-05-05T20:48:00.000+08:00
 category: 中场位置
 cover:
-  image: /images/uploads/hq720.jpg
+  image: /images/uploads/screenshot_2026-05-06_012226_400.png
 ---
 ## Quick Definition
 

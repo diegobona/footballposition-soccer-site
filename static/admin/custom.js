@@ -585,12 +585,232 @@
   function textToSlateRawValue(value) {
     return String(value || "")
       .split("\n")
-      .map(function (line) {
-        return {
-          type: "paragraph",
-          children: [{ text: line }]
-        };
-      });
+      .map(createSlateRawBlock);
+  }
+
+  function createSlateRawBlock(line) {
+    return {
+      type: "paragraph",
+      children: [{ text: String(line || "") }]
+    };
+  }
+
+  function markdownTextToSlateRawBlocks(text) {
+    return String(text || "")
+      .replace(/^\n+/g, "")
+      .split("\n")
+      .map(createSlateRawBlock);
+  }
+
+  function insertTextAtOffset(value, text, offset) {
+    var currentValue = String(value || "");
+    if (typeof offset !== "number" || !isFinite(offset) || offset < 0 || offset > currentValue.length) {
+      var separator = currentValue && !/\n$/.test(currentValue) && !/^\n/.test(text) ? "\n" : "";
+      return currentValue + separator + text;
+    }
+
+    var before = currentValue.slice(0, offset);
+    var after = currentValue.slice(offset);
+    var prefix = before && !/\n$/.test(before) && !/^\n/.test(text) ? "\n" : "";
+    var suffix = after && !/\n$/.test(text) && !/^\n/.test(after) ? "\n" : "";
+    return before + prefix + text + suffix + after;
+  }
+
+  function findNearestEditableRoot(node) {
+    var current = node && node.nodeType === 3 ? node.parentElement : node;
+
+    while (current && current !== document.body) {
+      if (current.isContentEditable || current.getAttribute("contenteditable") === "true") {
+        return current;
+      }
+      current = current.parentElement;
+    }
+
+    return null;
+  }
+
+  function findNearestSlateElementNode(node) {
+    var current = node && node.nodeType === 3 ? node.parentElement : node;
+
+    while (current && current !== document.body) {
+      if (current.getAttribute && current.getAttribute("data-slate-node") === "element") {
+        return current;
+      }
+      current = current.parentElement;
+    }
+
+    return null;
+  }
+
+  function findSlateBlockFromDomNode(node) {
+    var current = findNearestSlateElementNode(node) || (node && node.nodeType === 3 ? node.parentElement : node);
+    var depth = 0;
+
+    while (current && depth < 20) {
+      var fiber = getReactFiber(current);
+      var fiberDepth = 0;
+
+      while (fiber && fiberDepth < 30) {
+        var props = getFiberProps(fiber);
+        if (props && isSlateRawBlock(props.element)) {
+          return props.element;
+        }
+
+        fiber = fiber.return;
+        fiberDepth += 1;
+      }
+
+      current = current.parentElement;
+      depth += 1;
+    }
+
+    return null;
+  }
+
+  function getSelectionOffsetWithinNode(node) {
+    var selection = window.getSelection && window.getSelection();
+    var elementNode = findNearestSlateElementNode(node);
+
+    if (!selection || selection.rangeCount === 0 || !elementNode || !elementNode.contains(selection.anchorNode)) {
+      return null;
+    }
+
+    try {
+      var range = selection.getRangeAt(0).cloneRange();
+      var preSelectionRange = range.cloneRange();
+      preSelectionRange.selectNodeContents(elementNode);
+      preSelectionRange.setEnd(range.startContainer, range.startOffset);
+      return preSelectionRange.toString().length;
+    } catch (error) {
+      console.warn("CMS image paste warning: unable to capture Slate line cursor offset", error);
+      return null;
+    }
+  }
+
+  function getSlateSelectionContext(sourceNode) {
+    return {
+      slateBlock: findSlateBlockFromDomNode(sourceNode),
+      slateBlockOffset: getSelectionOffsetWithinNode(sourceNode)
+    };
+  }
+
+  function getSelectionAnchorNode() {
+    var selection = window.getSelection && window.getSelection();
+    return selection && selection.anchorNode ? selection.anchorNode : null;
+  }
+
+  function buildImageInsertSourceContext(event) {
+    var selectionNode = getSelectionAnchorNode() || event.target;
+    var slateSelectionContext = getSlateSelectionContext(selectionNode);
+
+    return {
+      sourceNode: event.target,
+      activeElement: document.activeElement,
+      path: getEventPathCandidates(event),
+      selectionOffset: slateSelectionContext.slateBlock ? null : getSelectionCharacterOffset(selectionNode),
+      slateBlock: slateSelectionContext.slateBlock,
+      slateBlockOffset: slateSelectionContext.slateBlockOffset
+    };
+  }
+
+  function getSelectionCharacterOffset(sourceNode) {
+    var selection = window.getSelection && window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      return null;
+    }
+
+    var editableRoot = findNearestEditableRoot(selection.anchorNode) || findNearestEditableRoot(sourceNode);
+    if (!editableRoot || !editableRoot.contains(selection.anchorNode)) {
+      return null;
+    }
+
+    try {
+      var range = selection.getRangeAt(0).cloneRange();
+      var preSelectionRange = range.cloneRange();
+      preSelectionRange.selectNodeContents(editableRoot);
+      preSelectionRange.setEnd(range.startContainer, range.startOffset);
+      return preSelectionRange.toString().length;
+    } catch (error) {
+      console.warn("CMS image paste warning: unable to capture editor cursor offset", error);
+      return null;
+    }
+  }
+
+  function getSlateBlockText(block) {
+    if (!isSlateRawBlock(block)) {
+      return "";
+    }
+
+    return block.children
+      .map(function (child) {
+        return child.text || "";
+      })
+      .join("");
+  }
+
+  function getOffsetForSlateBlock(value, block, blockOffset) {
+    if (!block || !isSlateRawValue(value)) {
+      return null;
+    }
+
+    var offset = 0;
+    for (var i = 0; i < value.length; i += 1) {
+      if (value[i] === block) {
+        var textLength = getSlateBlockText(value[i]).length;
+        var safeBlockOffset = typeof blockOffset === "number" && isFinite(blockOffset)
+          ? Math.max(0, Math.min(blockOffset, textLength))
+          : textLength;
+        return offset + safeBlockOffset;
+      }
+
+      offset += getSlateBlockText(value[i]).length;
+      if (i < value.length - 1) {
+        offset += 1;
+      }
+    }
+
+    return null;
+  }
+
+  function insertTextIntoSlateRawValue(value, text, block, blockOffset) {
+    if (!isSlateRawValue(value) || !block) {
+      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value || []), text, null));
+    }
+
+    var blockIndex = value.indexOf(block);
+    if (blockIndex === -1) {
+      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value), text, null));
+    }
+
+    var blockText = getSlateBlockText(block);
+    var safeOffset = typeof blockOffset === "number" && isFinite(blockOffset)
+      ? Math.max(0, Math.min(blockOffset, blockText.length))
+      : blockText.length;
+    var beforeText = blockText.slice(0, safeOffset);
+    var afterText = blockText.slice(safeOffset);
+    var insertedBlocks = markdownTextToSlateRawBlocks(text);
+    var nextValue = value.slice(0, blockIndex);
+
+    if (beforeText || safeOffset > 0) {
+      if (beforeText === blockText) {
+        nextValue.push(block);
+      } else {
+        nextValue.push(createSlateRawBlock(beforeText));
+      }
+    }
+
+    Array.prototype.push.apply(nextValue, insertedBlocks);
+
+    if (afterText || safeOffset < blockText.length) {
+      if (afterText === blockText) {
+        nextValue.push(block);
+      } else {
+        nextValue.push(createSlateRawBlock(afterText));
+      }
+    }
+
+    Array.prototype.push.apply(nextValue, value.slice(blockIndex + 1));
+    return nextValue.length ? nextValue : [createSlateRawBlock("")];
   }
 
   function findSlateRawController(sourceContext) {
@@ -647,9 +867,17 @@
       return false;
     }
 
-    var currentValue = slateRawValueToText(controller.value);
-    var separator = currentValue && !/\n$/.test(currentValue) && !/^\n/.test(text) ? "\n" : "";
-    controller.onChange(textToSlateRawValue(currentValue + separator + text));
+    if (sourceContext && sourceContext.slateBlock) {
+      controller.onChange(insertTextIntoSlateRawValue(
+        controller.value,
+        text,
+        sourceContext.slateBlock,
+        sourceContext.slateBlockOffset
+      ));
+    } else {
+      var currentValue = slateRawValueToText(controller.value);
+      controller.onChange(textToSlateRawValue(insertTextAtOffset(currentValue, text, sourceContext && sourceContext.selectionOffset)));
+    }
     return true;
   }
 
@@ -932,7 +1160,7 @@
           markdownChunks.push(buildMarkdown(files[i], result.publicUrl));
         } catch (uploadError) {
           uploadFailures.push(uploadError);
-          console.warn("CMS image paste warning: GitHub upload failed, using inline image fallback", uploadError);
+          console.warn("CMS image paste warning: image upload failed, using inline image fallback", uploadError);
           markdownChunks.push(await buildInlineMarkdown(files[i]));
         }
       }
@@ -944,7 +1172,7 @@
 
       updateRevisionField();
       if (uploadFailures.length) {
-        showToast("GitHub 上传失败，已改为内联图片写入 Markdown。内联图片可发布，但会增加文章文件大小。", "error");
+        showToast("图片上传失败，已改为内联图片写入 Markdown。内联图片可发布，但会增加文章文件大小。", "error");
       } else {
         showToast("图片已上传并写入 Markdown 正文，请点击保存或发布。", "success");
       }
@@ -962,11 +1190,7 @@
         return;
       }
 
-      var sourceContext = {
-        sourceNode: event.target,
-        activeElement: document.activeElement,
-        path: getEventPathCandidates(event)
-      };
+      var sourceContext = buildImageInsertSourceContext(event);
       claimImageEvent(event);
       handleImageInsert(files, sourceContext);
     },
@@ -994,11 +1218,7 @@
         return;
       }
 
-      var sourceContext = {
-        sourceNode: event.target,
-        activeElement: document.activeElement,
-        path: getEventPathCandidates(event)
-      };
+      var sourceContext = buildImageInsertSourceContext(event);
       claimImageEvent(event);
       handleImageInsert(files, sourceContext);
     },

@@ -9,7 +9,7 @@ const source = fs.readFileSync(customJsPath, "utf8");
 
 const instrumentedSource = source.replace(
   /\}\)\(\);\s*$/,
-  "window.__cmsImagePasteTestHooks = { handleImageInsert, insertWithTextarea, setNativeValue, uploadImage };})();"
+  "window.__cmsImagePasteTestHooks = { handleImageInsert, insertWithTextarea, setNativeValue, uploadImage, buildImageInsertSourceContext };})();"
 );
 
 const listeners = [];
@@ -56,19 +56,52 @@ class FakeTextarea {
 }
 
 class FakeEditable {
-  constructor() {
+  constructor(slateBlock) {
     this.tagName = "DIV";
     this.isContentEditable = true;
     this.parentElement = null;
     this.events = [];
+    if (slateBlock) {
+      this.__reactFiber$line = {
+        memoizedProps: {
+          element: slateBlock,
+        },
+        return: null,
+      };
+    }
   }
 
   closest(selector) {
     return selector.includes("contenteditable") ? this : null;
   }
 
+  contains(node) {
+    return node === this || node.parentElement === this;
+  }
+
+  getAttribute(name) {
+    if (name === "contenteditable") {
+      return "true";
+    }
+    return null;
+  }
+
   dispatchEvent(event) {
     this.events.push(event.type);
+  }
+}
+
+class FakeSlateLine extends FakeEditable {
+  constructor(slateBlock) {
+    super(slateBlock);
+    this.parentElement = null;
+  }
+
+  getAttribute(name) {
+    if (name === "data-slate-node") {
+      return "element";
+    }
+    return super.getAttribute(name);
   }
 }
 
@@ -205,6 +238,47 @@ assert.deepStrictEqual(textarea.events, ["input", "change", "blur"]);
 assert.strictEqual(textarea.focused, true);
 testImagePasteEventIsFullyClaimed();
 
+function testPasteContextUsesSelectionAnchorNode() {
+  const firstBlock = { type: "paragraph", children: [{ text: "first" }] };
+  const secondBlock = { type: "paragraph", children: [{ text: "second" }] };
+  const editorRoot = new FakeEditable(firstBlock);
+  const lineNode = new FakeSlateLine(secondBlock);
+  lineNode.parentElement = editorRoot;
+  lineNode.__reactFiber$line.return = {
+    memoizedProps: {
+      value: [firstBlock, secondBlock],
+      onChange() {},
+    },
+    return: null,
+  };
+
+  const originalGetSelection = context.window.getSelection;
+  context.window.getSelection = () => ({
+    anchorNode: lineNode,
+    rangeCount: 0,
+  });
+
+  try {
+    const sourceContext = context.window.__cmsImagePasteTestHooks.buildImageInsertSourceContext({
+      target: editorRoot,
+      composedPath() {
+        return [editorRoot];
+      },
+    });
+
+    assert.strictEqual(
+      sourceContext.slateBlock,
+      secondBlock,
+      "paste context should use the selection anchor node instead of the editor root event target"
+    );
+    assert.strictEqual(sourceContext.selectionOffset, null, "global DOM offset should not be used when a Slate block is available");
+  } finally {
+    context.window.getSelection = originalGetSelection;
+  }
+}
+
+testPasteContextUsesSelectionAnchorNode();
+
 async function testUploadsImagesThroughR2Worker() {
   const uploadCalls = [];
   const uploadContext = {
@@ -305,17 +379,23 @@ async function testFallsBackToInlineImageWhenUploadFails() {
 }
 
 async function testUpdatesSlateRawMarkdownEditor() {
-  const editable = new FakeEditable();
   const slateChangeCalls = [];
-  editable.__reactFiber$test = {
+  const slateValue = [
+    { type: "paragraph", children: [{ text: "before" }] },
+    { type: "paragraph", children: [{ text: "middle" }] },
+    { type: "paragraph", children: [{ text: "after" }] },
+  ];
+  const editable = new FakeEditable(slateValue[1]);
+  const editorFiber = {
     memoizedProps: {
-      value: [{ type: "paragraph", children: [{ text: "start" }] }],
+      value: slateValue,
       onChange(value) {
         slateChangeCalls.push(value);
       },
     },
     return: null,
   };
+  editable.__reactFiber$line.return = editorFiber;
 
   const file = {
     name: "slate-raw.png",
@@ -330,19 +410,71 @@ async function testUpdatesSlateRawMarkdownEditor() {
     sourceNode: editable,
     activeElement: editable,
     path: [editable],
+    slateBlock: slateValue[1],
+    slateBlockOffset: "middle".length,
   });
 
   assert.strictEqual(slateChangeCalls.length, 1, "raw markdown Slate editor should receive a visible value update");
   assert.strictEqual(
     slateChangeCalls[0].map((node) => node.children[0].text).join("\n"),
-    "start\n![slate raw](data:image/png;base64,AQIDBA==)\n",
-    "raw markdown Slate value should contain the inserted image markdown"
+    "before\nmiddle\n![slate raw](data:image/png;base64,AQIDBA==)\n\nafter",
+    "raw markdown Slate value should insert image markdown at the captured cursor offset"
+  );
+}
+
+async function testPreservesExistingSlateImageRows() {
+  const slateChangeCalls = [];
+  const oldImageRow = { type: "paragraph", children: [{ text: "![old image](https://media.example/old.png)" }] };
+  const targetRow = { type: "paragraph", children: [{ text: "target" }] };
+  const laterImageRow = { type: "paragraph", children: [{ text: "![later image](https://media.example/later.png)" }] };
+  const slateValue = [
+    { type: "paragraph", children: [{ text: "intro" }] },
+    oldImageRow,
+    targetRow,
+    laterImageRow,
+  ];
+  const editable = new FakeEditable(targetRow);
+  editable.__reactFiber$line.return = {
+    memoizedProps: {
+      value: slateValue,
+      onChange(value) {
+        slateChangeCalls.push(value);
+      },
+    },
+    return: null,
+  };
+
+  const file = {
+    name: "new-image.png",
+    type: "image/png",
+    size: 4,
+    async arrayBuffer() {
+      return Uint8Array.from([1, 2, 3, 4]).buffer;
+    },
+  };
+
+  await context.window.__cmsImagePasteTestHooks.handleImageInsert([file], {
+    sourceNode: editable,
+    activeElement: editable,
+    path: [editable],
+    slateBlock: targetRow,
+    slateBlockOffset: "target".length,
+  });
+
+  assert.strictEqual(slateChangeCalls.length, 1);
+  const nextValue = slateChangeCalls[0];
+  assert.ok(nextValue.includes(oldImageRow), "existing image rows before the insertion point should be preserved by object identity");
+  assert.ok(nextValue.includes(laterImageRow), "existing image rows after the insertion point should be preserved by object identity");
+  assert.strictEqual(
+    nextValue.map((node) => node.children[0].text).join("\n"),
+    "intro\n![old image](https://media.example/old.png)\ntarget\n![new image](data:image/png;base64,AQIDBA==)\n\n![later image](https://media.example/later.png)"
   );
 }
 
 testUploadsImagesThroughR2Worker()
   .then(testFallsBackToInlineImageWhenUploadFails)
   .then(testUpdatesSlateRawMarkdownEditor)
+  .then(testPreservesExistingSlateImageRows)
   .then(() => {
     console.log("cms-image-paste tests passed");
   })
