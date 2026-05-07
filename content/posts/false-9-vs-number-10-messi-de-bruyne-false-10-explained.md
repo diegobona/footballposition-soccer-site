@@ -112,6 +112,7 @@ Instead, the player may:
 - make late runs into the box  
 
 This makes the role harder to mark than a traditional Number 10.
+![image](https://media.footballposition.soccer/uploads/2026/05/20260507-033841-1a9ceada-image.png)
 
 
 For a deeper explanation, read the full guide here:  
