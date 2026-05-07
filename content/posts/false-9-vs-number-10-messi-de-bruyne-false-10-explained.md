@@ -7,7 +7,9 @@ _editor_revision: ""
 date: 2026-05-07T10:27:00.000+08:00
 category: 进攻位置
 ---
-# False 9 vs Number 10: Messi, De Bruyne & False 10 Explained
+#
+![image](https://media.footballposition.soccer/uploads/2026/05/20260507-023156-806a7bde-image.png)
+ False 9 vs Number 10: Messi, De Bruyne & False 10 Explained
 
 If you have ever searched for **False 9**, **Number 10**, or **False 10**, you have probably noticed one confusing thing:
 
@@ -39,19 +41,7 @@ In simple terms:
 
 ---
 
-## [Insert Image/GIF: Three-Role Tactical Comparison]
 
-**Suggested visual:**  
-A simple pitch diagram showing:
-
-- False 9 starting as a striker, then dropping deep  
-- Number 10 staying between midfield and attack  
-- False 10 starting centrally, then drifting wide or dropping deeper  
-
-**Suggested alt text:**  
-`False 9 vs Number 10 vs False 10 tactical movement comparison`
-
----
 
 ## What Is a False 9?
 
