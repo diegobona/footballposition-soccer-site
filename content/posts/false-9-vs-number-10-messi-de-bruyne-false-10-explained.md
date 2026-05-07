@@ -91,6 +91,8 @@ Instead, the player may:
 - make late runs into the box  
 
 This makes the role harder to mark than a traditional Number 10.
+![image](https://media.footballposition.soccer/uploads/2026/05/20260507-030903-25e29933-image.png)
+
 
 For a deeper explanation, read the full guide here:  
 [False 10 Explained: Meaning, Role & Tactical Examples](https://footballposition.soccer/posts/false-10-explained/)
