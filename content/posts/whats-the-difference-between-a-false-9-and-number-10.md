@@ -4,11 +4,11 @@ seo_title: "False 9 vs Number 10: Key Differences & What About the False 10?"
 meta_description: Discover the tactical differences between a False 9 and Number
   10, plus how the False 10 fits in. Learn with clear examples from Messi,
   Firmino, Özil, and Götze.
-slug: whats-the-difference-between-a-false-9-and-number-10
+slug: whats-the-difference-between-a-false-9-and-number-10-old
 date: 2025-12-07T21:18:00.000+08:00
 category: 进攻位置
 cover:
-  image: /images/uploads/hq720.jpg
+  image: /images/uploads/screenshot_2026-05-05_211646_969.png
 faq:
   - question: What is the difference between a False 9 and a Number 10?
     answer: A False 9 starts as a striker and drops into midfield to create space,
@@ -60,6 +60,8 @@ onrushing midfielders to exploit.
   goals come from wide players and midfield
 * **Iconic players**: Lionel Messi (under Guardiola), Roberto Firmino, 
   Francesco Totti
+
+![8a4cc2dc75a81d5f5cfd35219d7a1023](https://media.footballposition.soccer/uploads/2026/05/20260506-152304-9bd84ee1-8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
 
 ## Quick Comparison Table
 
