@@ -7,9 +7,6 @@ _editor_revision: ""
 date: 2026-05-07T10:27:00.000+08:00
 category: 进攻位置
 ---
-#
-![image](https://media.footballposition.soccer/uploads/2026/05/20260507-023156-806a7bde-image.png)
- False 9 vs Number 10: Messi, De Bruyne & False 10 Explained
 
 If you have ever searched for **False 9**, **Number 10**, or **False 10**, you have probably noticed one confusing thing:
 
@@ -39,9 +36,9 @@ In simple terms:
 - **Number 10** = a playmaker between the lines  
 - **False 10** = a Number 10 who refuses to stay in one place  
 
+![image](https://media.footballposition.soccer/uploads/2026/05/20260507-024836-91b7d039-image.png)
+
 ---
-
-
 
 ## What Is a False 9?
 
@@ -56,15 +53,7 @@ If the defender stays, the False 9 has time to turn and create.
 
 That is why Lionel Messi is often used as the classic example. At Barcelona, he did not simply wait in the box. He dropped into midfield, connected play, and created space for wide forwards to attack behind him.
 
----
-
-## [Insert GIF: Messi Dropping Deep From Striker Zone]
-
-**Suggested caption:**  
-Messi often blurred the line between striker and playmaker by dropping into midfield.
-
-**Suggested alt text:**  
-`Messi dropping deep as a False 9 to create space behind defenders`
+![8a4cc2dc75a81d5f5cfd35219d7a1023](https://media.footballposition.soccer/uploads/2026/05/20260507-024621-d6e6308b-8a4cc2dc75a81d5f5cfd35219d7a1023.gif)
 
 ---
 
@@ -98,19 +87,7 @@ This makes the role harder to mark than a traditional Number 10.
 For a deeper explanation, read the full guide here:  
 [False 10 Explained: Meaning, Role & Tactical Examples](https://footballposition.soccer/posts/false-10-explained/)
 
----
 
-## [Insert Image/GIF: False 10 Movement Pattern]
-
-**Suggested visual:**  
-A player starting in the Number 10 zone, then moving in three directions:
-
-1. dropping into midfield  
-2. drifting into the right half-space  
-3. making a late run into the box  
-
-**Suggested alt text:**  
-`False 10 movement from attacking midfield into half-spaces and deeper zones`
 
 ---
 
