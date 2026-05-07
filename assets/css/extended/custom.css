@@ -1,220 +1,622 @@
-/* Custom CSS for Grid Layout on Homepage */
-@media screen and (min-width: 960px) {
-    body.home .main {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr); /* 2 columns */
-        gap: 30px; /* Gap between cards */
-    }
+/* FootballPosition.soccer visual system */
 
-    /* Make Header span full width */
-    body.home .page-header {
-        grid-column: 1 / -1;
-    }
-
-    /* Make Pagination span full width */
-    body.home .pagination {
-        grid-column: 1 / -1;
-    }
-
-    /* Card Styling - Homepage Only */
-    body.home .post-entry {
-        margin-bottom: 0 !important;
-        background: var(--entry);
-        border: 1px solid var(--border);
-        border-radius: var(--radius);
-        padding: 20px;
-        transition: transform 0.1s;
-        display: flex;
-        flex-direction: column;
-        height: 100%;
-    }
-
-    body.home .post-entry:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    }
-    
-    /* Adjust image within card - Homepage Only */
-    body.home .entry-cover {
-        margin-bottom: 15px;
-    }
-    
-    body.home .entry-cover img {
-        border-radius: var(--radius);
-        pointer-events: none;
-        width: 100%;
-        height: 200px; /* Fixed height for consistency */
-        object-fit: cover;
-    }
+:root {
+    --fps-ink: #17211b;
+    --fps-muted: #5d6b63;
+    --fps-line: #d9e3dc;
+    --fps-card: #ffffff;
+    --fps-pitch: #146c43;
+    --fps-pitch-deep: #0e5134;
+    --fps-lime: #91c84b;
+    --fps-gold: #d7a725;
+    --fps-blue: #2f6fbc;
+    --fps-red: #ce3b32;
+    --fps-shadow: 0 14px 34px rgba(21, 38, 27, 0.1);
+    --fps-shadow-strong: 0 18px 42px rgba(21, 38, 27, 0.16);
+    --radius: 8px;
 }
 
-/* Grid Container for Shortcodes (e.g., in category pages) */
-.grid-container {
-    display: grid;
-    grid-template-columns: 1fr; /* Mobile default */
-    gap: 30px;
-    margin-top: 30px;
-    width: 100%;
+body:not(.dark) {
+    --theme: #f4f7f4;
+    --entry: var(--fps-card);
+    --primary: var(--fps-ink);
+    --secondary: var(--fps-muted);
+    --tertiary: #e9eee9;
+    --content: #27342c;
+    --border: var(--fps-line);
 }
 
-@media screen and (min-width: 768px) {
-    .grid-container {
-        grid-template-columns: repeat(2, 1fr);
-    }
+body.dark {
+    --theme: #10251c;
+    --entry: #173124;
+    --primary: #eef6ef;
+    --secondary: #aab9ae;
+    --tertiary: #213d2e;
+    --content: #d7e3da;
+    --border: #355743;
+    --code-block-bg: #102219;
+    --code-bg: #223d2e;
+    --fps-card: #173124;
+    --fps-line: #355743;
+    --fps-pitch: #48a06f;
+    --fps-pitch-deep: #113b2b;
+    --fps-lime: #a7d765;
+    --fps-gold: #e0b848;
+    --fps-blue: #6ea4e8;
+    --fps-shadow: 0 14px 34px rgba(0, 0, 0, 0.28);
+    --fps-shadow-strong: 0 18px 42px rgba(0, 0, 0, 0.38);
 }
 
-/* Specific styles for grid entries in shortcodes to ensure they behave */
-.grid-entry {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    margin-bottom: 0 !important;
-    width: 100% !important;
-    background: var(--entry);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-sizing: border-box;
+body {
+    background:
+        linear-gradient(90deg, rgba(20, 108, 67, 0.035) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(20, 108, 67, 0.03) 1px, transparent 1px),
+        var(--theme);
+    background-size: 48px 48px, 48px 48px, auto;
 }
 
-.grid-entry .entry-cover {
-    width: 100%;
-    margin-bottom: 15px;
-    display: block; /* Ensure it's not inline */
+body.dark {
+    background:
+        radial-gradient(circle at 18% 0%, rgba(72, 160, 111, 0.18), transparent 32%),
+        linear-gradient(90deg, rgba(167, 215, 101, 0.07) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(167, 215, 101, 0.055) 1px, transparent 1px),
+        linear-gradient(135deg, #10251c 0%, #0d1f18 45%, #123522 100%);
+    background-size: auto, 48px 48px, 48px 48px, auto;
 }
 
-.grid-entry .entry-cover img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    border-radius: var(--radius);
-}
-
-/* Dark mode adjustments if needed */
-.dark .post-entry:hover, .dark .grid-entry:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-}
-
-
-/* Custom CSS */
-
-/* Override main width for list pages (categories) to allow wider content */
-/* Also apply to home if we want wider grid, but user asked for category specifically */
-body.list {
-    --main-width: 1200px;
-}
-
-/* Ensure main container respects the new width variable */
 .main {
     max-width: calc(var(--main-width) + var(--gap) * 2);
 }
 
-/* Category List Layout (Full Width, Horizontal Image+Text) - For Non-Home List Pages */
-body.list:not(.home) .post-entry {
-    /* Default for no image: standard vertical or block */
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin-bottom: 30px !important;
-    background: var(--entry);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 20px;
-    box-sizing: border-box;
+.nav {
+    max-width: 1240px;
+    padding: 0 var(--gap);
 }
 
-/* If it has an image, use Grid for Horizontal Layout */
+.header {
+    background: color-mix(in srgb, var(--theme) 88%, transparent);
+    border-bottom: 1px solid color-mix(in srgb, var(--border) 82%, transparent);
+    backdrop-filter: blur(12px);
+}
+
+body.dark .header {
+    background: rgba(16, 37, 28, 0.9);
+}
+
+.logo a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 800;
+}
+
+.logo a::before {
+    content: "";
+    width: 18px;
+    height: 18px;
+    border: 2px solid var(--fps-pitch);
+    border-radius: 50%;
+    background:
+        linear-gradient(90deg, transparent 45%, var(--fps-pitch) 45%, var(--fps-pitch) 55%, transparent 55%),
+        linear-gradient(0deg, transparent 45%, var(--fps-pitch) 45%, var(--fps-pitch) 55%, transparent 55%),
+        #f7fbf7;
+    box-shadow: inset 0 0 0 3px #f7fbf7;
+}
+
+body.dark .logo a::before {
+    border-color: var(--fps-lime);
+    background:
+        linear-gradient(90deg, transparent 45%, var(--fps-lime) 45%, var(--fps-lime) 55%, transparent 55%),
+        linear-gradient(0deg, transparent 45%, var(--fps-lime) 45%, var(--fps-lime) 55%, transparent 55%),
+        #14221b;
+    box-shadow: inset 0 0 0 3px #14221b;
+}
+
+#menu {
+    gap: 8px;
+}
+
+#menu li a {
+    border: 1px solid transparent;
+    border-radius: 999px;
+    color: var(--secondary);
+    font-weight: 650;
+    padding: 8px 12px;
+}
+
+#menu li a:hover,
+#menu li a:focus {
+    background: color-mix(in srgb, var(--fps-pitch) 10%, transparent);
+    border-color: color-mix(in srgb, var(--fps-pitch) 22%, transparent);
+    color: var(--primary);
+}
+
+body.home,
+body.list {
+    --main-width: 1240px;
+}
+
+body.home .main {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 28px;
+    padding-top: 34px;
+}
+
+body.home .home-info {
+    position: relative;
+    min-height: 330px;
+    display: grid;
+    align-content: center;
+    overflow: hidden;
+    margin: 0;
+    padding: 42px;
+    border: 1px solid color-mix(in srgb, var(--fps-pitch) 22%, var(--border));
+    border-radius: 8px;
+    background:
+        linear-gradient(90deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.72)),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.16) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.12) 1px, transparent 1px),
+        linear-gradient(135deg, var(--fps-pitch), var(--fps-pitch-deep));
+    background-size: auto, 56px 56px, 56px 56px, auto;
+    box-shadow: var(--fps-shadow);
+}
+
+body.dark .home-info {
+    background:
+        linear-gradient(90deg, rgba(16, 23, 21, 0.78), rgba(16, 23, 21, 0.52)),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.11) 1px, transparent 1px),
+        linear-gradient(0deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(135deg, #12593a, #0d3f2c);
+}
+
+body.dark .home-info .entry-content {
+    color: #dbe7de;
+}
+
+body.dark .home-info .entry-content::before {
+    background: rgba(224, 184, 72, 0.18);
+    color: #ffe19a;
+}
+
+body.home .home-info::after {
+    content: "";
+    position: absolute;
+    right: 28px;
+    top: 38px;
+    width: 190px;
+    height: 190px;
+    border: 2px solid rgba(255, 255, 255, 0.48);
+    border-radius: 50%;
+}
+
+body.home .home-info .entry-header h1 {
+    max-width: 760px;
+    font-size: 2.35rem;
+    line-height: 1.12;
+    margin: 0 0 18px;
+}
+
+body.home .home-info .entry-content {
+    max-width: 720px;
+    color: var(--content);
+    font-size: 1rem;
+    line-height: 1.75;
+}
+
+body.home .home-info .entry-content::before {
+    content: "Position guides | Tactical roles | Player development";
+    display: inline-flex;
+    margin-bottom: 16px;
+    padding: 7px 10px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--fps-gold) 18%, white);
+    color: #5a4311;
+    font-size: 0.82rem;
+    font-weight: 750;
+}
+
+body.home .post-entry,
+.grid-entry,
+body.list:not(.home) .post-entry {
+    position: relative;
+    overflow: hidden;
+    margin: 0 !important;
+    border: 1px solid color-mix(in srgb, var(--border) 88%, transparent);
+    border-radius: 8px;
+    background: var(--entry);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.45), var(--fps-shadow);
+    transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+}
+
+body.home .post-entry:hover,
+.grid-entry:hover,
+body.list:not(.home) .post-entry:hover {
+    transform: translateY(-3px);
+    border-color: color-mix(in srgb, var(--fps-pitch) 28%, var(--border));
+    box-shadow: var(--fps-shadow-strong);
+}
+
+body.home .post-entry {
+    display: flex;
+    flex-direction: column;
+    min-height: 100%;
+    padding: 22px;
+}
+
+.entry-cover {
+    overflow: hidden;
+    border-radius: 8px;
+    background: color-mix(in srgb, var(--fps-pitch) 12%, var(--tertiary));
+}
+
+.entry-cover img {
+    width: 100%;
+    object-fit: cover;
+    transition: transform 0.28s ease, filter 0.28s ease;
+}
+
+body.home .entry-cover,
+.grid-entry .entry-cover {
+    margin-bottom: 18px;
+}
+
+body.home .entry-cover img,
+.grid-entry .entry-cover img {
+    height: 220px;
+}
+
+body.home .post-entry:hover .entry-cover img,
+.grid-entry:hover .entry-cover img,
+body.list:not(.home) .post-entry:hover .entry-cover img {
+    transform: scale(1.035);
+    filter: saturate(1.05) contrast(1.02);
+}
+
+.entry-header h2,
+.entry-header h1 {
+    line-height: 1.22;
+}
+
+body.home .entry-header h2,
+.grid-entry .entry-header h2 {
+    font-size: 1.38rem;
+    margin-bottom: 10px;
+}
+
+.entry-content {
+    color: var(--secondary);
+    line-height: 1.7;
+}
+
+.entry-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    color: var(--secondary);
+    font-size: 0.88rem;
+    margin-top: auto;
+}
+
+.entry-footer a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--fps-blue) 11%, transparent);
+    color: color-mix(in srgb, var(--fps-blue) 72%, var(--primary));
+    font-weight: 700;
+}
+
+.entry-footer a:hover {
+    background: color-mix(in srgb, var(--fps-blue) 18%, transparent);
+}
+
+body.dark .entry-footer a {
+    background: rgba(110, 164, 232, 0.14);
+    color: #b9d8ff;
+}
+
+body.dark .entry-footer a:hover {
+    background: rgba(110, 164, 232, 0.22);
+}
+
+body.list:not(.home) .page-header {
+    margin-bottom: 26px;
+    padding: 26px 0 8px;
+    border-bottom: 1px solid var(--border);
+}
+
+body.list:not(.home) .page-header h1 {
+    font-size: 2rem;
+}
+
+body.list:not(.home) .post-entry {
+    padding: 20px;
+    margin-bottom: 22px !important;
+}
+
 body.list:not(.home) .post-entry:has(.entry-cover) {
     display: grid;
-    grid-template-columns: 320px 1fr;
-    grid-template-rows: auto auto 1fr; /* Header, Content, Footer */
-    gap: 0 30px;
+    grid-template-columns: 320px minmax(0, 1fr);
+    gap: 0 26px;
     align-items: start;
 }
 
-/* Left side: Image */
 body.list:not(.home) .post-entry .entry-cover {
     grid-column: 1;
-    grid-row: 1 / 5; /* Span all rows */
-    width: 100%; /* Fill the grid cell */
-    margin-bottom: 0;
-    margin-right: 0;
+    grid-row: 1 / 5;
+    margin: 0;
 }
 
 body.list:not(.home) .post-entry .entry-cover img {
-    width: 100%;
-    height: 200px; /* Fixed height */
-    object-fit: cover;
-    border-radius: var(--radius);
+    height: 210px;
 }
 
-/* Right side: Text Content */
-body.list:not(.home) .post-entry .entry-header {
-    grid-column: 2;
-    grid-row: 1;
-    margin-bottom: 10px;
-}
-
-body.list:not(.home) .post-entry .entry-content {
-    grid-column: 2;
-    grid-row: 2;
-    margin-bottom: 10px;
-}
-
+body.list:not(.home) .post-entry .entry-header,
+body.list:not(.home) .post-entry .entry-content,
 body.list:not(.home) .post-entry .entry-footer {
     grid-column: 2;
-    grid-row: 3;
-    margin-top: auto; /* Push to bottom if needed */
 }
 
-/* Reset for Mobile */
-@media screen and (max-width: 768px) {
-    body.list:not(.home) .post-entry:has(.entry-cover) {
-        display: flex;
-        flex-direction: column;
-    }
-    
-    body.list:not(.home) .post-entry .entry-cover {
-        width: 100%;
-        margin-bottom: 20px;
-    }
-
-    body.list:not(.home) .post-entry .entry-cover img {
-        height: auto;
-        max-height: 250px;
-    }
-    
-    /* Reset grid placements are not needed for flex, but good to be safe */
+.post-single {
+    max-width: 900px;
+    padding: 0 0 10px;
 }
 
-/* Dark mode adjustments if needed */
-.dark .post-entry:hover, .dark .grid-entry:hover, .dark .category-list-entry:hover {
-    box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+body.dark .post-single {
+    border: 1px solid rgba(167, 215, 101, 0.13);
+    border-radius: 8px;
+    background:
+        linear-gradient(180deg, rgba(23, 49, 36, 0.94), rgba(18, 42, 31, 0.92)),
+        var(--entry);
+    box-shadow: var(--fps-shadow);
+    padding: 26px 34px 34px;
 }
 
-/* FAQ section on post pages */
+.post-header {
+    position: relative;
+    padding: 28px 0 18px;
+    border-bottom: 1px solid var(--border);
+}
+
+.post-title {
+    font-size: 2.35rem;
+    line-height: 1.12;
+}
+
+.post-description {
+    max-width: 780px;
+    color: var(--secondary);
+    line-height: 1.65;
+}
+
+.post-meta {
+    color: var(--secondary);
+}
+
+.post-content {
+    font-size: 1.02rem;
+    line-height: 1.8;
+}
+
+body.dark .post-single {
+    color: var(--content);
+}
+
+body.dark .post-content a {
+    color: #9fca7a;
+    box-shadow: 0 1px 0 rgba(159, 202, 122, 0.4);
+}
+
+body.dark .post-content a:hover {
+    color: #d7f6b8;
+}
+
+.post-content h2 {
+    margin-top: 42px;
+    padding-top: 12px;
+    border-top: 1px solid color-mix(in srgb, var(--border) 76%, transparent);
+    font-size: 1.8rem;
+}
+
+.post-content h3 {
+    margin-top: 28px;
+    color: color-mix(in srgb, var(--fps-pitch) 74%, var(--primary));
+}
+
+.post-content img {
+    border-radius: 8px;
+    box-shadow: var(--fps-shadow);
+}
+
+.post-content blockquote {
+    border-inline-start: 4px solid var(--fps-gold);
+    background: color-mix(in srgb, var(--fps-gold) 10%, transparent);
+    border-radius: 0 8px 8px 0;
+}
+
+body.dark .post-content blockquote {
+    background: rgba(224, 184, 72, 0.1);
+    color: #e6eddf;
+}
+
+.post-content table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.post-content th {
+    background: color-mix(in srgb, var(--fps-pitch) 12%, var(--entry));
+}
+
+body.dark .post-content td,
+body.dark .post-content th {
+    border-color: var(--border);
+}
+
+body.dark .post-content th {
+    background: rgba(72, 160, 111, 0.16);
+    color: #eef6ef;
+}
+
+.post-tags a {
+    border-radius: 999px;
+    background: color-mix(in srgb, var(--fps-pitch) 10%, transparent);
+}
+
 .faq-section {
-    margin-top: 36px;
+    margin-top: 42px;
+    padding-top: 6px;
+}
+
+.faq-section h2 {
+    font-size: 1.75rem;
 }
 
 .faq-list {
     display: grid;
-    gap: 14px;
+    gap: 12px;
 }
 
 .faq-item {
     border: 1px solid var(--border);
-    border-radius: var(--radius);
+    border-radius: 8px;
     background: var(--entry);
-    padding: 14px 18px;
+    padding: 0;
+    box-shadow: 0 8px 22px rgba(21, 38, 27, 0.06);
+}
+
+body.dark .faq-item {
+    background: #151f1b;
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
 }
 
 .faq-item summary {
     cursor: pointer;
-    font-weight: 700;
+    padding: 15px 18px;
+    font-weight: 800;
     list-style-position: outside;
 }
 
 .faq-answer {
-    margin-top: 12px;
+    padding: 0 18px 16px;
+    color: var(--content);
+}
+
+body.dark .faq-answer {
+    color: #d7e3da;
+}
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 28px;
+    width: 100%;
+}
+
+.grid-entry {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    padding: 20px;
+}
+
+.pagination a {
+    border-radius: 999px;
+    background: var(--fps-pitch);
+    color: #ffffff;
+    font-weight: 800;
+}
+
+.pagination a:hover {
+    background: var(--fps-pitch-deep);
+}
+
+@media screen and (min-width: 860px) {
+    body.home .main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body.home .home-info {
+        grid-column: 1 / -1;
+    }
+
+    .grid-container {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media screen and (min-width: 1160px) {
+    body.home .main {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    body.home .home-info {
+        grid-column: 1 / 2;
+    }
+
+    body.home .home-info + .post-entry {
+        grid-column: 2 / 3;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    .nav {
+        padding-inline: 16px;
+    }
+
+    #menu li a {
+        padding: 7px 10px;
+        white-space: nowrap;
+    }
+
+    body.home .main {
+        padding-top: 18px;
+        gap: 18px;
+    }
+
+    body.home .home-info {
+        min-height: auto;
+        padding: 26px 20px;
+    }
+
+    body.home .home-info::after {
+        display: none;
+    }
+
+    body.home .home-info .entry-header h1,
+    .post-title {
+        font-size: 1.75rem;
+    }
+
+    body.home .post-entry,
+    .grid-entry,
+    body.list:not(.home) .post-entry {
+        padding: 16px;
+    }
+
+    body.home .entry-cover img,
+    .grid-entry .entry-cover img,
+    body.list:not(.home) .post-entry .entry-cover img {
+        height: 190px;
+    }
+
+    body.list:not(.home) .post-entry:has(.entry-cover) {
+        display: flex;
+        flex-direction: column;
+    }
+
+    body.list:not(.home) .post-entry .entry-cover {
+        width: 100%;
+        margin-bottom: 16px;
+    }
+
+    .post-content {
+        font-size: 1rem;
+    }
 }

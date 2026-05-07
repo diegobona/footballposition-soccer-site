@@ -13,6 +13,7 @@ buildFuture = true
   pagerSize = 10
 
 [params]
+  defaultTheme = "dark"
   description = "Position guides, tactics, and training tips for every football role — from goalkeeper to false nine."
   keywords = ["football positions", "soccer positions", "tactical roles", "position guides", "training drills", "player development", "defensive positions in soccer", "defensive positions"]
   mainSections = ["posts"]
