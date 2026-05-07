@@ -6,6 +6,8 @@ meta_description: Compare the False 9, Number 10, and False 10 roles with clear
 _editor_revision: ""
 date: 2026-05-07T10:27:00.000+08:00
 category: 进攻位置
+cover:
+  image: /images/uploads/hq720.jpg
 ---
 
 If you have ever searched for **False 9**, **Number 10**, or **False 10**, you have probably noticed one confusing thing:
