@@ -12,4 +12,10 @@ assert.match(
   "CMS body field should keep the markdown widget so Rich Text / Markdown mode stays available"
 );
 
+assert.match(
+  config,
+  /^publish_mode:\s*editorial_workflow\s*$/m,
+  "CMS should use editorial workflow so entries can be saved as drafts before publishing"
+);
+
 console.log("cms-config tests passed");
