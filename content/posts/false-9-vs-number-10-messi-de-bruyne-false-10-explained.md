@@ -1,10 +1,12 @@
 ---
 title: "False 9 vs Number 10: Messi, De Bruyne & False 10 Explained"
+seo_title: "False 9 vs Number 10: Messi, De Bruyne & False 10"
 meta_description: Compare the False 9, Number 10, and False 10 roles with clear
   tactical examples from Messi and De Bruyne. Learn how each role moves and
   creates space.
+slug: whats-the-difference-between-a-false-9-and-number-10
 _editor_revision: ""
-date: 2026-05-07T10:27:00.000+08:00
+date: 2025-12-07T21:18:00.000+08:00
 category: 进攻位置
 cover:
   image: /images/uploads/hq720.jpg
@@ -46,6 +48,8 @@ In simple terms:
 
 A **False 9** is a striker who does not play like a traditional striker.
 
+Iconic players: Lionel Messi (under Guardiola), Roberto Firmino, Francesco Totti
+
 Instead of staying high near the centre-backs, the False 9 drops into midfield to receive the ball.
 
 This creates a dilemma for defenders:
@@ -62,6 +66,8 @@ That is why Lionel Messi is often used as the classic example. At Barcelona, he 
 ## What Is a Number 10?
 
 A **Number 10** is the traditional attacking midfielder.
+
+Iconic players: Zinedine Zidane, Diego Maradona, Juan Román Riquelme
 
 This player usually operates between the opposition midfield and defensive lines. The job is to receive the ball in dangerous spaces, create chances, and connect midfield with attack.
 
