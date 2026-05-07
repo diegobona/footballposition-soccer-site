@@ -10,6 +10,27 @@ date: 2025-12-07T21:18:00.000+08:00
 category: 进攻位置
 cover:
   image: /images/uploads/hq720.jpg
+faq:
+  - question: What is the difference between a False 9 and a Number 10?
+    answer: A False 9 starts as a striker but drops into midfield to pull
+      centre-backs out of position. A Number 10 starts in attacking midfield and
+      focuses on creating chances between midfield and attack.
+  - question: What is a False 10 in soccer?
+    answer: A False 10 is an attacking midfielder who does not stay fixed in the
+      central Number 10 zone. Instead, the player drops deeper, drifts wide,
+      rotates with teammates, or makes late runs to disrupt defensive shape.
+  - question: " How is a False 10 different from a False 9?"
+    answer: A False 9 is a forward who drops deep from the striker position. A False
+      10 is a midfielder who starts in the Number 10 zone but moves
+      unpredictably across midfield and attacking areas.
+  - question: Is a False 10 just a better Number 10?
+    answer: No. A False 10 is not simply a better Number 10. A traditional Number 10
+      gives the team a creative hub, while a False 10 creates movement,
+      rotation, and confusion by leaving the central zone.
+  - question: Did Messi play as a False 9 or a False 10?
+    answer: Messi is most famous for playing as a False 9 at Barcelona, but in some
+      phases he also showed False 10-like behavior by dropping into midfield,
+      linking play, and creating space through movement.
 ---
 
 If you have ever searched for **False 9**, **Number 10**, or **False 10**, you have probably noticed one confusing thing:
@@ -91,7 +112,6 @@ Instead, the player may:
 - make late runs into the box  
 
 This makes the role harder to mark than a traditional Number 10.
-![image](https://media.footballposition.soccer/uploads/2026/05/20260507-030903-25e29933-image.png)
 
 
 For a deeper explanation, read the full guide here:  
@@ -134,35 +154,3 @@ At first glance, these three roles can look similar. In reality, they create ver
 - A **Number 10** creates between the lines.  
 - A **False 10** manipulates the whole defensive structure through movement.  
 
----
-
-## Common Mistake: A False 10 Is Not Just a Better Number 10
-
-A False 10 is not simply a more advanced version of a Number 10.
-
-It is a different tactical idea.
-
-A normal Number 10 gives the team a creative hub.  
-A False 10 gives the team movement, rotation, and confusion.
-
-That can be powerful, but it also requires structure around the player. If nobody fills the space the False 10 leaves behind, the team can become unbalanced.
-
----
-
-## Final Summary
-
-The simplest way to remember the difference is this:
-
-- A **False 9** starts as a striker but drops deep  
-- A **Number 10** plays between midfield and attack  
-- A **False 10** starts as a Number 10 but moves unpredictably  
-
-Messi helps explain the False 9 because he often dropped from the forward line into midfield.
-
-De Bruyne helps explain the False 10 idea because his movement between central areas, half-spaces, and deeper zones constantly changes how defenders must react.
-
-So the real difference is simple:
-
-**A False 9 manipulates centre-backs.**  
-**A Number 10 creates between the lines.**  
-**A False 10 manipulates midfield and defensive shape through movement.**
