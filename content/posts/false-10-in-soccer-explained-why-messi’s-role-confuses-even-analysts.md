@@ -34,7 +34,8 @@ False 10 starts deeper and uses movement to disrupt defensive organization.
 ## Messi and the False 10 Role
 
 While Lionel Messi is most famous for his False 9 role under Pep Guardiola：
-![image](https://media.footballposition.soccer/uploads/2026/05/20260510-093736-d7fa942a-image.png)
+![image](https://media.footballposition.soccer/uploads/2026/05/20260510-122325-dbe12093-image.png)
+
 
 his later Barcelona years — particularly under Luis Enrique and Ernesto
 Valverde — showcased False 10 tendencies. Instead of leading the line, Messi
