@@ -43,6 +43,8 @@ wide to the right before cutting inside on his left foot. This roaming,
 deeper-starting playmaking made him essentially a False 10 — a midfielder on
 the team sheet but the creative hub of the entire attack.
 
+![image](https://media.footballposition.soccer/uploads/2026/05/20260510-094236-70ea4f9f-image.png)
+
 ## Classic False 10 Examples: Götze and Özil
 
 ### Mario Götze
