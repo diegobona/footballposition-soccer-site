@@ -65,6 +65,8 @@ find pockets of space, cutting inside to deliver passes. His roaming,
 position-fluid style made him far more than a stationary playmaker: he was a
 False 10 who pulled defensive structures apart through movement.
 
+![ecnpqzc](https://media.footballposition.soccer/uploads/2026/05/20260510-123008-f85f4f9b-ecnpqzc.gif)
+
 ## False 10 Movement Explained
 
 The defining feature of a False 10 is movement, not starting position:
