@@ -28,6 +28,8 @@ occasionally bursts into the attack. Key traits include:
 
 Unlike a traditional Number 10 who starts high and stays between lines, the
 False 10 starts deeper and uses movement to disrupt defensive organization.
+![image](https://media.footballposition.soccer/uploads/2026/05/20260510-091931-375245c6-image.png)
+
 
 ## Messi and the False 10 Role
 
