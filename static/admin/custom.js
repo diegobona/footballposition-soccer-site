@@ -13,6 +13,7 @@
   var mediaObjectFolder = enhancerConfig.mediaObjectFolder || "uploads";
   var maxFileSize = enhancerConfig.maxFileSize || 10 * 1024 * 1024;
   var toastTimer = null;
+  var lastEditorSourceContext = null;
 
   function slugify(value) {
     return String(value || "")
@@ -27,6 +28,78 @@
       .replace(/&/g, "&amp;")
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;");
+  }
+
+  function escapeHtmlAttribute(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/"/g, "&quot;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function normalizeVideoUrl(value) {
+    var url = String(value || "").trim();
+    if (!url) {
+      return "";
+    }
+
+    if (/^\/\//.test(url)) {
+      return "https:" + url;
+    }
+
+    if (/^https?:\/\//i.test(url) || /^\/[^/]/.test(url)) {
+      return url;
+    }
+
+    return "https://" + url;
+  }
+
+  function getYoutubeVideoId(url) {
+    var match = String(url || "").match(/(?:youtube\.com\/(?:watch\?[^#]*v=|embed\/|shorts\/)|youtu\.be\/)([A-Za-z0-9_-]{6,})/i);
+    return match ? match[1] : "";
+  }
+
+  function getVimeoVideoId(url) {
+    var match = String(url || "").match(/vimeo\.com\/(?:video\/)?([0-9]+)/i);
+    return match ? match[1] : "";
+  }
+
+  function getBilibiliVideoId(url) {
+    var match = String(url || "").match(/bilibili\.com\/video\/(BV[0-9A-Za-z]+)/i);
+    return match ? match[1] : "";
+  }
+
+  function isDirectVideoUrl(url) {
+    return /\.(mp4|webm|ogg)(\?.*)?$/i.test(String(url || ""));
+  }
+
+  function buildVideoEmbedHtml(url, title) {
+    var normalizedUrl = normalizeVideoUrl(url);
+    if (!normalizedUrl) {
+      return "";
+    }
+
+    var safeTitle = escapeHtmlAttribute(String(title || "").trim() || "Embedded video");
+    var safeUrl = escapeHtmlAttribute(normalizedUrl);
+    var youtubeId = getYoutubeVideoId(normalizedUrl);
+    var vimeoId = getVimeoVideoId(normalizedUrl);
+    var bilibiliId = getBilibiliVideoId(normalizedUrl);
+    var embedUrl = normalizedUrl;
+
+    if (youtubeId) {
+      embedUrl = "https://www.youtube-nocookie.com/embed/" + youtubeId;
+    } else if (vimeoId) {
+      embedUrl = "https://player.vimeo.com/video/" + vimeoId;
+    } else if (bilibiliId) {
+      embedUrl = "https://player.bilibili.com/player.html?bvid=" + bilibiliId;
+    }
+
+    if (isDirectVideoUrl(normalizedUrl)) {
+      return '\n<figure class="video-embed">\n  <video controls preload="metadata" src="' + safeUrl + '" title="' + safeTitle + '"></video>\n</figure>\n';
+    }
+
+    return '\n<figure class="video-embed">\n  <iframe src="' + escapeHtmlAttribute(embedUrl) + '" title="' + safeTitle + '" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>\n</figure>\n';
   }
 
   function showToast(message, type) {
@@ -1035,7 +1108,7 @@
       path: sourceContext && sourceContext.path,
       candidates: candidates
     });
-    throw new Error("未找到正文编辑器，请先点击文章正文区域后再粘贴图片。");
+    throw new Error("未找到正文编辑器，请先点击文章正文区域后再插入内容。");
   }
 
   function collectPastedImages(event) {
@@ -1182,6 +1255,95 @@
     }
   }
 
+  function buildCurrentEditorSourceContext(sourceNode) {
+    var selectionNode = getSelectionAnchorNode() || sourceNode || document.activeElement;
+    var slateSelectionContext = getSlateSelectionContext(selectionNode);
+
+    return {
+      sourceNode: sourceNode || document.activeElement,
+      activeElement: document.activeElement,
+      path: [],
+      selectionOffset: slateSelectionContext.slateBlock ? null : getSelectionCharacterOffset(selectionNode),
+      slateBlock: slateSelectionContext.slateBlock,
+      slateBlockOffset: slateSelectionContext.slateBlockOffset
+    };
+  }
+
+  function rememberEditorSourceContext(sourceNode) {
+    if (!sourceNode || sourceNode === document.body || sourceNode === document.documentElement) {
+      return;
+    }
+
+    var candidate = closestEditorCandidate(sourceNode);
+    var slateNode = findNearestSlateElementNode(sourceNode);
+    var editableRoot = findNearestEditableRoot(sourceNode);
+
+    if (!candidate && !slateNode && !editableRoot) {
+      return;
+    }
+
+    lastEditorSourceContext = buildCurrentEditorSourceContext(sourceNode);
+  }
+
+  function handleVideoInsert(sourceContext) {
+    var insertContext = sourceContext || lastEditorSourceContext || buildCurrentEditorSourceContext(document.activeElement);
+    var videoUrl = window.prompt("Video URL (YouTube, Vimeo, Bilibili, mp4, webm, ogg):");
+    if (videoUrl === null) {
+      return;
+    }
+
+    var embedHtml = buildVideoEmbedHtml(videoUrl, window.prompt("Video title (optional):") || "");
+    if (!embedHtml) {
+      showToast("Please enter a video URL.", "error");
+      return;
+    }
+
+    try {
+      insertMarkdownIntoCms(embedHtml, insertContext);
+      updateRevisionField();
+      showToast("Video embed inserted. Save or publish the entry when ready.", "success");
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "Unable to insert video. Click inside the article body first.", "error");
+    }
+  }
+
+  function ensureVideoInsertButton() {
+    if (document.getElementById("cms-video-insert-button")) {
+      return;
+    }
+
+    var button = document.createElement("button");
+    button.id = "cms-video-insert-button";
+    button.type = "button";
+    button.textContent = "Insert video";
+    if (button.setAttribute) {
+      button.setAttribute("aria-label", "Insert video into article body");
+    }
+    button.style.position = "fixed";
+    button.style.right = "20px";
+    button.style.bottom = "72px";
+    button.style.zIndex = "99998";
+    button.style.border = "0";
+    button.style.borderRadius = "8px";
+    button.style.background = "#0f766e";
+    button.style.color = "#ffffff";
+    button.style.padding = "10px 14px";
+    button.style.font = "700 14px/1.2 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif";
+    button.style.boxShadow = "0 12px 28px rgba(15, 118, 110, 0.28)";
+    button.style.cursor = "pointer";
+    if (button.addEventListener) {
+      button.addEventListener("mousedown", function (event) {
+        event.preventDefault();
+      });
+      button.addEventListener("click", function () {
+        handleVideoInsert(lastEditorSourceContext);
+      });
+    }
+
+    document.body.appendChild(button);
+  }
+
   document.addEventListener(
     "paste",
     function (event) {
@@ -1225,6 +1387,17 @@
     true
   );
 
+  ["focusin", "keyup", "mouseup"].forEach(function (eventName) {
+    document.addEventListener(
+      eventName,
+      function (event) {
+        rememberEditorSourceContext(event.target);
+      },
+      true
+    );
+  });
+
   startTranslationProtection();
   registerMediaFallbackServiceWorker();
+  ensureVideoInsertButton();
 })();

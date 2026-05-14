@@ -444,6 +444,28 @@ body.dark .post-content a:hover {
     object-fit: cover;
 }
 
+.video-embed {
+    margin: 32px 0;
+}
+
+.video-embed iframe,
+.video-embed video {
+    display: block;
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    border: 0;
+    border-radius: 8px;
+    background: #050806;
+    box-shadow: var(--fps-shadow);
+}
+
+.video-embed figcaption {
+    margin-top: 10px;
+    color: var(--secondary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
 .post-content blockquote {
     border-inline-start: 4px solid var(--fps-gold);
     background: color-mix(in srgb, var(--fps-gold) 10%, transparent);

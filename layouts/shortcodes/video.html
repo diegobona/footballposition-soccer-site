@@ -1,0 +1,53 @@
+{{- $src := .Get "src" -}}
+{{- $title := .Get "title" | default "Embedded video" -}}
+{{- if not $src -}}
+  {{- errorf "video shortcode requires a src parameter" -}}
+{{- end -}}
+
+{{- $embedSrc := $src -}}
+{{- $isDirectVideo := findRE `(?i)\.(mp4|webm|ogg)(\?.*)?$` $src -}}
+{{- $youtubeId := "" -}}
+{{- $vimeoId := "" -}}
+{{- $bilibiliId := "" -}}
+
+{{- with findRESubmatch `(?i)(?:youtube\.com/(?:watch\?v=|embed/|shorts/)|youtu\.be/)([A-Za-z0-9_-]{6,})` $src -}}
+  {{- with index . 0 -}}
+    {{- $youtubeId = index . 1 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with findRESubmatch `(?i)vimeo\.com/(?:video/)?([0-9]+)` $src -}}
+  {{- with index . 0 -}}
+    {{- $vimeoId = index . 1 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- with findRESubmatch `(?i)bilibili\.com/video/(BV[0-9A-Za-z]+)` $src -}}
+  {{- with index . 0 -}}
+    {{- $bilibiliId = index . 1 -}}
+  {{- end -}}
+{{- end -}}
+
+{{- if $youtubeId -}}
+  {{- $embedSrc = printf "https://www.youtube-nocookie.com/embed/%s" $youtubeId -}}
+{{- else if $vimeoId -}}
+  {{- $embedSrc = printf "https://player.vimeo.com/video/%s" $vimeoId -}}
+{{- else if $bilibiliId -}}
+  {{- $embedSrc = printf "https://player.bilibili.com/player.html?bvid=%s" $bilibiliId -}}
+{{- end -}}
+
+<figure class="video-embed">
+  {{- if $isDirectVideo -}}
+    <video controls preload="metadata" src="{{ $src | safeURL }}" title="{{ $title }}"></video>
+  {{- else -}}
+    <iframe
+      src="{{ $embedSrc | safeURL }}"
+      title="{{ $title }}"
+      loading="lazy"
+      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+      allowfullscreen></iframe>
+  {{- end -}}
+  {{- with .Get "caption" -}}
+    <figcaption>{{ . }}</figcaption>
+  {{- end -}}
+</figure>

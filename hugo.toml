@@ -12,6 +12,11 @@ buildFuture = true
 [pagination]
   pagerSize = 10
 
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+
 [params]
   defaultTheme = "dark"
   description = "Position guides, tactics, and training tips for every football role — from goalkeeper to false nine."
