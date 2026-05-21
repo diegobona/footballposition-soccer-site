@@ -48,7 +48,6 @@ In the early stages of the tournament, Zidane had both good moments and flaws. H
 After advancing from the group, France beat Paraguay 1–0 in the round of 16, eliminated Italy on penalties in the quarterfinals, and then defeated Croatia 2–1 in the semifinals to reach the final.
 
 But in all of those matches, Zidane had not scored a single goal.
-![image](https://media.footballposition.soccer/uploads/2026/05/20260521-055812-8265f219-image.png)
 
 
 ### Before the final, Zidane had not scored at the 1998 World Cup.
@@ -105,6 +104,7 @@ British commentator John Motson was responsible for broadcasting the World Cup f
 Motson and his colleagues even wondered whether they had misread it. None of them understood what had happened.
 
 Motson quickly asked his colleague Stubbs to contact Brazilian legend Pelé and find out what was going on. After asking, the answer came back: Pelé did not know either.
+![image](https://media.footballposition.soccer/uploads/2026/05/20260521-055922-3bcdc52e-image.png)
 
 ### Brazil had originally planned to start Edmundo in place of Ronaldo.
 
