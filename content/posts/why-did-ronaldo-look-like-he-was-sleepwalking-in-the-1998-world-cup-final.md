@@ -7,7 +7,7 @@ category: 综述
 At the 1998 World Cup, defending champions Brazil were the biggest favorites to win the title. They had the player widely regarded at the time as the best striker in the world: Ronaldo.
 ![image](https://media.footballposition.soccer/uploads/2026/05/20260520-134449-c963e2d4-image.png)
 
-### In 1998, Ronaldo was universally recognized as the best forward in world football. 
+### In 1998, Ronaldo was universally recognized as the best forward in world football.
 
 He combined speed and technique, was extremely efficient in front of goal, and often dribbled past opponents and scored in ways that seemed almost unimaginable.
 
@@ -31,6 +31,9 @@ The incident had an extremely negative impact. During his suspension, Cantona mi
 
 After that, Jacquet established Zinedine Zidane, who had Algerian roots, as the core of France’s midfield.
 
+![image](https://media.footballposition.soccer/uploads/2026/05/20260521-055655-ae13b90f-image.png)
+
+
 
 ### Cantona’s kick at the fan effectively ended his national-team career.
 
@@ -45,6 +48,8 @@ In the early stages of the tournament, Zidane had both good moments and flaws. H
 After advancing from the group, France beat Paraguay 1–0 in the round of 16, eliminated Italy on penalties in the quarterfinals, and then defeated Croatia 2–1 in the semifinals to reach the final.
 
 But in all of those matches, Zidane had not scored a single goal.
+![image](https://media.footballposition.soccer/uploads/2026/05/20260521-055812-8265f219-image.png)
+
 
 ### Before the final, Zidane had not scored at the 1998 World Cup.
 
