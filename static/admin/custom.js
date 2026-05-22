@@ -308,8 +308,21 @@
     return alt || "image";
   }
 
+  function normalizeAltText(value, fallback) {
+    var alt = slugify(String(value || "")).replace(/-/g, " ").trim();
+    if (alt) {
+      return alt;
+    }
+
+    return fallback || "image";
+  }
+
+  function buildMarkdownWithAlt(alt, publicUrl) {
+    return "\n![" + normalizeAltText(alt, "image") + "](" + publicUrl + ")\n";
+  }
+
   function buildMarkdown(file, publicUrl) {
-    return "\n![" + getAltText(file) + "](" + publicUrl + ")\n";
+    return buildMarkdownWithAlt(getAltText(file), publicUrl);
   }
 
   async function buildInlineMarkdown(file) {
@@ -620,8 +633,8 @@
     }
 
     var currentValue = controller.value || "";
-    var separator = currentValue && !/\n$/.test(currentValue) && !/^\n/.test(text) ? "\n" : "";
-    controller.onChange(currentValue + separator + text);
+    var offset = sourceContext && typeof sourceContext.selectionOffset === "number" ? sourceContext.selectionOffset : null;
+    controller.onChange(insertTextAtOffset(currentValue, text, offset));
     return true;
   }
 
@@ -641,6 +654,12 @@
 
   function isSlateRawValue(value) {
     return Array.isArray(value) && value.length >= 1 && value.every(isSlateRawBlock);
+  }
+
+  function isSlateValue(value) {
+    return Array.isArray(value) && value.length >= 1 && value.every(function (node) {
+      return node && typeof node.type === "string" && Array.isArray(node.children);
+    });
   }
 
   function slateRawValueToText(value) {
@@ -673,6 +692,32 @@
       .replace(/^\n+/g, "")
       .split("\n")
       .map(createSlateRawBlock);
+  }
+
+  function markdownToSlateBlocks(text) {
+    var lines = String(text || "").replace(/^\n+/g, "").split("\n");
+    var blocks = [];
+    var imageRegex = /^!\[([^\]]*)\]\(([^)]+)\)$/;
+
+    for (var i = 0; i < lines.length; i += 1) {
+      var line = lines[i];
+      var match = imageRegex.exec(line);
+      if (match) {
+        blocks.push({
+          type: "image",
+          data: {
+            url: match[2],
+            alt: match[1] || ""
+          },
+          children: [{ text: "" }],
+          isVoid: true
+        });
+      } else if (line) {
+        blocks.push(createSlateRawBlock(line));
+      }
+    }
+
+    return blocks.length ? blocks : [createSlateRawBlock("")];
   }
 
   function insertTextAtOffset(value, text, offset) {
@@ -775,14 +820,40 @@
   function buildImageInsertSourceContext(event) {
     var selectionNode = getSelectionAnchorNode() || event.target;
     var slateSelectionContext = getSlateSelectionContext(selectionNode);
+    var slateBlockOffset = slateSelectionContext.slateBlockOffset;
+    var globalOffset = null;
+    var slateBlockText = null;
+    var slateBlockIndex = null;
+
+    if (slateSelectionContext.slateBlock && typeof slateBlockOffset === "number" && isFinite(slateBlockOffset)) {
+      var controller = findSlateRawController({
+        sourceNode: event.target,
+        activeElement: document.activeElement,
+        path: getEventPathCandidates(event)
+      });
+      if (controller && isSlateValue(controller.value)) {
+        globalOffset = getOffsetForSlateBlock(controller.value, slateSelectionContext.slateBlock, slateBlockOffset);
+        var blockIndex = controller.value.indexOf(slateSelectionContext.slateBlock);
+        if (blockIndex !== -1) {
+          slateBlockText = getSlateBlockText(slateSelectionContext.slateBlock);
+          slateBlockIndex = blockIndex;
+        }
+      }
+    }
+
+    if (globalOffset === null) {
+      globalOffset = getSelectionCharacterOffset(selectionNode);
+    }
 
     return {
       sourceNode: event.target,
       activeElement: document.activeElement,
       path: getEventPathCandidates(event),
-      selectionOffset: slateSelectionContext.slateBlock ? null : getSelectionCharacterOffset(selectionNode),
+      selectionOffset: globalOffset,
       slateBlock: slateSelectionContext.slateBlock,
-      slateBlockOffset: slateSelectionContext.slateBlockOffset
+      slateBlockOffset: slateSelectionContext.slateBlockOffset,
+      slateBlockText: slateBlockText,
+      slateBlockIndex: slateBlockIndex
     };
   }
 
@@ -845,14 +916,66 @@
     return null;
   }
 
-  function insertTextIntoSlateRawValue(value, text, block, blockOffset) {
+  function findBlockIndexByContent(value, blockText, hintIndex) {
+    if (!isSlateRawValue(value) || typeof blockText !== "string") {
+      return -1;
+    }
+
+    if (typeof hintIndex === "number" && hintIndex >= 0 && hintIndex < value.length) {
+      if (getSlateBlockText(value[hintIndex]) === blockText) {
+        return hintIndex;
+      }
+    }
+
+    for (var i = 0; i < value.length; i += 1) {
+      if (getSlateBlockText(value[i]) === blockText) {
+        return i;
+      }
+    }
+
+    return -1;
+  }
+
+  function resolveSlateBlock(currentValue, sourceContext) {
+    if (!sourceContext || !sourceContext.slateBlock) {
+      return null;
+    }
+
+    if (currentValue.indexOf(sourceContext.slateBlock) !== -1) {
+      return sourceContext.slateBlock;
+    }
+
+    if (sourceContext.slateBlockText != null) {
+      var index = findBlockIndexByContent(currentValue, sourceContext.slateBlockText, sourceContext.slateBlockIndex);
+      if (index !== -1) {
+        return currentValue[index];
+      }
+    }
+
+    return null;
+  }
+
+  function insertBlocksAtBlockIndex(value, text, blockIndex) {
+    if (!Array.isArray(value) || typeof blockIndex !== "number" || blockIndex < 0 || blockIndex >= value.length) {
+      var newBlocks = markdownToSlateBlocks(text);
+      return value.concat(newBlocks);
+    }
+
+    var newBlocks = markdownToSlateBlocks(text);
+    var nextValue = value.slice(0, blockIndex + 1);
+    Array.prototype.push.apply(nextValue, newBlocks);
+    Array.prototype.push.apply(nextValue, value.slice(blockIndex + 1));
+    return nextValue;
+  }
+
+  function insertTextIntoSlateRawValue(value, text, block, blockOffset, fallbackOffset) {
     if (!isSlateRawValue(value) || !block) {
-      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value || []), text, null));
+      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value || []), text, typeof fallbackOffset === "number" ? fallbackOffset : null));
     }
 
     var blockIndex = value.indexOf(block);
     if (blockIndex === -1) {
-      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value), text, null));
+      return textToSlateRawValue(insertTextAtOffset(slateRawValueToText(value), text, typeof fallbackOffset === "number" ? fallbackOffset : null));
     }
 
     var blockText = getSlateBlockText(block);
@@ -915,7 +1038,7 @@
 
         while (fiber && fiberDepth < 100) {
           var props = getFiberProps(fiber);
-          if (props && typeof props.onChange === "function" && isSlateRawValue(props.value)) {
+          if (props && typeof props.onChange === "function" && isSlateValue(props.value)) {
             return {
               onChange: props.onChange,
               value: props.value
@@ -940,16 +1063,34 @@
       return false;
     }
 
-    if (sourceContext && sourceContext.slateBlock) {
+    var resolvedBlock = resolveSlateBlock(controller.value, sourceContext);
+    var hasOnlyTextBlocks = isSlateRawValue(controller.value);
+
+    if (resolvedBlock && hasOnlyTextBlocks) {
       controller.onChange(insertTextIntoSlateRawValue(
         controller.value,
         text,
-        sourceContext.slateBlock,
-        sourceContext.slateBlockOffset
+        resolvedBlock,
+        sourceContext.slateBlockOffset,
+        sourceContext.selectionOffset
       ));
+    } else if (typeof sourceContext.slateBlockIndex === "number" && sourceContext.slateBlockIndex >= 0) {
+      controller.onChange(insertBlocksAtBlockIndex(
+        controller.value,
+        text,
+        sourceContext.slateBlockIndex
+      ));
+    } else if (resolvedBlock) {
+      var blockIndex = controller.value.indexOf(resolvedBlock);
+      if (blockIndex !== -1) {
+        controller.onChange(insertBlocksAtBlockIndex(controller.value, text, blockIndex));
+      } else {
+        var newBlocks = markdownToSlateBlocks(text);
+        controller.onChange(controller.value.concat(newBlocks));
+      }
     } else {
-      var currentValue = slateRawValueToText(controller.value);
-      controller.onChange(textToSlateRawValue(insertTextAtOffset(currentValue, text, sourceContext && sourceContext.selectionOffset)));
+      var newBlocks = markdownToSlateBlocks(text);
+      controller.onChange(controller.value.concat(newBlocks));
     }
     return true;
   }
@@ -1216,6 +1357,164 @@
     };
   }
 
+  async function uploadImageToMarkdown(file) {
+    try {
+      var result = await uploadImage(file);
+      await cacheImageForLocalPreview(result.publicUrl, file);
+      return {
+        markdown: buildMarkdown(file, result.publicUrl),
+        error: null
+      };
+    } catch (uploadError) {
+      console.warn("CMS image paste warning: image upload failed, using inline image fallback", uploadError);
+      return {
+        markdown: await buildInlineMarkdown(file),
+        error: uploadError
+      };
+    }
+  }
+
+  function getClipboardHtml(event) {
+    if (!event || !event.clipboardData || typeof event.clipboardData.getData !== "function") {
+      return "";
+    }
+
+    return event.clipboardData.getData("text/html") || "";
+  }
+
+  function containsHtmlImages(html) {
+    return /<img\b/i.test(String(html || ""));
+  }
+
+  function getClipboardPlainText(event) {
+    if (!event || !event.clipboardData || typeof event.clipboardData.getData !== "function") {
+      return "";
+    }
+
+    return event.clipboardData.getData("text/plain") || "";
+  }
+
+  function decodeHtmlEntities(value) {
+    return String(value || "")
+      .replace(/&nbsp;/gi, " ")
+      .replace(/&quot;/gi, "\"")
+      .replace(/&#39;|&apos;/gi, "'")
+      .replace(/&lt;/gi, "<")
+      .replace(/&gt;/gi, ">")
+      .replace(/&amp;/gi, "&")
+      .replace(/&#(\d+);/g, function (match, code) {
+        var parsed = parseInt(code, 10);
+        return isFinite(parsed) ? String.fromCharCode(parsed) : match;
+      })
+      .replace(/&#x([0-9a-f]+);/gi, function (match, code) {
+        var parsed = parseInt(code, 16);
+        return isFinite(parsed) ? String.fromCharCode(parsed) : match;
+      });
+  }
+
+  function extractHtmlAttribute(attributes, name) {
+    var match = new RegExp(name + '\\s*=\\s*("([^"]*)"|\'([^\']*)\'|([^\\s>]+))', "i").exec(String(attributes || ""));
+    if (!match) {
+      return "";
+    }
+
+    return decodeHtmlEntities(match[2] || match[3] || match[4] || "");
+  }
+
+  function normalizeHtmlPasteText(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n[ \t]+/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function extractHtmlPastePayload(html) {
+    var images = [];
+    var blockBoundaryRegex = /<\/(?:p|div|section|article|blockquote|h[1-6]|tr|table|ul|ol)>/gi;
+    var lineBreakRegex = /<(?:br\s*\/?|\/li)>/gi;
+    var listItemRegex = /<li\b[^>]*>/gi;
+    var text = String(html || "").replace(/<img\b([^>]*)>/gi, function (match, attributes) {
+      var index = images.length;
+      images.push({
+        src: extractHtmlAttribute(attributes, "src"),
+        alt: extractHtmlAttribute(attributes, "alt")
+      });
+      return "\n[[CMS_IMAGE_" + index + "]]\n";
+    });
+
+    text = text
+      .replace(lineBreakRegex, "\n")
+      .replace(blockBoundaryRegex, "\n\n")
+      .replace(listItemRegex, "- ")
+      .replace(/<style\b[\s\S]*?<\/style>/gi, "")
+      .replace(/<script\b[\s\S]*?<\/script>/gi, "")
+      .replace(/<[^>]+>/g, "");
+
+    return {
+      text: normalizeHtmlPasteText(decodeHtmlEntities(text)),
+      images: images
+    };
+  }
+
+  function normalizePastedImageUrl(value) {
+    var url = String(value || "").trim();
+    if (!url) {
+      return "";
+    }
+
+    if (/^\/\//.test(url)) {
+      return "https:" + url;
+    }
+
+    if (/^(?:https?:|data:|\/)/i.test(url)) {
+      return url;
+    }
+
+    return "";
+  }
+
+  async function buildClipboardPasteMarkdown(html, plainText, files) {
+    var parsedHtml = extractHtmlPastePayload(html);
+    var pendingFiles = Array.isArray(files) ? files.slice() : [];
+    var uploadFailures = [];
+    var output = parsedHtml.text || normalizeHtmlPasteText(plainText);
+
+    for (var i = 0; i < parsedHtml.images.length; i += 1) {
+      var image = parsedHtml.images[i];
+      var markdown = "";
+      var directUrl = normalizePastedImageUrl(image.src);
+
+      if (directUrl) {
+        markdown = buildMarkdownWithAlt(image.alt, directUrl).trim();
+      } else if (pendingFiles.length) {
+        var uploadResult = await uploadImageToMarkdown(pendingFiles.shift());
+        markdown = uploadResult.markdown.trim();
+        if (uploadResult.error) {
+          uploadFailures.push(uploadResult.error);
+        }
+      }
+
+      output = output.replace("[[CMS_IMAGE_" + i + "]]", markdown ? "\n\n" + markdown + "\n\n" : "");
+    }
+
+    while (pendingFiles.length) {
+      var remainingUpload = await uploadImageToMarkdown(pendingFiles.shift());
+      if (remainingUpload.error) {
+        uploadFailures.push(remainingUpload.error);
+      }
+      output = output
+        ? output + "\n\n" + remainingUpload.markdown.trim()
+        : remainingUpload.markdown.trim();
+    }
+
+    return {
+      markdown: output ? "\n" + output.replace(/\n{3,}/g, "\n\n").trim() + "\n" : "",
+      uploadFailures: uploadFailures
+    };
+  }
+
   async function handleImageInsert(files, sourceContext) {
     if (!files.length) {
       return;
@@ -1227,15 +1526,11 @@
       var markdownChunks = [];
       var uploadFailures = [];
       for (var i = 0; i < files.length; i += 1) {
-        try {
-          var result = await uploadImage(files[i]);
-          await cacheImageForLocalPreview(result.publicUrl, files[i]);
-          markdownChunks.push(buildMarkdown(files[i], result.publicUrl));
-        } catch (uploadError) {
-          uploadFailures.push(uploadError);
-          console.warn("CMS image paste warning: image upload failed, using inline image fallback", uploadError);
-          markdownChunks.push(await buildInlineMarkdown(files[i]));
+        var uploadResult = await uploadImageToMarkdown(files[i]);
+        if (uploadResult.error) {
+          uploadFailures.push(uploadResult.error);
         }
+        markdownChunks.push(uploadResult.markdown);
       }
 
       var inserted = insertMarkdownIntoCms(markdownChunks.join("\n"), sourceContext);
@@ -1255,17 +1550,69 @@
     }
   }
 
+  async function handleClipboardPaste(files, html, plainText, sourceContext) {
+    showToast("正在处理粘贴内容...", "info");
+
+    try {
+      var result = await buildClipboardPasteMarkdown(html, plainText, files);
+      if (!result.markdown) {
+        throw new Error("未读取到可插入的文本或图片内容。");
+      }
+
+      var inserted = insertMarkdownIntoCms(result.markdown, sourceContext);
+      if (!inserted) {
+        throw new Error("未找到可写入内容的编辑器区域。");
+      }
+
+      updateRevisionField();
+      if (result.uploadFailures.length) {
+        showToast("部分图片上传失败，已改为内联图片写入 Markdown。内联图片可发布，但会增加文章文件大小。", "error");
+      } else {
+        showToast("粘贴内容已写入 Markdown 正文，请点击保存或发布。", "success");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "粘贴内容处理失败，请查看控制台日志。", "error");
+    }
+  }
+
   function buildCurrentEditorSourceContext(sourceNode) {
     var selectionNode = getSelectionAnchorNode() || sourceNode || document.activeElement;
     var slateSelectionContext = getSlateSelectionContext(selectionNode);
+    var slateBlockOffset = slateSelectionContext.slateBlockOffset;
+    var globalOffset = null;
+    var slateBlockText = null;
+    var slateBlockIndex = null;
+
+    if (slateSelectionContext.slateBlock && typeof slateBlockOffset === "number" && isFinite(slateBlockOffset)) {
+      var controller = findSlateRawController({
+        sourceNode: sourceNode || document.activeElement,
+        activeElement: document.activeElement,
+        path: []
+      });
+      if (controller && isSlateValue(controller.value)) {
+        globalOffset = getOffsetForSlateBlock(controller.value, slateSelectionContext.slateBlock, slateBlockOffset);
+        var blockIndex = controller.value.indexOf(slateSelectionContext.slateBlock);
+        if (blockIndex !== -1) {
+          slateBlockText = getSlateBlockText(slateSelectionContext.slateBlock);
+          slateBlockIndex = blockIndex;
+        }
+      }
+    }
+
+    if (globalOffset === null) {
+      globalOffset = getSelectionCharacterOffset(selectionNode);
+    }
 
     return {
       sourceNode: sourceNode || document.activeElement,
       activeElement: document.activeElement,
       path: [],
-      selectionOffset: slateSelectionContext.slateBlock ? null : getSelectionCharacterOffset(selectionNode),
+      selectionOffset: globalOffset,
       slateBlock: slateSelectionContext.slateBlock,
-      slateBlockOffset: slateSelectionContext.slateBlockOffset
+      slateBlockOffset: slateSelectionContext.slateBlockOffset,
+      slateBlockText: slateBlockText,
+      slateBlockIndex: slateBlockIndex
     };
   }
 
@@ -1348,13 +1695,19 @@
     "paste",
     function (event) {
       var files = collectPastedImages(event);
-      if (!files.length) {
+      var html = getClipboardHtml(event);
+      var hasHtmlImages = containsHtmlImages(html);
+      if (!files.length && !hasHtmlImages) {
         return;
       }
 
       var sourceContext = buildImageInsertSourceContext(event);
       claimImageEvent(event);
-      handleImageInsert(files, sourceContext);
+      if (hasHtmlImages) {
+        handleClipboardPaste(files, html, getClipboardPlainText(event), sourceContext);
+      } else {
+        handleImageInsert(files, sourceContext);
+      }
     },
     true
   );

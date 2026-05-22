@@ -9,7 +9,7 @@ const source = fs.readFileSync(customJsPath, "utf8");
 
 const instrumentedSource = source.replace(
   /\}\)\(\);\s*$/,
-  "window.__cmsImagePasteTestHooks = { handleImageInsert, insertWithTextarea, setNativeValue, uploadImage, buildImageInsertSourceContext };})();"
+  "window.__cmsImagePasteTestHooks = { handleImageInsert, handleClipboardPaste, buildClipboardPasteMarkdown, insertWithTextarea, setNativeValue, uploadImage, buildImageInsertSourceContext };})();"
 );
 
 const listeners = [];
@@ -471,10 +471,61 @@ async function testPreservesExistingSlateImageRows() {
   );
 }
 
+async function testHandlesMixedHtmlPasteWithImagesWithoutCrashingDecap() {
+  const textarea = new FakeTextarea("start");
+  const onChangeCalls = [];
+  textarea.__reactFiber$test = {
+    memoizedProps: {
+      field: {
+        get(key) {
+          return key === "name" ? "body" : undefined;
+        },
+      },
+      value: "start",
+      onChange(value) {
+        onChangeCalls.push(value);
+      },
+    },
+    return: null,
+  };
+
+  const file = {
+    name: "clipboard-image.png",
+    type: "image/png",
+    size: 4,
+    async arrayBuffer() {
+      return Uint8Array.from([5, 6, 7, 8]).buffer;
+    },
+  };
+
+  await context.window.__cmsImagePasteTestHooks.handleClipboardPaste(
+    [file],
+    '<p>Intro text</p><img src="https://images.example/hero.png" alt="Hero image"><p>Middle text</p><img src="blob:https://editor.local/clipboard" alt="Clipboard image"><p>End text</p>',
+    "Intro text\nMiddle text\nEnd text",
+    {
+      sourceNode: textarea,
+      activeElement: textarea,
+      path: [textarea],
+    }
+  );
+
+  assert.strictEqual(
+    textarea.value,
+    "start\nIntro text\n\n![hero image](https://images.example/hero.png)\n\nMiddle text\n\n![clipboard image](data:image/png;base64,BQYHCA==)\n\nEnd text\n",
+    "mixed HTML paste should be converted to Markdown so Decap never receives the crashing image node paste"
+  );
+  assert.deepStrictEqual(
+    onChangeCalls,
+    ["start\nIntro text\n\n![hero image](https://images.example/hero.png)\n\nMiddle text\n\n![clipboard image](data:image/png;base64,BQYHCA==)\n\nEnd text\n"],
+    "mixed HTML paste should still notify Decap about the updated entry body"
+  );
+}
+
 testUploadsImagesThroughR2Worker()
   .then(testFallsBackToInlineImageWhenUploadFails)
   .then(testUpdatesSlateRawMarkdownEditor)
   .then(testPreservesExistingSlateImageRows)
+  .then(testHandlesMixedHtmlPasteWithImagesWithoutCrashingDecap)
   .then(() => {
     console.log("cms-image-paste tests passed");
   })
