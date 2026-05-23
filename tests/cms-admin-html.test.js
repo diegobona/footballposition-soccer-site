@@ -10,5 +10,7 @@ assert.match(html, /<html[^>]*translate="no"[^>]*class="notranslate"/, "admin ht
 assert.match(html, /<meta\s+name="google"\s+content="notranslate"/, "admin html should ask browser translation to skip the CMS");
 assert.match(html, /<body[^>]*translate="no"[^>]*class="notranslate"/, "admin body should opt out of translation");
 assert.match(html, /id="nc-root"[^>]*translate="no"[^>]*class="notranslate"/, "Decap root should opt out of translation");
+assert.match(html, /toastui-editor\.min\.css/, "admin html should load Toast UI editor styles");
+assert.match(html, /toastui-editor-all\.min\.js/, "admin html should load Toast UI editor script");
 
 console.log("cms-admin-html tests passed");

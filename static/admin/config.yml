@@ -40,4 +40,6 @@ collections:
         fields:
           - {label: "问题", name: "question", widget: "string"}
           - {label: "答案", name: "answer", widget: "text"}
-      - {label: "文章正文 (Body，可直接粘贴/拖拽图片)", name: "body", widget: "markdown"}
+      - label: "文章正文 (Body，可直接粘贴/拖拽图片)"
+        name: "body"
+        widget: "toast-ui-editor"

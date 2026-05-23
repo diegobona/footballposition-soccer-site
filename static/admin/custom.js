@@ -14,6 +14,8 @@
   var maxFileSize = enhancerConfig.maxFileSize || 10 * 1024 * 1024;
   var toastTimer = null;
   var lastEditorSourceContext = null;
+  var activeToastUiEditorContext = null;
+  var markdownOnlyUiObserver = null;
 
   function slugify(value) {
     return String(value || "")
@@ -391,6 +393,10 @@
       return false;
     }
 
+    if (!window.getComputedStyle || !element.getBoundingClientRect) {
+      return true;
+    }
+
     var style = window.getComputedStyle(element);
     return style.display !== "none" && style.visibility !== "hidden" && element.getBoundingClientRect().height > 0;
   }
@@ -424,6 +430,162 @@
     }
 
     return labelNode.closest('[data-testid], [class*="EditorControl"], [class*="Widget"], section, article, div');
+  }
+
+  function enforceMarkdownOnlyUi(root) {
+    var scope = root && root.querySelectorAll ? root : document;
+    var bodyFieldRoot = root || findBodyFieldRoot();
+    var candidates = scope.querySelectorAll ? scope.querySelectorAll("button, [role='tab'], [role='switch'], label, span, div") : [];
+    var markdownToggle = null;
+    var rawToggle = null;
+
+    Array.prototype.forEach.call(candidates, function (node) {
+      if (!node || !bodyFieldRoot || !bodyFieldRoot.contains(node)) {
+        return;
+      }
+
+      var text = String(node.textContent || "").trim().toLowerCase();
+      if (text === "markdown") {
+        markdownToggle = markdownToggle || node;
+      } else if (text === "raw") {
+        rawToggle = rawToggle || node;
+      } else if (text === "rich text") {
+        if (node.style) {
+          node.style.display = "none";
+        }
+
+        var wrapper = node.closest && node.closest("button, label, [role='tab'], [role='switch']");
+        if (wrapper && wrapper.style) {
+          wrapper.style.display = "none";
+        }
+      }
+    });
+
+    var preferredToggle = markdownToggle || rawToggle;
+    if (preferredToggle && preferredToggle.__cmsMarkdownOnlyForced !== true && typeof preferredToggle.click === "function") {
+      preferredToggle.__cmsMarkdownOnlyForced = true;
+      try {
+        preferredToggle.click();
+      } catch (error) {
+        console.warn("CMS markdown-only warning: unable to switch editor to markdown mode", error);
+      }
+    }
+  }
+
+  function startMarkdownOnlyUiEnforcement() {
+    return;
+  }
+
+  function findToastUiEditorContextFromNode(node) {
+    var element = node && node.nodeType === 3 ? node.parentElement : node;
+    if (!element || !element.closest) {
+      return null;
+    }
+
+    var host = element.closest("[data-cms-toast-widget]");
+    return host && host.__cmsToastUiEditorContext ? host.__cmsToastUiEditorContext : null;
+  }
+
+  function isAttachedToastUiEditorContext(context) {
+    if (!context || !context.root) {
+      return false;
+    }
+
+    if (typeof document === "undefined") {
+      return true;
+    }
+
+    if (document.body && typeof document.body.contains === "function") {
+      return document.body.contains(context.root);
+    }
+
+    return true;
+  }
+
+  function setActiveToastUiEditorContext(context) {
+    activeToastUiEditorContext = context || null;
+    if (!context) {
+      return;
+    }
+
+    lastEditorSourceContext = {
+      sourceNode: context.root,
+      activeElement: document.activeElement,
+      path: [],
+      toastEditorId: context.id,
+      toastEditorContext: context
+    };
+  }
+
+  function resolveToastUiEditorContext(sourceContext) {
+    if (sourceContext && sourceContext.toastEditorContext) {
+      return sourceContext.toastEditorContext;
+    }
+
+    var sourceNodeContext = sourceContext && findToastUiEditorContextFromNode(sourceContext.sourceNode);
+    if (sourceNodeContext) {
+      return sourceNodeContext;
+    }
+
+    var activeElementContext = sourceContext && findToastUiEditorContextFromNode(sourceContext.activeElement);
+    if (activeElementContext) {
+      return activeElementContext;
+    }
+
+    if (isAttachedToastUiEditorContext(activeToastUiEditorContext)) {
+      return activeToastUiEditorContext;
+    }
+
+    return null;
+  }
+
+  function isWithinToastUiEditor(node) {
+    return !!findToastUiEditorContextFromNode(node);
+  }
+
+  function eventTargetsToastUiEditor(event) {
+    if (!event) {
+      return false;
+    }
+
+    if (isWithinToastUiEditor(event.target)) {
+      return true;
+    }
+
+    var path = getEventPathCandidates(event);
+    for (var index = 0; index < path.length; index += 1) {
+      if (isWithinToastUiEditor(path[index])) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  function insertWithToastUiEditor(text, sourceContext) {
+    var toastContext = resolveToastUiEditorContext(sourceContext);
+    if (!toastContext || !toastContext.editor) {
+      return false;
+    }
+
+    setActiveToastUiEditorContext(toastContext);
+    if (typeof toastContext.editor.focus === "function") {
+      toastContext.editor.focus();
+    }
+
+    if (typeof toastContext.editor.insertText === "function") {
+      toastContext.editor.insertText(text);
+    } else if (typeof toastContext.editor.getMarkdown === "function" && typeof toastContext.editor.setMarkdown === "function") {
+      toastContext.editor.setMarkdown((toastContext.editor.getMarkdown() || "") + text, true);
+    } else {
+      return false;
+    }
+
+    if (typeof toastContext.syncToField === "function") {
+      toastContext.syncToField();
+    }
+
+    return true;
   }
 
   function closestEditorCandidate(node) {
@@ -633,7 +795,7 @@
     }
 
     var currentValue = controller.value || "";
-    var offset = sourceContext && typeof sourceContext.selectionOffset === "number" ? sourceContext.selectionOffset : null;
+    var offset = resolveMarkdownInsertOffset(currentValue, sourceContext);
     controller.onChange(insertTextAtOffset(currentValue, text, offset));
     return true;
   }
@@ -732,6 +894,57 @@
     var prefix = before && !/\n$/.test(before) && !/^\n/.test(text) ? "\n" : "";
     var suffix = after && !/\n$/.test(text) && !/^\n/.test(after) ? "\n" : "";
     return before + prefix + text + suffix + after;
+  }
+
+  function findAllTextOccurrenceIndexes(value, searchText) {
+    var indexes = [];
+    if (!searchText) {
+      return indexes;
+    }
+
+    var startIndex = 0;
+    while (startIndex < value.length) {
+      var matchIndex = value.indexOf(searchText, startIndex);
+      if (matchIndex === -1) {
+        break;
+      }
+      indexes.push(matchIndex);
+      startIndex = matchIndex + searchText.length;
+    }
+
+    return indexes;
+  }
+
+  function resolveMarkdownInsertOffset(currentValue, sourceContext) {
+    var currentText = String(currentValue || "");
+    if (!sourceContext) {
+      return null;
+    }
+
+    var blockText = typeof sourceContext.slateBlockText === "string" ? sourceContext.slateBlockText : "";
+    var blockOffset = sourceContext.slateBlockOffset;
+    if (blockText) {
+      var occurrences = findAllTextOccurrenceIndexes(currentText, blockText);
+      if (occurrences.length) {
+        var targetIndex = occurrences[0];
+        if (occurrences.length > 1 && typeof sourceContext.selectionOffset === "number" && isFinite(sourceContext.selectionOffset)) {
+          targetIndex = occurrences.reduce(function (closestIndex, index) {
+            return Math.abs(index - sourceContext.selectionOffset) < Math.abs(closestIndex - sourceContext.selectionOffset)
+              ? index
+              : closestIndex;
+          }, occurrences[0]);
+        }
+
+        var safeBlockOffset = typeof blockOffset === "number" && isFinite(blockOffset)
+          ? Math.max(0, Math.min(blockOffset, blockText.length))
+          : blockText.length;
+        return targetIndex + safeBlockOffset;
+      }
+    }
+
+    return typeof sourceContext.selectionOffset === "number" && isFinite(sourceContext.selectionOffset)
+      ? sourceContext.selectionOffset
+      : null;
   }
 
   function findNearestEditableRoot(node) {
@@ -916,6 +1129,55 @@
     return null;
   }
 
+  function resolveSlateContextFromGlobalOffset(value, selectionOffset) {
+    if (!Array.isArray(value) || typeof selectionOffset !== "number" || !isFinite(selectionOffset) || selectionOffset < 0) {
+      return null;
+    }
+
+    var offset = 0;
+    for (var i = 0; i < value.length; i += 1) {
+      var block = value[i];
+      var blockText = getSlateBlockText(block);
+      var blockLength = blockText.length;
+      var blockEnd = offset + blockLength;
+
+      if (isSlateRawBlock(block) && selectionOffset <= blockEnd) {
+        return {
+          slateBlock: block,
+          slateBlockIndex: i,
+          slateBlockText: blockText,
+          slateBlockOffset: Math.max(0, Math.min(selectionOffset - offset, blockLength))
+        };
+      }
+
+      offset = blockEnd;
+      if (i < value.length - 1) {
+        offset += 1;
+        if (selectionOffset < offset && isSlateRawBlock(block)) {
+          return {
+            slateBlock: block,
+            slateBlockIndex: i,
+            slateBlockText: blockText,
+            slateBlockOffset: blockLength
+          };
+        }
+      }
+    }
+
+    for (var reverseIndex = value.length - 1; reverseIndex >= 0; reverseIndex -= 1) {
+      if (isSlateRawBlock(value[reverseIndex])) {
+        return {
+          slateBlock: value[reverseIndex],
+          slateBlockIndex: reverseIndex,
+          slateBlockText: getSlateBlockText(value[reverseIndex]),
+          slateBlockOffset: getSlateBlockText(value[reverseIndex]).length
+        };
+      }
+    }
+
+    return null;
+  }
+
   function findBlockIndexByContent(value, blockText, hintIndex) {
     if (!isSlateRawValue(value) || typeof blockText !== "string") {
       return -1;
@@ -1009,6 +1271,51 @@
     return nextValue.length ? nextValue : [createSlateRawBlock("")];
   }
 
+  function insertStructuredBlocksIntoSlateValue(value, text, block, blockOffset, fallbackBlockIndex) {
+    if (!Array.isArray(value)) {
+      return markdownToSlateBlocks(text);
+    }
+
+    var insertedBlocks = markdownToSlateBlocks(text);
+    var blockIndex = value.indexOf(block);
+
+    if (blockIndex !== -1 && isSlateRawBlock(block)) {
+      var blockText = getSlateBlockText(block);
+      var safeOffset = typeof blockOffset === "number" && isFinite(blockOffset)
+        ? Math.max(0, Math.min(blockOffset, blockText.length))
+        : blockText.length;
+      var beforeText = blockText.slice(0, safeOffset);
+      var afterText = blockText.slice(safeOffset);
+      var nextValue = value.slice(0, blockIndex);
+
+      if (beforeText) {
+        nextValue.push(createSlateRawBlock(beforeText));
+      }
+
+      Array.prototype.push.apply(nextValue, insertedBlocks);
+
+      if (afterText) {
+        nextValue.push(createSlateRawBlock(afterText));
+      }
+
+      Array.prototype.push.apply(nextValue, value.slice(blockIndex + 1));
+      return nextValue.length ? nextValue : [createSlateRawBlock("")];
+    }
+
+    if (blockIndex === -1 && typeof fallbackBlockIndex === "number" && fallbackBlockIndex >= 0 && fallbackBlockIndex < value.length) {
+      blockIndex = fallbackBlockIndex;
+    }
+
+    if (blockIndex !== -1) {
+      var nextValueFromIndex = value.slice(0, blockIndex + 1);
+      Array.prototype.push.apply(nextValueFromIndex, insertedBlocks);
+      Array.prototype.push.apply(nextValueFromIndex, value.slice(blockIndex + 1));
+      return nextValueFromIndex.length ? nextValueFromIndex : [createSlateRawBlock("")];
+    }
+
+    return null;
+  }
+
   function findSlateRawController(sourceContext) {
     var nodes = [];
 
@@ -1057,7 +1364,8 @@
     return null;
   }
 
-  function insertViaSlateRawEditor(text, sourceContext) {
+  function insertViaSlateRawEditor(text, sourceContext, options) {
+    var behavior = options || {};
     var controller = findSlateRawController(sourceContext);
     if (!controller) {
       return false;
@@ -1065,6 +1373,50 @@
 
     var resolvedBlock = resolveSlateBlock(controller.value, sourceContext);
     var hasOnlyTextBlocks = isSlateRawValue(controller.value);
+    var blockIndex = sourceContext && typeof sourceContext.slateBlockIndex === "number" && sourceContext.slateBlockIndex >= 0
+      ? sourceContext.slateBlockIndex
+      : resolvedBlock
+        ? controller.value.indexOf(resolvedBlock)
+        : -1;
+    var derivedContext = !resolvedBlock && sourceContext && typeof sourceContext.selectionOffset === "number"
+      ? resolveSlateContextFromGlobalOffset(controller.value, sourceContext.selectionOffset)
+      : null;
+
+    if (!resolvedBlock && derivedContext) {
+      resolvedBlock = derivedContext.slateBlock;
+      blockIndex = derivedContext.slateBlockIndex;
+      sourceContext = {
+        sourceNode: sourceContext.sourceNode,
+        activeElement: sourceContext.activeElement,
+        path: sourceContext.path,
+        selectionOffset: sourceContext.selectionOffset,
+        slateBlock: derivedContext.slateBlock,
+        slateBlockOffset: derivedContext.slateBlockOffset,
+        slateBlockText: derivedContext.slateBlockText,
+        slateBlockIndex: derivedContext.slateBlockIndex
+      };
+    }
+
+    if (behavior.structuredBlocks) {
+      var structuredValue = insertStructuredBlocksIntoSlateValue(
+        controller.value,
+        text,
+        resolvedBlock,
+        sourceContext && sourceContext.slateBlockOffset,
+        blockIndex
+      );
+      if (structuredValue) {
+        controller.onChange(structuredValue);
+        return true;
+      }
+
+      if (behavior.requireSelection) {
+        return false;
+      }
+
+      controller.onChange(controller.value.concat(markdownToSlateBlocks(text)));
+      return true;
+    }
 
     if (resolvedBlock && hasOnlyTextBlocks) {
       controller.onChange(insertTextIntoSlateRawValue(
@@ -1074,16 +1426,16 @@
         sourceContext.slateBlockOffset,
         sourceContext.selectionOffset
       ));
-    } else if (typeof sourceContext.slateBlockIndex === "number" && sourceContext.slateBlockIndex >= 0) {
+    } else if (blockIndex !== -1) {
       controller.onChange(insertBlocksAtBlockIndex(
         controller.value,
         text,
-        sourceContext.slateBlockIndex
+        blockIndex
       ));
     } else if (resolvedBlock) {
-      var blockIndex = controller.value.indexOf(resolvedBlock);
-      if (blockIndex !== -1) {
-        controller.onChange(insertBlocksAtBlockIndex(controller.value, text, blockIndex));
+      var resolvedBlockIndex = controller.value.indexOf(resolvedBlock);
+      if (resolvedBlockIndex !== -1) {
+        controller.onChange(insertBlocksAtBlockIndex(controller.value, text, resolvedBlockIndex));
       } else {
         var newBlocks = markdownToSlateBlocks(text);
         controller.onChange(controller.value.concat(newBlocks));
@@ -1217,22 +1569,295 @@
     return true;
   }
 
-  function insertMarkdownIntoCms(text, sourceContext) {
+  function insertWithContentEditableHtml(editable, html) {
+    if (!editable || !editable.isContentEditable) {
+      return false;
+    }
+
+    var markup = String(html || "").trim();
+    if (!markup) {
+      return false;
+    }
+
+    editable.focus();
+    try {
+      if (document.execCommand && document.execCommand("insertHTML", false, markup)) {
+        dispatchChangeEvents(editable);
+        return true;
+      }
+    } catch (error) {
+      console.warn("CMS rich text paste warning: insertHTML command failed, using DOM fallback", error);
+    }
+
+    try {
+      var selection = window.getSelection && window.getSelection();
+      if (selection && selection.rangeCount > 0) {
+        var range = selection.getRangeAt(0);
+        range.deleteContents();
+        if (range.createContextualFragment) {
+          var fragment = range.createContextualFragment(markup);
+          range.insertNode(fragment);
+        } else {
+          range.insertNode(document.createTextNode(markup));
+        }
+        range.collapse(false);
+        selection.removeAllRanges();
+        selection.addRange(range);
+        dispatchChangeEvents(editable);
+        return true;
+      }
+    } catch (fallbackError) {
+      console.warn("CMS rich text paste warning: DOM insertion fallback failed", fallbackError);
+    }
+
+    return insertWithContentEditable(editable, markup);
+  }
+
+  function findRichTextEditable(sourceContext) {
     var candidates = buildEditorCandidates(sourceContext);
 
     for (var i = 0; i < candidates.length; i += 1) {
       var candidate = candidates[i];
-      if (candidate.classList && candidate.classList.contains("CodeMirror") && insertWithCodeMirror(candidate, text)) {
-        return true;
+      if (candidate && candidate.isContentEditable && isVisibleElement(candidate)) {
+        return candidate;
       }
+    }
 
-      if (candidate.tagName === "TEXTAREA" && insertWithTextarea(candidate, text)) {
-        return true;
-      }
+    return null;
+  }
 
-      if (candidate.isContentEditable) {
+  function escapeHtmlText(value) {
+    return String(value || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;");
+  }
+
+  function renderPlainTextAsHtml(value) {
+    var text = String(value || "").replace(/\r\n?/g, "\n");
+    if (!text.trim()) {
+      return "";
+    }
+
+    return text
+      .split(/\n{2,}/)
+      .map(function (paragraph) {
+        return "<p>" + paragraph.split("\n").map(escapeHtmlText).join("<br>") + "</p>";
+      })
+      .join("");
+  }
+
+  function renderSanitizedChildrenToHtml(nodes, state) {
+    var output = "";
+    for (var i = 0; i < nodes.length; i += 1) {
+      output += renderSanitizedHtmlNode(nodes[i], state);
+    }
+    return output;
+  }
+
+  function renderSanitizedListHtml(node, state, ordered) {
+    var items = [];
+
+    for (var i = 0; i < node.childNodes.length; i += 1) {
+      var child = node.childNodes[i];
+      if (!child || child.nodeType !== 1 || String(child.tagName || "").toLowerCase() !== "li") {
         continue;
       }
+
+      var itemHtml = renderSanitizedChildrenToHtml(child.childNodes || [], state).trim();
+      if (itemHtml) {
+        items.push("<li>" + itemHtml + "</li>");
+      }
+    }
+
+    if (!items.length) {
+      return "";
+    }
+
+    return "<" + (ordered ? "ol" : "ul") + ">" + items.join("") + "</" + (ordered ? "ol" : "ul") + ">";
+  }
+
+  function renderSanitizedHtmlNode(node, state) {
+    if (!node) {
+      return "";
+    }
+
+    if (node.nodeType === 3) {
+      return escapeHtmlText(node.textContent || "");
+    }
+
+    if (node.nodeType !== 1) {
+      return "";
+    }
+
+    var tagName = String(node.tagName || "").toLowerCase();
+    var childHtml = renderSanitizedChildrenToHtml(node.childNodes || [], state);
+
+    if (!tagName || tagName === "style" || tagName === "script" || tagName === "noscript" || tagName === "template" || tagName === "head" || tagName === "title") {
+      return "";
+    }
+
+    if (tagName === "br") {
+      return "<br>";
+    }
+
+    if (tagName === "img") {
+      var index = state.images.length;
+      state.images.push({
+        src: node.getAttribute ? node.getAttribute("src") || "" : "",
+        alt: node.getAttribute ? node.getAttribute("alt") || "" : ""
+      });
+      return '[[CMS_HTML_IMAGE_' + index + ']]';
+    }
+
+    if (tagName === "a") {
+      var href = normalizePastedLinkUrl(node.getAttribute ? node.getAttribute("href") : "");
+      return href ? '<a href="' + escapeHtmlAttribute(href) + '">' + childHtml + "</a>" : childHtml;
+    }
+
+    if (tagName === "strong" || tagName === "b") {
+      return "<strong>" + childHtml + "</strong>";
+    }
+
+    if (tagName === "em" || tagName === "i") {
+      return "<em>" + childHtml + "</em>";
+    }
+
+    if (tagName === "code") {
+      return "<code>" + childHtml + "</code>";
+    }
+
+    if (tagName === "pre") {
+      return "<pre><code>" + childHtml + "</code></pre>";
+    }
+
+    if (/^h[1-6]$/.test(tagName)) {
+      return "<" + tagName + ">" + childHtml + "</" + tagName + ">";
+    }
+
+    if (tagName === "blockquote") {
+      return "<blockquote>" + childHtml + "</blockquote>";
+    }
+
+    if (tagName === "ol") {
+      return renderSanitizedListHtml(node, state, true);
+    }
+
+    if (tagName === "ul") {
+      return renderSanitizedListHtml(node, state, false);
+    }
+
+    if (tagName === "li") {
+      return childHtml;
+    }
+
+    if (tagName === "p" || tagName === "div" || tagName === "section" || tagName === "article" || tagName === "figure" || tagName === "figcaption") {
+      return "<p>" + childHtml + "</p>";
+    }
+
+    if (tagName === "span" || tagName === "font" || tagName === "body" || tagName === "html") {
+      return childHtml;
+    }
+
+    return childHtml;
+  }
+
+  async function buildClipboardPasteRichHtml(html, plainText, files) {
+    var sourceHtml = sanitizeClipboardHtml(html);
+    var pendingFiles = Array.isArray(files) ? files.slice() : [];
+    var uploadFailures = [];
+    var outputHtml = "";
+
+    if (sourceHtml && typeof DOMParser === "function") {
+      try {
+        var parser = new DOMParser();
+        var documentNode = parser.parseFromString(sourceHtml, "text/html");
+        var root = documentNode && documentNode.body ? documentNode.body : documentNode && documentNode.documentElement;
+        var state = { images: [] };
+        outputHtml = root ? renderSanitizedChildrenToHtml(root.childNodes || [], state) : "";
+
+        for (var imageIndex = 0; imageIndex < state.images.length; imageIndex += 1) {
+          var image = state.images[imageIndex];
+          var replacementHtml = "";
+          var directUrl = normalizePastedImageUrl(image.src);
+
+          if (directUrl) {
+            replacementHtml = '<p><img src="' + escapeHtmlAttribute(directUrl) + '" alt="' + escapeHtmlAttribute(image.alt || "") + '"></p>';
+          } else if (pendingFiles.length) {
+            var uploadResult = await uploadImageToMarkdown(pendingFiles.shift());
+            if (uploadResult.error) {
+              uploadFailures.push(uploadResult.error);
+            }
+            var replacementImage = extractMarkdownImageData(uploadResult.markdown);
+            if (replacementImage) {
+              replacementHtml = '<p><img src="' + escapeHtmlAttribute(replacementImage.url) + '" alt="' + escapeHtmlAttribute(image.alt || replacementImage.alt || "") + '"></p>';
+            }
+          }
+
+          outputHtml = outputHtml.replace('[[CMS_HTML_IMAGE_' + imageIndex + ']]', replacementHtml);
+        }
+      } catch (error) {
+        console.warn("CMS rich text paste warning: HTML sanitization failed, falling back to plain text HTML", error);
+      }
+    }
+
+    while (pendingFiles.length) {
+      var remainingUpload = await uploadImageToMarkdown(pendingFiles.shift());
+      if (remainingUpload.error) {
+        uploadFailures.push(remainingUpload.error);
+      }
+      var remainingImage = extractMarkdownImageData(remainingUpload.markdown);
+      if (remainingImage) {
+        outputHtml += '<p><img src="' + escapeHtmlAttribute(remainingImage.url) + '" alt="' + escapeHtmlAttribute(remainingImage.alt || "") + '"></p>';
+      }
+    }
+
+    if (!outputHtml) {
+      outputHtml = renderPlainTextAsHtml(plainText);
+    }
+
+    return {
+      html: outputHtml,
+      uploadFailures: uploadFailures
+    };
+  }
+
+  function insertHtmlIntoCms(html, sourceContext) {
+    var editable = findRichTextEditable(sourceContext);
+    if (editable) {
+      return insertWithContentEditableHtml(editable, html);
+    }
+
+    return false;
+  }
+
+  function insertMarkdownIntoCms(text, sourceContext, options) {
+    var behavior = options || {};
+    var candidates = buildEditorCandidates(sourceContext);
+
+    if (insertWithToastUiEditor(text, sourceContext)) {
+      return true;
+    }
+
+    if (!behavior.preferFieldChange) {
+      for (var i = 0; i < candidates.length; i += 1) {
+        var candidate = candidates[i];
+        if (candidate.classList && candidate.classList.contains("CodeMirror") && insertWithCodeMirror(candidate, text)) {
+          return true;
+        }
+
+        if (candidate.tagName === "TEXTAREA" && insertWithTextarea(candidate, text)) {
+          return true;
+        }
+
+        if (candidate.isContentEditable) {
+          continue;
+        }
+      }
+    }
+
+    if (behavior.preferFieldChange && insertViaCmsFieldChange(text, sourceContext)) {
+      return true;
     }
 
     if (insertViaSlateRawEditor(text, sourceContext)) {
@@ -1374,6 +1999,291 @@
     }
   }
 
+  function createImageFileFromBlob(blob) {
+    if (!blob) {
+      return null;
+    }
+
+    if (typeof File === "function" && blob instanceof File) {
+      return blob;
+    }
+
+    if (typeof File !== "function") {
+      return blob;
+    }
+
+    return new File([blob], "pasted-image." + getFileExtension(blob), {
+      type: blob.type || "image/png"
+    });
+  }
+
+  async function uploadImageForToastUiEditor(blob) {
+    var file = createImageFileFromBlob(blob);
+    if (!file) {
+      throw new Error("未读取到可上传的图片数据。");
+    }
+
+    try {
+      var result = await uploadImage(file);
+      await cacheImageForLocalPreview(result.publicUrl, file);
+      return {
+        url: result.publicUrl,
+        alt: getAltText(file),
+        fallback: false
+      };
+    } catch (uploadError) {
+      console.warn("CMS toast editor warning: image upload failed, using inline image fallback", uploadError);
+      var inlineImage = extractMarkdownImageData(await buildInlineMarkdown(file));
+      if (!inlineImage || !inlineImage.url) {
+        throw uploadError;
+      }
+
+      return {
+        url: inlineImage.url,
+        alt: inlineImage.alt || getAltText(file),
+        fallback: true
+      };
+    }
+  }
+
+  function registerToastUiEditorWidget() {
+    if (
+      !window.CMS ||
+      typeof window.CMS.registerWidget !== "function" ||
+      typeof window.createClass !== "function" ||
+      typeof window.h !== "function"
+    ) {
+      return;
+    }
+
+    if (window.__cmsToastUiWidgetRegistered) {
+      return;
+    }
+
+    window.__cmsToastUiWidgetRegistered = true;
+
+    var ToastUiControl = window.createClass({
+      setEditorHost: function (node) {
+        this.editorHost = node;
+      },
+
+      syncFromEditor: function () {
+        if (!this.editor || this.isSyncingEditorValue) {
+          return;
+        }
+
+        var nextValue = this.editor.getMarkdown();
+        if (nextValue === this.lastSyncedValue) {
+          return;
+        }
+
+        this.lastSyncedValue = nextValue;
+        this.props.onChange(nextValue);
+      },
+
+      activateEditor: function () {
+        if (this.toastContext) {
+          setActiveToastUiEditorContext(this.toastContext);
+        }
+      },
+
+      handleImageBlob: function (blob, callback) {
+        var self = this;
+        uploadImageForToastUiEditor(blob)
+          .then(function (uploadedImage) {
+            callback(uploadedImage.url, uploadedImage.alt || "image");
+            self.activateEditor();
+            if (typeof self.syncFromEditor === "function") {
+              window.setTimeout(function () {
+                self.syncFromEditor();
+              }, 0);
+            }
+            showToast(uploadedImage.fallback ? "图片上传失败，已以内联图片方式插入正文。" : "图片已插入正文。", uploadedImage.fallback ? "info" : "success");
+          })
+          .catch(function (error) {
+            console.error(error);
+            showToast(error && error.message ? error.message : "图片插入失败，请稍后重试。", "error");
+          });
+
+        return false;
+      },
+
+      handleVideoInsert: function (event) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        this.activateEditor();
+        handleVideoInsert({
+          sourceNode: this.editorHost,
+          activeElement: document.activeElement,
+          path: [],
+          toastEditorContext: this.toastContext
+        });
+      },
+
+      componentDidMount: function () {
+        if (!this.editorHost || !window.toastui || !window.toastui.Editor) {
+          showToast("TOAST UI Editor 加载失败，请刷新后台页面后重试。", "error");
+          return;
+        }
+
+        var self = this;
+        var host = this.editorHost;
+        var EditorConstructor = window.toastui.Editor;
+        host.setAttribute("data-cms-toast-widget", "true");
+
+        this.editor = new EditorConstructor({
+          el: host,
+          height: "680px",
+          minHeight: "420px",
+          initialValue: this.props.value || "",
+          initialEditType: "wysiwyg",
+          previewStyle: "vertical",
+          hideModeSwitch: true,
+          usageStatistics: false,
+          placeholder: "粘贴网页图文、直接粘贴图片，或使用下方插入视频按钮。",
+          toolbarItems: [
+            ["heading", "bold", "italic", "strike"],
+            ["hr", "quote"],
+            ["ul", "ol", "task"],
+            ["table", "link"],
+            ["image", "code", "codeblock"]
+          ],
+          hooks: {
+            addImageBlobHook: function (blob, callback) {
+              return self.handleImageBlob(blob, callback);
+            }
+          },
+          events: {
+            change: function () {
+              self.syncFromEditor();
+            },
+            focus: function () {
+              self.activateEditor();
+            },
+            blur: function () {
+              self.syncFromEditor();
+            }
+          }
+        });
+
+        this.lastSyncedValue = this.editor.getMarkdown();
+        this.toastContext = {
+          id: "toast-editor-" + String(Date.now()) + "-" + Math.random().toString(16).slice(2, 8),
+          root: host,
+          editor: this.editor,
+          syncToField: this.syncFromEditor
+        };
+        host.__cmsToastUiEditorContext = this.toastContext;
+        this.activateEditor();
+
+        var editorElements = this.editor.getEditorElements ? this.editor.getEditorElements() : null;
+        if (editorElements && editorElements.wwEditor && editorElements.wwEditor.addEventListener) {
+          editorElements.wwEditor.addEventListener("focusin", function () {
+            self.activateEditor();
+          });
+        }
+      },
+
+      componentDidUpdate: function () {
+        if (!this.editor) {
+          return;
+        }
+
+        var nextValue = this.props.value || "";
+        if (nextValue === this.lastSyncedValue || nextValue === this.editor.getMarkdown()) {
+          return;
+        }
+
+        this.isSyncingEditorValue = true;
+        this.editor.setMarkdown(nextValue, false);
+        this.lastSyncedValue = nextValue;
+        this.isSyncingEditorValue = false;
+      },
+
+      componentWillUnmount: function () {
+        if (this.editor && typeof this.editor.destroy === "function") {
+          this.editor.destroy();
+        }
+
+        if (this.editorHost) {
+          delete this.editorHost.__cmsToastUiEditorContext;
+        }
+
+        if (activeToastUiEditorContext === this.toastContext) {
+          activeToastUiEditorContext = null;
+        }
+      },
+
+      render: function () {
+        return window.h(
+          "div",
+          { className: this.props.classNameWrapper || "" },
+          [
+            window.h("div", {
+              key: "editor",
+              ref: this.setEditorHost,
+              className: "cms-toast-editor-shell",
+              style: {
+                border: "1px solid #d0d5dd",
+                borderRadius: "12px",
+                overflow: "hidden",
+                background: "#ffffff"
+              }
+            }),
+            window.h(
+              "div",
+              {
+                key: "actions",
+                style: {
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  gap: "12px",
+                  marginTop: "10px"
+                }
+              },
+              [
+                window.h(
+                  "button",
+                  {
+                    key: "video",
+                    type: "button",
+                    onClick: this.handleVideoInsert,
+                    style: {
+                      border: "0",
+                      borderRadius: "8px",
+                      background: "#0f766e",
+                      color: "#ffffff",
+                      padding: "8px 12px",
+                      font: "700 13px/1.2 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      cursor: "pointer"
+                    }
+                  },
+                  "Insert video"
+                ),
+                window.h(
+                  "span",
+                  {
+                    key: "hint",
+                    style: {
+                      color: "#475467",
+                      font: "12px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
+                    }
+                  },
+                  "支持富文本粘贴、图片粘贴/上传，保存时自动转成 Markdown。"
+                )
+              ]
+            )
+          ]
+        );
+      }
+    });
+
+    window.CMS.registerWidget("toast-ui-editor", ToastUiControl);
+  }
+
   function getClipboardHtml(event) {
     if (!event || !event.clipboardData || typeof event.clipboardData.getData !== "function") {
       return "";
@@ -1392,6 +2302,19 @@
     }
 
     return event.clipboardData.getData("text/plain") || "";
+  }
+
+  function sanitizeClipboardHtml(html) {
+    return String(html || "")
+      .replace(/\uFEFF/g, "")
+      .replace(/<!--StartFragment-->|<!--EndFragment-->/gi, "")
+      .replace(/<!--[\s\S]*?-->/g, "")
+      .replace(/<\?xml[\s\S]*?\?>/gi, "")
+      .replace(/<!\[if[\s\S]*?!\[endif\]>/gi, "")
+      .replace(/<(?:meta|link)\b[^>]*>/gi, "")
+      .replace(/<(?:xml|o:p|w:[\w-]+|v:[\w-]+|st1:[\w-]+)\b[\s\S]*?<\/(?:xml|o:p|w:[\w-]+|v:[\w-]+|st1:[\w-]+)>/gi, "")
+      .replace(/<(?:o:p|w:[\w-]+|v:[\w-]+|st1:[\w-]+)\b[^>]*\/?>/gi, "")
+      .replace(/^\s*(?:Version:[^\n]*|StartHTML:\d+|EndHTML:\d+|StartFragment:\d+|EndFragment:\d+|SourceURL:[^\n]*)\s*$/gim, "");
   }
 
   function decodeHtmlEntities(value) {
@@ -1424,24 +2347,214 @@
   function normalizeHtmlPasteText(value) {
     return String(value || "")
       .replace(/\r\n?/g, "\n")
+      .replace(/\u00a0/g, " ")
       .replace(/[ \t]+\n/g, "\n")
       .replace(/\n[ \t]+/g, "\n")
+      .replace(/[ \t]{2,}/g, " ")
       .replace(/\n{3,}/g, "\n\n")
       .trim();
   }
 
-  function extractHtmlPastePayload(html) {
+  function normalizeInlineClipboardText(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/\u00a0/g, " ")
+      .replace(/[ \t]+/g, " ");
+  }
+
+  function trimInlineMarkdown(value) {
+    return String(value || "")
+      .replace(/^[ \t\n]+/g, "")
+      .replace(/[ \t\n]+$/g, "");
+  }
+
+  function wrapInlineMarkdown(marker, value) {
+    var content = trimInlineMarkdown(value);
+    return content ? marker + content + marker : "";
+  }
+
+  function prefixMarkdownLines(value, firstPrefix, nextPrefix) {
+    var lines = normalizeHtmlPasteText(value).split("\n");
+    if (!lines.length || !lines[0]) {
+      return "";
+    }
+
+    return lines
+      .map(function (line, index) {
+        return (index === 0 ? firstPrefix : nextPrefix) + line;
+      })
+      .join("\n");
+  }
+
+  function normalizePastedLinkUrl(value) {
+    var url = String(value || "").trim();
+    if (!url) {
+      return "";
+    }
+
+    if (/^\/\//.test(url)) {
+      return "https:" + url;
+    }
+
+    if (/^(?:https?:|mailto:|tel:|\/|#)/i.test(url)) {
+      return url;
+    }
+
+    return "";
+  }
+
+  function createHtmlImagePlaceholder(attributes, images) {
+    var index = images.length;
+    images.push({
+      src: extractHtmlAttribute(attributes, "src"),
+      alt: extractHtmlAttribute(attributes, "alt")
+    });
+    return "\n[[CMS_IMAGE_" + index + "]]\n";
+  }
+
+  function renderHtmlChildrenToMarkdown(nodes, state) {
+    var output = "";
+    for (var i = 0; i < nodes.length; i += 1) {
+      output += renderHtmlNodeToMarkdown(nodes[i], state);
+    }
+    return output;
+  }
+
+  function renderHtmlListToMarkdown(node, state, ordered) {
+    var items = [];
+    var itemIndex = 1;
+
+    for (var i = 0; i < node.childNodes.length; i += 1) {
+      var child = node.childNodes[i];
+      if (!child || child.nodeType !== 1 || String(child.tagName || "").toLowerCase() !== "li") {
+        continue;
+      }
+
+      var renderedItem = normalizeHtmlPasteText(renderHtmlChildrenToMarkdown(child.childNodes || [], state));
+      if (!renderedItem) {
+        continue;
+      }
+
+      var prefix = ordered ? String(itemIndex) + ". " : "- ";
+      var continuationPrefix = ordered ? "   " : "  ";
+      items.push(prefixMarkdownLines(renderedItem, prefix, continuationPrefix));
+      itemIndex += 1;
+    }
+
+    return items.length ? "\n\n" + items.join("\n") + "\n\n" : "";
+  }
+
+  function renderHtmlNodeToMarkdown(node, state) {
+    if (!node) {
+      return "";
+    }
+
+    if (node.nodeType === 3) {
+      return normalizeInlineClipboardText(node.textContent || "");
+    }
+
+    if (node.nodeType !== 1) {
+      return "";
+    }
+
+    var tagName = String(node.tagName || "").toLowerCase();
+    var childMarkdown = renderHtmlChildrenToMarkdown(node.childNodes || [], state);
+
+    if (!tagName || tagName === "style" || tagName === "script" || tagName === "noscript" || tagName === "template" || tagName === "head" || tagName === "title") {
+      return "";
+    }
+
+    if (tagName === "img") {
+      var imageIndex = state.images.length;
+      state.images.push({
+        src: node.getAttribute ? node.getAttribute("src") || "" : "",
+        alt: node.getAttribute ? node.getAttribute("alt") || "" : ""
+      });
+      return "\n[[CMS_IMAGE_" + imageIndex + "]]\n";
+    }
+
+    if (tagName === "br") {
+      return "\n";
+    }
+
+    if (/^h[1-6]$/.test(tagName)) {
+      var headingLevel = parseInt(tagName.slice(1), 10);
+      var headingText = normalizeHtmlPasteText(childMarkdown);
+      return headingText ? "\n\n" + Array(headingLevel + 1).join("#") + " " + headingText + "\n\n" : "";
+    }
+
+    if (tagName === "a") {
+      var href = normalizePastedLinkUrl(node.getAttribute ? node.getAttribute("href") : "");
+      var linkText = trimInlineMarkdown(childMarkdown);
+      if (!linkText) {
+        return href;
+      }
+      return href ? "[" + linkText + "](" + href + ")" : linkText;
+    }
+
+    if (tagName === "strong" || tagName === "b") {
+      return wrapInlineMarkdown("**", childMarkdown);
+    }
+
+    if (tagName === "em" || tagName === "i") {
+      return wrapInlineMarkdown("*", childMarkdown);
+    }
+
+    if (tagName === "code") {
+      var inlineCode = trimInlineMarkdown(childMarkdown).replace(/`+/g, "");
+      return inlineCode ? "`" + inlineCode + "`" : "";
+    }
+
+    if (tagName === "pre") {
+      var codeBlock = trimInlineMarkdown(childMarkdown);
+      return codeBlock ? "\n\n```\n" + codeBlock + "\n```\n\n" : "";
+    }
+
+    if (tagName === "ul") {
+      return renderHtmlListToMarkdown(node, state, false);
+    }
+
+    if (tagName === "ol") {
+      return renderHtmlListToMarkdown(node, state, true);
+    }
+
+    if (tagName === "blockquote") {
+      var quoteText = normalizeHtmlPasteText(childMarkdown);
+      return quoteText ? "\n\n" + prefixMarkdownLines(quoteText, "> ", "> ") + "\n\n" : "";
+    }
+
+    if (tagName === "p" || tagName === "div" || tagName === "section" || tagName === "article" || tagName === "figure" || tagName === "figcaption") {
+      var blockText = normalizeHtmlPasteText(childMarkdown);
+      return blockText ? "\n\n" + blockText + "\n\n" : "";
+    }
+
+    if (tagName === "li") {
+      return childMarkdown;
+    }
+
+    return childMarkdown;
+  }
+
+  function extractHtmlPastePayloadWithDomParser(html) {
+    var parser = new DOMParser();
+    var documentNode = parser.parseFromString(sanitizeClipboardHtml(html), "text/html");
+    var root = documentNode && documentNode.body ? documentNode.body : documentNode && documentNode.documentElement;
+    var state = { images: [] };
+    var markdown = root ? renderHtmlChildrenToMarkdown(root.childNodes || [], state) : "";
+
+    return {
+      text: normalizeHtmlPasteText(markdown),
+      images: state.images
+    };
+  }
+
+  function extractHtmlPastePayloadFallback(html) {
     var images = [];
     var blockBoundaryRegex = /<\/(?:p|div|section|article|blockquote|h[1-6]|tr|table|ul|ol)>/gi;
     var lineBreakRegex = /<(?:br\s*\/?|\/li)>/gi;
     var listItemRegex = /<li\b[^>]*>/gi;
-    var text = String(html || "").replace(/<img\b([^>]*)>/gi, function (match, attributes) {
-      var index = images.length;
-      images.push({
-        src: extractHtmlAttribute(attributes, "src"),
-        alt: extractHtmlAttribute(attributes, "alt")
-      });
-      return "\n[[CMS_IMAGE_" + index + "]]\n";
+    var text = sanitizeClipboardHtml(html).replace(/<img\b([^>]*)>/gi, function (match, attributes) {
+      return createHtmlImagePlaceholder(attributes, images);
     });
 
     text = text
@@ -1456,6 +2569,18 @@
       text: normalizeHtmlPasteText(decodeHtmlEntities(text)),
       images: images
     };
+  }
+
+  function extractHtmlPastePayload(html) {
+    if (typeof DOMParser === "function") {
+      try {
+        return extractHtmlPastePayloadWithDomParser(html);
+      } catch (error) {
+        console.warn("CMS image paste warning: DOMParser HTML conversion failed, using fallback parser", error);
+      }
+    }
+
+    return extractHtmlPastePayloadFallback(html);
   }
 
   function normalizePastedImageUrl(value) {
@@ -1576,6 +2701,163 @@
     }
   }
 
+  async function handleRichTextClipboardPaste(files, html, plainText, sourceContext) {
+    showToast("正在处理富文本粘贴内容...", "info");
+
+    try {
+      var insertContext = resolvePreferredInsertSourceContext(sourceContext, lastEditorSourceContext);
+      var result = await buildClipboardPasteMarkdown(html, plainText, files);
+      if (!result.markdown) {
+        throw new Error("未读取到可插入的富文本或图片内容。");
+      }
+
+      var inserted = insertMarkdownIntoCms(result.markdown, insertContext, { preferFieldChange: true });
+      if (!inserted) {
+        throw new Error("未找到可写入内容的富文本编辑器区域。");
+      }
+
+      updateRevisionField();
+      if (result.uploadFailures.length) {
+        showToast("部分图片上传失败，已改为内联图片插入富文本。", "error");
+      } else {
+        showToast("富文本内容已插入，请点击保存或发布。", "success");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "富文本粘贴处理失败，请查看控制台日志。", "error");
+    }
+  }
+
+  async function handleRichTextImageInsert(files, sourceContext) {
+    if (!files.length) {
+      return;
+    }
+
+    showToast("正在插入富文本图片...", "info");
+
+    try {
+      var insertContext = resolvePreferredInsertSourceContext(sourceContext, lastEditorSourceContext);
+      var markdownChunks = [];
+      var uploadFailures = [];
+
+      for (var i = 0; i < files.length; i += 1) {
+        var uploadResult = await uploadImageToMarkdown(files[i]);
+        if (uploadResult.error) {
+          uploadFailures.push(uploadResult.error);
+        }
+        markdownChunks.push(uploadResult.markdown.trim());
+      }
+
+      var inserted = insertViaSlateRawEditor(markdownChunks.join("\n\n"), insertContext, {
+        structuredBlocks: true,
+        requireSelection: true
+      });
+      if (!inserted) {
+        throw new Error("未定位到富文本光标，请先点击正文中的具体位置后再粘贴图片。");
+      }
+
+      updateRevisionField();
+      if (uploadFailures.length) {
+        showToast("部分图片上传失败，已改为内联图片插入富文本。", "error");
+      } else {
+        showToast("图片已按当前光标位置插入富文本。", "success");
+      }
+    } catch (error) {
+      console.error(error);
+      showToast(error.message || "富文本图片插入失败，请查看控制台日志。", "error");
+    }
+  }
+
+  function extractMarkdownImageData(markdown) {
+    var match = /!\[([^\]]*)\]\(([^)]+)\)/.exec(String(markdown || ""));
+    if (!match) {
+      return null;
+    }
+
+    return {
+      alt: match[1] || "",
+      url: match[2] || ""
+    };
+  }
+
+  function getContextEditorRoot(sourceContext) {
+    if (!sourceContext) {
+      return null;
+    }
+
+    return (
+      closestEditorCandidate(sourceContext.sourceNode) ||
+      closestEditorCandidate(sourceContext.activeElement) ||
+      findNearestEditableRoot(sourceContext.sourceNode) ||
+      findNearestEditableRoot(sourceContext.activeElement) ||
+      null
+    );
+  }
+
+  function resolvePreferredInsertSourceContext(sourceContext, fallbackContext) {
+    var currentContext = sourceContext || null;
+    var rememberedContext = fallbackContext || null;
+
+    if (!currentContext) {
+      return rememberedContext;
+    }
+
+    if (!rememberedContext) {
+      return currentContext;
+    }
+
+    var currentRoot = getContextEditorRoot(currentContext);
+    var rememberedRoot = getContextEditorRoot(rememberedContext);
+    if (currentRoot && rememberedRoot && currentRoot !== rememberedRoot) {
+      return currentContext;
+    }
+
+    var hasCurrentOffset = typeof currentContext.selectionOffset === "number" && isFinite(currentContext.selectionOffset);
+    var hasRememberedOffset = typeof rememberedContext.selectionOffset === "number" && isFinite(rememberedContext.selectionOffset);
+    var hasCurrentSlateContext = Boolean(
+      currentContext.slateBlock ||
+      currentContext.slateBlockText != null ||
+      (typeof currentContext.slateBlockIndex === "number" && currentContext.slateBlockIndex >= 0)
+    );
+    var hasRememberedSlateContext = Boolean(
+      rememberedContext.slateBlock ||
+      rememberedContext.slateBlockText != null ||
+      (typeof rememberedContext.slateBlockIndex === "number" && rememberedContext.slateBlockIndex >= 0)
+    );
+
+    if (!hasCurrentSlateContext && hasRememberedSlateContext) {
+      return {
+        sourceNode: currentContext.sourceNode,
+        activeElement: currentContext.activeElement,
+        path: currentContext.path,
+        selectionOffset: hasRememberedOffset ? rememberedContext.selectionOffset : currentContext.selectionOffset,
+        slateBlock: rememberedContext.slateBlock || currentContext.slateBlock,
+        slateBlockOffset: rememberedContext.slateBlockOffset != null ? rememberedContext.slateBlockOffset : currentContext.slateBlockOffset,
+        slateBlockText: rememberedContext.slateBlockText != null ? rememberedContext.slateBlockText : currentContext.slateBlockText,
+        slateBlockIndex: rememberedContext.slateBlockIndex != null ? rememberedContext.slateBlockIndex : currentContext.slateBlockIndex
+      };
+    }
+
+    if (!hasRememberedOffset) {
+      return currentContext;
+    }
+
+    if (!hasCurrentOffset || (currentContext.selectionOffset === 0 && rememberedContext.selectionOffset > 0)) {
+      return {
+        sourceNode: currentContext.sourceNode,
+        activeElement: currentContext.activeElement,
+        path: currentContext.path,
+        selectionOffset: rememberedContext.selectionOffset,
+        slateBlock: rememberedContext.slateBlock || currentContext.slateBlock,
+        slateBlockOffset: rememberedContext.slateBlockOffset != null ? rememberedContext.slateBlockOffset : currentContext.slateBlockOffset,
+        slateBlockText: rememberedContext.slateBlockText != null ? rememberedContext.slateBlockText : currentContext.slateBlockText,
+        slateBlockIndex: rememberedContext.slateBlockIndex != null ? rememberedContext.slateBlockIndex : currentContext.slateBlockIndex
+      };
+    }
+
+    return currentContext;
+  }
+
   function buildCurrentEditorSourceContext(sourceNode) {
     var selectionNode = getSelectionAnchorNode() || sourceNode || document.activeElement;
     var slateSelectionContext = getSlateSelectionContext(selectionNode);
@@ -1621,6 +2903,12 @@
       return;
     }
 
+    var toastContext = findToastUiEditorContextFromNode(sourceNode);
+    if (toastContext) {
+      setActiveToastUiEditorContext(toastContext);
+      return;
+    }
+
     var candidate = closestEditorCandidate(sourceNode);
     var slateNode = findNearestSlateElementNode(sourceNode);
     var editableRoot = findNearestEditableRoot(sourceNode);
@@ -1646,7 +2934,10 @@
     }
 
     try {
-      insertMarkdownIntoCms(embedHtml, insertContext);
+      var inserted = insertMarkdownIntoCms(embedHtml, insertContext);
+      if (!inserted) {
+        throw new Error("未找到可写入内容的编辑器区域。");
+      }
       updateRevisionField();
       showToast("Video embed inserted. Save or publish the entry when ready.", "success");
     } catch (error) {
@@ -1694,14 +2985,19 @@
   document.addEventListener(
     "paste",
     function (event) {
+      if (eventTargetsToastUiEditor(event)) {
+        return;
+      }
+
       var files = collectPastedImages(event);
       var html = getClipboardHtml(event);
       var hasHtmlImages = containsHtmlImages(html);
+      var sourceContext = buildImageInsertSourceContext(event);
+
       if (!files.length && !hasHtmlImages) {
         return;
       }
 
-      var sourceContext = buildImageInsertSourceContext(event);
       claimImageEvent(event);
       if (hasHtmlImages) {
         handleClipboardPaste(files, html, getClipboardPlainText(event), sourceContext);
@@ -1715,6 +3011,10 @@
   document.addEventListener(
     "dragover",
     function (event) {
+      if (eventTargetsToastUiEditor(event)) {
+        return;
+      }
+
       var files = collectDroppedImages(event);
       if (!files.length) {
         return;
@@ -1728,6 +3028,10 @@
   document.addEventListener(
     "drop",
     function (event) {
+      if (eventTargetsToastUiEditor(event)) {
+        return;
+      }
+
       var files = collectDroppedImages(event);
       if (!files.length) {
         return;
@@ -1750,7 +3054,20 @@
     );
   });
 
+  document.addEventListener(
+    "selectionchange",
+    function () {
+      var selectionNode = getSelectionAnchorNode();
+      if (!selectionNode) {
+        return;
+      }
+
+      rememberEditorSourceContext(selectionNode.nodeType === 3 ? selectionNode.parentElement : selectionNode);
+    },
+    true
+  );
+
   startTranslationProtection();
+  registerToastUiEditorWidget();
   registerMediaFallbackServiceWorker();
-  ensureVideoInsertButton();
 })();

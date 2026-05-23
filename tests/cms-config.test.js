@@ -8,8 +8,8 @@ const config = fs.readFileSync(configPath, "utf8");
 
 assert.match(
   config,
-  /name:\s*"body"[\s\S]*?widget:\s*"markdown"/,
-  "CMS body field should keep the markdown widget so Rich Text / Markdown mode stays available"
+  /name:\s*"body"[\s\S]*?widget:\s*"toast-ui-editor"/,
+  "CMS body field should use the Toast UI widget so the editor runs through the custom Markdown-backed editor"
 );
 
 assert.match(

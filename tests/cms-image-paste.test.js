@@ -9,15 +9,34 @@ const source = fs.readFileSync(customJsPath, "utf8");
 
 const instrumentedSource = source.replace(
   /\}\)\(\);\s*$/,
-  "window.__cmsImagePasteTestHooks = { handleImageInsert, handleClipboardPaste, buildClipboardPasteMarkdown, insertWithTextarea, setNativeValue, uploadImage, buildImageInsertSourceContext };})();"
+  "window.__cmsImagePasteTestHooks = { handleImageInsert, handleClipboardPaste, handleRichTextClipboardPaste, handleRichTextImageInsert, buildClipboardPasteMarkdown, buildClipboardPasteRichHtml, insertWithTextarea, insertHtmlIntoCms, insertMarkdownIntoCms, insertViaSlateRawEditor, handleVideoInsert, setNativeValue, uploadImage, buildImageInsertSourceContext, rememberEditorSourceContext, resolvePreferredInsertSourceContext, resolveMarkdownInsertOffset, resolveSlateContextFromGlobalOffset, __setLastEditorSourceContext(value) { lastEditorSourceContext = value; } };})();"
 );
 
 const listeners = [];
+const execCommands = [];
 
 class FakeEvent {
   constructor(type) {
     this.type = type;
   }
+}
+
+function createTextNode(text) {
+  return {
+    nodeType: 3,
+    textContent: text,
+  };
+}
+
+function createElementNode(tagName, attributes, children) {
+  return {
+    nodeType: 1,
+    tagName,
+    childNodes: children || [],
+    getAttribute(name) {
+      return (attributes && attributes[name]) || "";
+    },
+  };
 }
 
 class FakeTextarea {
@@ -61,6 +80,7 @@ class FakeEditable {
     this.isContentEditable = true;
     this.parentElement = null;
     this.events = [];
+    this.focused = false;
     if (slateBlock) {
       this.__reactFiber$line = {
         memoizedProps: {
@@ -88,6 +108,10 @@ class FakeEditable {
 
   dispatchEvent(event) {
     this.events.push(event.type);
+  }
+
+  focus() {
+    this.focused = true;
   }
 }
 
@@ -138,6 +162,10 @@ const context = {
   document: {
     addEventListener(type, listener, options) {
       listeners.push({ type, listener, options });
+    },
+    execCommand(command, _ui, value) {
+      execCommands.push({ command, value });
+      return true;
     },
     querySelectorAll() {
       return [];
@@ -521,11 +549,334 @@ async function testHandlesMixedHtmlPasteWithImagesWithoutCrashingDecap() {
   );
 }
 
+async function testPreservesFormattingFromRichHtmlPaste() {
+  const originalDOMParser = context.DOMParser;
+  context.DOMParser = class FakeDOMParser {
+    parseFromString() {
+      return {
+        body: createElementNode("body", {}, [
+          createElementNode("p", {}, [createTextNode("The 2026 World Cup is about to begin.")]),
+          createElementNode("p", {}, [
+            createTextNode("Lionel "),
+            createElementNode("strong", {}, [createTextNode("Messi")]),
+            createTextNode(" and "),
+            createElementNode("a", { href: "https://example.com/lautaro" }, [createTextNode("Lautaro Martinez")]),
+            createTextNode(" lead the squad."),
+          ]),
+          createElementNode("h2", {}, [createTextNode("Argentina Base Formation")]),
+          createElementNode("ol", {}, [
+            createElementNode("li", {}, [createTextNode("Keep the ball")]),
+            createElementNode("li", {}, [createTextNode("Press after loss")]),
+          ]),
+          createElementNode("img", { src: "blob:https://editor.local/chart", alt: "Argentina shape" }, []),
+          createElementNode("p", {}, [createTextNode("On paper, Argentina can easily be described as a 4-3-3.")]),
+        ]),
+      };
+    }
+  };
+
+  const file = {
+    name: "argentina-shape.png",
+    type: "image/png",
+    size: 4,
+    async arrayBuffer() {
+      return Uint8Array.from([9, 10, 11, 12]).buffer;
+    },
+  };
+
+  try {
+    const result = await context.window.__cmsImagePasteTestHooks.buildClipboardPasteMarkdown(
+      "<html>ignored by fake parser</html>",
+      "plain fallback should not be used",
+      [file]
+    );
+
+    assert.strictEqual(
+      result.markdown,
+      "\nThe 2026 World Cup is about to begin.\n\nLionel **Messi** and [Lautaro Martinez](https://example.com/lautaro) lead the squad.\n\n## Argentina Base Formation\n\n1. Keep the ball\n2. Press after loss\n\n![argentina shape](data:image/png;base64,CQoLDA==)\n\nOn paper, Argentina can easily be described as a 4-3-3.\n",
+      "rich HTML paste should preserve headings, emphasis, links, ordered lists, and image placement"
+    );
+  } finally {
+    context.DOMParser = originalDOMParser;
+  }
+}
+
+function testRichTextHtmlPasteFallsThroughToDecap() {
+  const richEditable = new FakeEditable();
+  context.document.activeElement = richEditable;
+  context.document.activeElement = richEditable;
+  context.document.querySelectorAll = (selector) => {
+    if (selector === ".CodeMirror") {
+      return [];
+    }
+    if (selector === '[contenteditable="true"]') {
+      return [richEditable];
+    }
+    if (selector === "textarea") {
+      return [];
+    }
+    return [];
+  };
+  context.window.getSelection = () => ({
+    anchorNode: richEditable,
+    rangeCount: 0,
+  });
+  const pasteListener = listeners.find((listener) => listener.type === "paste");
+  let prevented = false;
+  pasteListener.listener({
+    target: richEditable,
+    clipboardData: {
+      items: [],
+      getData(type) {
+        if (type === "text/html") {
+          return "<p>Alpha <strong>Messi</strong></p>";
+        }
+        if (type === "text/plain") {
+          return "Alpha Messi";
+        }
+        return "";
+      },
+    },
+    composedPath() {
+      return [richEditable];
+    },
+    preventDefault() {
+      prevented = true;
+    },
+    stopPropagation() {},
+    stopImmediatePropagation() {},
+  });
+
+  assert.strictEqual(prevented, false, "rich text HTML-only paste should fall through to Decap so Slate keeps its own state in sync");
+}
+
+async function testRichTextImagePasteUsesSlateBlocksAtCursor() {
+  const richEditable = new FakeEditable();
+  const fieldChangeCalls = [];
+  const slateChangeCalls = [];
+  const slateValue = [
+    { type: "paragraph", children: [{ text: "intro middle outro" }] },
+  ];
+
+  richEditable.__reactFiber$line = {
+    memoizedProps: {
+      value: slateValue,
+      onChange(value) {
+        slateChangeCalls.push(value);
+      },
+    },
+    return: {
+      memoizedProps: {
+        field: {
+          get(key) {
+            return key === "name" ? "body" : undefined;
+          },
+        },
+        value: "intro middle outro",
+        onChange(value) {
+          fieldChangeCalls.push(value);
+        },
+      },
+      return: null,
+    },
+  };
+
+  await context.window.__cmsImagePasteTestHooks.handleRichTextImageInsert(
+    [{
+      name: "rich-paste.png",
+      type: "image/png",
+      size: 4,
+      async arrayBuffer() {
+        return Uint8Array.from([21, 22, 23, 24]).buffer;
+      },
+    }],
+    {
+      sourceNode: richEditable,
+      activeElement: richEditable,
+      path: [richEditable],
+      slateBlock: slateValue[0],
+      slateBlockOffset: "intro ".length,
+    }
+  );
+
+  assert.strictEqual(fieldChangeCalls.length, 0, "rich text image paste should not fall back to markdown field updates");
+  assert.strictEqual(slateChangeCalls.length, 1, "rich text image paste should update the Slate editor value directly");
+  assert.strictEqual(slateChangeCalls[0].length, 3, "rich text image paste should split the paragraph into before/image/after blocks");
+  assert.strictEqual(slateChangeCalls[0][0].type, "paragraph");
+  assert.strictEqual(slateChangeCalls[0][0].children[0].text, "intro ");
+  assert.strictEqual(slateChangeCalls[0][1].type, "image");
+  assert.strictEqual(slateChangeCalls[0][1].data.url, "data:image/png;base64,FRYXGA==");
+  assert.strictEqual(slateChangeCalls[0][1].data.alt, "rich paste");
+  assert.strictEqual(slateChangeCalls[0][2].type, "paragraph");
+  assert.strictEqual(slateChangeCalls[0][2].children[0].text, "middle outro");
+}
+
+async function testRichTextImagePasteUsesRememberedSlateContext() {
+  const richEditable = new FakeEditable();
+  const slateChangeCalls = [];
+  const slateValue = [
+    { type: "paragraph", children: [{ text: "intro middle outro" }] },
+  ];
+
+  richEditable.__reactFiber$line = {
+    memoizedProps: {
+      value: slateValue,
+      onChange(value) {
+        slateChangeCalls.push(value);
+      },
+    },
+    return: {
+      memoizedProps: {
+        field: {
+          get(key) {
+            return key === "name" ? "body" : undefined;
+          },
+        },
+        value: "intro middle outro",
+        onChange() {},
+      },
+      return: null,
+    },
+  };
+
+  context.window.__cmsImagePasteTestHooks.__setLastEditorSourceContext({
+    sourceNode: richEditable,
+    activeElement: richEditable,
+    path: [richEditable],
+    slateBlock: slateValue[0],
+    slateBlockOffset: "intro ".length,
+    slateBlockText: "intro middle outro",
+    slateBlockIndex: 0,
+  });
+
+  await context.window.__cmsImagePasteTestHooks.handleRichTextImageInsert(
+    [{
+      name: "cursor-image.png",
+      type: "image/png",
+      size: 4,
+      async arrayBuffer() {
+        return Uint8Array.from([31, 32, 33, 34]).buffer;
+      },
+    }],
+    {
+      sourceNode: richEditable,
+      activeElement: richEditable,
+      path: [richEditable],
+    }
+  );
+
+  assert.strictEqual(slateChangeCalls.length, 1);
+  assert.strictEqual(
+    slateChangeCalls[0][1].data.url,
+    "data:image/png;base64,HyAhIg==",
+    "rich text image paste should use the remembered Slate selection when the current event no longer exposes a block"
+  );
+}
+
+async function testRichTextImagePasteUsesGlobalSelectionOffsetWhenBlockIsMissing() {
+  const richEditable = new FakeEditable();
+  const slateChangeCalls = [];
+  const slateValue = [
+    { type: "paragraph", children: [{ text: "intro middle outro" }] },
+  ];
+
+  richEditable.__reactFiber$line = {
+    memoizedProps: {
+      value: slateValue,
+      onChange(value) {
+        slateChangeCalls.push(value);
+      },
+    },
+    return: {
+      memoizedProps: {
+        field: {
+          get(key) {
+            return key === "name" ? "body" : undefined;
+          },
+        },
+        value: "intro middle outro",
+        onChange() {},
+      },
+      return: null,
+    },
+  };
+
+  await context.window.__cmsImagePasteTestHooks.handleRichTextImageInsert(
+    [{
+      name: "global-offset-image.png",
+      type: "image/png",
+      size: 4,
+      async arrayBuffer() {
+        return Uint8Array.from([41, 42, 43, 44]).buffer;
+      },
+    }],
+    {
+      sourceNode: richEditable,
+      activeElement: richEditable,
+      path: [richEditable],
+      selectionOffset: "intro ".length,
+    }
+  );
+
+  assert.strictEqual(slateChangeCalls.length, 1, "rich text image paste should derive the active block from the global selection offset");
+  assert.strictEqual(slateChangeCalls[0][0].children[0].text, "intro ");
+  assert.strictEqual(slateChangeCalls[0][1].data.url, "data:image/png;base64,KSorLA==");
+  assert.strictEqual(slateChangeCalls[0][2].children[0].text, "middle outro");
+}
+
+function testSelectionChangeRemembersRichTextCursor() {
+  const selectionListener = listeners.find((listener) => listener.type === "selectionchange");
+  assert.ok(selectionListener, "selectionchange listener should be registered");
+
+  const richEditable = new FakeEditable();
+  const anchorNode = {
+    nodeType: 3,
+    parentElement: richEditable,
+  };
+
+  const originalGetSelection = context.window.getSelection;
+  context.window.getSelection = () => ({
+    anchorNode,
+    rangeCount: 0,
+  });
+
+  try {
+    selectionListener.listener();
+    const remembered = context.window.__cmsImagePasteTestHooks.resolvePreferredInsertSourceContext(
+      { sourceNode: richEditable, activeElement: richEditable, path: [richEditable], selectionOffset: 0 },
+      null
+    );
+    assert.strictEqual(remembered.selectionOffset, 0);
+  } finally {
+    context.window.getSelection = originalGetSelection;
+  }
+}
+
+function testResolveMarkdownInsertOffsetUsesSlateBlockText() {
+  const offset = context.window.__cmsImagePasteTestHooks.resolveMarkdownInsertOffset(
+    "\nIntro paragraph.\n\nArgentina 2026 Base Shape\n\nTail paragraph.\n",
+    {
+      selectionOffset: 0,
+      slateBlockText: "Argentina 2026 Base Shape",
+      slateBlockOffset: "Argentina ".length,
+    }
+  );
+
+  assert.strictEqual(
+    offset,
+    "\nIntro paragraph.\n\n".length + "Argentina ".length,
+    "rich text image insertion should anchor to the active Slate block text instead of falling back to offset 0"
+  );
+}
+
 testUploadsImagesThroughR2Worker()
   .then(testFallsBackToInlineImageWhenUploadFails)
   .then(testUpdatesSlateRawMarkdownEditor)
   .then(testPreservesExistingSlateImageRows)
   .then(testHandlesMixedHtmlPasteWithImagesWithoutCrashingDecap)
+  .then(testPreservesFormattingFromRichHtmlPaste)
+  .then(testSelectionChangeRemembersRichTextCursor)
+  .then(testResolveMarkdownInsertOffsetUsesSlateBlockText)
   .then(() => {
     console.log("cms-image-paste tests passed");
   })
