@@ -40,8 +40,11 @@
     {{- $name = "DefensivePositions" -}}
     {{- $url = "/defensive-positions/" -}}
   {{- else if eq $cat "综述" -}}
-    {{- $name = "Overview" -}}
+    {{- $name = "PositionsOverview" -}}
     {{- $url = "/overview/" -}}
+  {{- else if eq $cat "战术预览" -}}
+    {{- $name = "TacticalPreview" -}}
+    {{- $url = "/tactical-preview/" -}}
   {{- end -}}
 
   {{- if $url -}}

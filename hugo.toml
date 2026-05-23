@@ -36,24 +36,24 @@ buildFuture = true
 
 [menu]
   [[menu.main]]
-    name = "Overview"
-    url = "/overview/"
+    name = "TacticalPreview"
+    url = "/tactical-preview/"
     weight = 5
+  [[menu.main]]
+    name = "PositionsOverview"
+    url = "/overview/"
+    weight = 10
   [[menu.main]]
     name = "AttackingPositions"
     url = "/attacking-positions/"
-    weight = 10
+    weight = 20
   [[menu.main]]
     name = "MidfieldPositions"
     url = "/midfield-positions/"
-    weight = 20
+    weight = 30
   [[menu.main]]
     name = "DefensivePositions"
     url = "/defensive-positions/"
-    weight = 30
-  [[menu.main]]
-    name = "TacticalPreview"
-    url = "/tactical-preview/"
     weight = 40
 
 

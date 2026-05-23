@@ -1,5 +1,5 @@
 ---
-title: Overview
+title: PositionsOverview
 slug: overview
 ---
 
