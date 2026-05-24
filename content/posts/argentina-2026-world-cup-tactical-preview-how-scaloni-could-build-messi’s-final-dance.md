@@ -134,3 +134,8 @@ So when analyzing Argentina’s formation, the best question is not simply:
 The better question is:
 **When Messi moves, how do the other Argentina players adjust their positions?**
 That is the real tactical core of Argentina’s 2026 World Cup campaign.
+
+\<figure class="video-embed">
+ \<iframe src="https://player.bilibili.com/player.html?bvid=BV1c8EtzGEEb" title="Embedded video" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen>\</iframe>
+\</figure>
+
