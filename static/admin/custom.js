@@ -562,15 +562,30 @@
     return false;
   }
 
-  function insertWithToastUiEditor(text, sourceContext) {
+  function shouldInsertToastUiTextInMarkdownMode(text, options) {
+    if (options && options.forceMarkdownMode) {
+      return true;
+    }
+
+    return /<figure class="video-embed">[\s\S]*?<\/figure>/i.test(String(text || ""));
+  }
+
+  function insertWithToastUiEditor(text, sourceContext, options) {
     var toastContext = resolveToastUiEditorContext(sourceContext);
     if (!toastContext || !toastContext.editor) {
       return false;
     }
 
+    var behavior = options || {};
+    var shouldUseMarkdownMode = shouldInsertToastUiTextInMarkdownMode(text, behavior);
+
     setActiveToastUiEditorContext(toastContext);
     if (typeof toastContext.editor.focus === "function") {
       toastContext.editor.focus();
+    }
+
+    if (shouldUseMarkdownMode && typeof toastContext.editor.changeMode === "function") {
+      toastContext.editor.changeMode("markdown", true);
     }
 
     if (typeof toastContext.editor.insertText === "function") {
@@ -579,6 +594,10 @@
       toastContext.editor.setMarkdown((toastContext.editor.getMarkdown() || "") + text, true);
     } else {
       return false;
+    }
+
+    if (shouldUseMarkdownMode && typeof toastContext.editor.changeMode === "function") {
+      toastContext.editor.changeMode("wysiwyg", true);
     }
 
     if (typeof toastContext.syncToField === "function") {
@@ -1835,7 +1854,7 @@
     var behavior = options || {};
     var candidates = buildEditorCandidates(sourceContext);
 
-    if (insertWithToastUiEditor(text, sourceContext)) {
+    if (insertWithToastUiEditor(text, sourceContext, behavior)) {
       return true;
     }
 
@@ -2046,6 +2065,96 @@
     }
   }
 
+  function createToastUiHtmlBlockRenderer(tagName) {
+    return function (node) {
+      return [
+        {
+          type: "openTag",
+          tagName: tagName,
+          outerNewLine: true,
+          attributes: (node && node.attrs) || {}
+        },
+        {
+          type: "html",
+          content: (node && node.childrenHTML) || ""
+        },
+        {
+          type: "closeTag",
+          tagName: tagName,
+          outerNewLine: true
+        }
+      ];
+    };
+  }
+
+  function getToastUiVideoHtmlRenderer() {
+    return {
+      htmlBlock: {
+        figure: createToastUiHtmlBlockRenderer("figure"),
+        iframe: createToastUiHtmlBlockRenderer("iframe"),
+        video: createToastUiHtmlBlockRenderer("video")
+      }
+    };
+  }
+
+  function normalizeToastUiMarkdown(value) {
+    return String(value || "")
+      .replace(/\r\n?/g, "\n")
+      .replace(/(^|\n)[ \t]*\\+[ \t]*(?=\n(?:[ \t]*\n)*[ \t]*<figure class="video-embed">)/gi, "$1")
+      .replace(/(<\/figure>)(?:(?:\n)[ \t]*\\+[ \t]*)+(?=(?:\n|$))/gi, "$1");
+  }
+
+  function splitMarkdownPreviewSegments(value) {
+    var markdown = normalizeToastUiMarkdown(value);
+    var pattern = /(?:^|\n)\\\s*(?=\n\s*<figure class="video-embed">)|<figure class="video-embed">[\s\S]*?<\/figure>\s*(?:\n\\\s*(?=\n|$))?/gi;
+    var segments = [];
+    var lastIndex = 0;
+    var match;
+
+    while ((match = pattern.exec(markdown))) {
+      var matchedText = match[0];
+      if (/^(\n)?\\\s*$/i.test(matchedText)) {
+        lastIndex = pattern.lastIndex;
+        continue;
+      }
+
+      if (match.index > lastIndex) {
+        var before = markdown.slice(lastIndex, match.index);
+        if (before.trim()) {
+          segments.push({
+            type: "markdown",
+            content: before
+          });
+        }
+      }
+
+      segments.push({
+        type: "video",
+        content: matchedText.replace(/^\s*\\\s*\n?/i, "").replace(/\n\\\s*$/i, "").trim()
+      });
+      lastIndex = pattern.lastIndex;
+    }
+
+    if (lastIndex < markdown.length) {
+      var trailing = markdown.slice(lastIndex);
+      if (trailing.trim()) {
+        segments.push({
+          type: "markdown",
+          content: trailing
+        });
+      }
+    }
+
+    if (!segments.length) {
+      segments.push({
+        type: "markdown",
+        content: markdown
+      });
+    }
+
+    return segments;
+  }
+
   function registerToastUiEditorWidget() {
     if (
       !window.CMS ||
@@ -2062,6 +2171,158 @@
 
     window.__cmsToastUiWidgetRegistered = true;
 
+    var ToastUiPreviewMarkdownSegment = window.createClass({
+      setPreviewHost: function (node) {
+        this.previewHost = node;
+      },
+
+      renderPreviewMarkdown: function () {
+        if (
+          !this.previewHost ||
+          !window.toastui ||
+          !window.toastui.Editor ||
+          typeof window.toastui.Editor.factory !== "function"
+        ) {
+          return;
+        }
+
+        var previewValue = this.props.value || "";
+        if (!this.viewer) {
+          this.viewer = window.toastui.Editor.factory({
+            el: this.previewHost,
+            viewer: true,
+            initialValue: previewValue,
+            customHTMLRenderer: getToastUiVideoHtmlRenderer()
+          });
+          return;
+        }
+
+        if (typeof this.viewer.setMarkdown === "function") {
+          this.viewer.setMarkdown(previewValue);
+        }
+      },
+
+      componentDidMount: function () {
+        this.renderPreviewMarkdown();
+      },
+
+      componentDidUpdate: function () {
+        this.renderPreviewMarkdown();
+      },
+
+      componentWillUnmount: function () {
+        if (this.viewer && typeof this.viewer.destroy === "function") {
+          this.viewer.destroy();
+        }
+      },
+
+      render: function () {
+        return window.h("div", {
+          ref: this.setPreviewHost,
+          className: "cms-toast-preview-markdown-segment",
+          style: {
+            minHeight: "24px"
+          }
+        });
+      }
+    });
+
+    var ToastUiPreview = window.createClass({
+      render: function () {
+        var segments = splitMarkdownPreviewSegments(this.props.value || "");
+
+        return window.h(
+          "div",
+          {
+            className: "cms-toast-preview-body",
+            style: {
+              minHeight: "120px"
+            }
+          },
+          segments.map(function (segment, index) {
+            if (segment.type === "video") {
+              return window.h("div", {
+                key: "video-" + index,
+                className: "cms-toast-preview-video-segment",
+                style: {
+                  margin: "1.25rem 0"
+                },
+                dangerouslySetInnerHTML: {
+                  __html: segment.content
+                }
+              });
+            }
+
+            return window.h(ToastUiPreviewMarkdownSegment, {
+              key: "markdown-" + index,
+              value: segment.content
+            });
+          })
+        );
+      }
+    });
+
+    var PostsPreview = window.createClass({
+      resolveAssetUrl: function (value) {
+        if (!value) {
+          return "";
+        }
+
+        try {
+          var asset = this.props.getAsset && this.props.getAsset(value);
+          if (asset && typeof asset.toString === "function") {
+            return asset.toString();
+          }
+        } catch (error) {
+          console.warn("CMS preview warning: unable to resolve preview asset", error);
+        }
+
+        return String(value);
+      },
+
+      render: function () {
+        var entry = this.props.entry;
+        var title = entry && entry.getIn ? entry.getIn(["data", "title"]) : "";
+
+        return window.h(
+          "article",
+          {
+            style: {
+              padding: "24px",
+              fontFamily: "Inter, system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+              color: "#101828"
+            }
+          },
+          [
+            title
+              ? window.h(
+                  "h1",
+                  {
+                    key: "title",
+                    style: {
+                      fontSize: "32px",
+                      lineHeight: "1.2",
+                      margin: "0 0 20px"
+                    }
+                  },
+                  title
+                )
+              : null,
+            window.h(
+              "div",
+              {
+                key: "body",
+                style: {
+                  minHeight: "200px"
+                }
+              },
+              this.props.widgetFor ? this.props.widgetFor("body") : null
+            )
+          ]
+        );
+      }
+    });
+
     var ToastUiControl = window.createClass({
       setEditorHost: function (node) {
         this.editorHost = node;
@@ -2072,7 +2333,7 @@
           return;
         }
 
-        var nextValue = this.editor.getMarkdown();
+        var nextValue = normalizeToastUiMarkdown(this.editor.getMarkdown());
         if (nextValue === this.lastSyncedValue) {
           return;
         }
@@ -2142,6 +2403,7 @@
           previewStyle: "vertical",
           hideModeSwitch: true,
           usageStatistics: false,
+          customHTMLRenderer: getToastUiVideoHtmlRenderer(),
           placeholder: "粘贴网页图文、直接粘贴图片，或使用下方插入视频按钮。",
           toolbarItems: [
             ["heading", "bold", "italic", "strike"],
@@ -2168,7 +2430,7 @@
           }
         });
 
-        this.lastSyncedValue = this.editor.getMarkdown();
+        this.lastSyncedValue = normalizeToastUiMarkdown(this.editor.getMarkdown());
         this.toastContext = {
           id: "toast-editor-" + String(Date.now()) + "-" + Math.random().toString(16).slice(2, 8),
           root: host,
@@ -2191,8 +2453,8 @@
           return;
         }
 
-        var nextValue = this.props.value || "";
-        if (nextValue === this.lastSyncedValue || nextValue === this.editor.getMarkdown()) {
+        var nextValue = normalizeToastUiMarkdown(this.props.value || "");
+        if (nextValue === this.lastSyncedValue || nextValue === normalizeToastUiMarkdown(this.editor.getMarkdown())) {
           return;
         }
 
@@ -2281,7 +2543,10 @@
       }
     });
 
-    window.CMS.registerWidget("toast-ui-editor", ToastUiControl);
+    window.CMS.registerWidget("toast-ui-editor", ToastUiControl, ToastUiPreview);
+    if (typeof window.CMS.registerPreviewTemplate === "function") {
+      window.CMS.registerPreviewTemplate("posts", PostsPreview);
+    }
   }
 
   function getClipboardHtml(event) {
@@ -2934,7 +3199,7 @@
     }
 
     try {
-      var inserted = insertMarkdownIntoCms(embedHtml, insertContext);
+      var inserted = insertMarkdownIntoCms(embedHtml, insertContext, { forceMarkdownMode: true });
       if (!inserted) {
         throw new Error("未找到可写入内容的编辑器区域。");
       }
