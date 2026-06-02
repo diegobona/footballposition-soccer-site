@@ -6,7 +6,6 @@ date: 2026-06-02T15:30:00.000+08:00
 category: 战术预览
 ---
 The 2026 World Cup is approaching, and France remain one of the strongest title contenders. According to Reuters, Didier Deschamps has named his 26-man squad, with Kylian Mbappe, Ousmane Dembele, Michael Olise, Aurelien Tchouameni, N’Golo Kante, William Saliba, Jules Kounde, Theo Hernandez, and Mike Maignan among the key players selected. France are in Group I alongside Senegal, Iraq, and Norway. Deschamps has also warned his players not to look too far ahead, stressing that France must first focus on their group-stage opponents.
-For a website like **footballposition.soccer**, the most important question is not simply whether France have a strong squad. The real focus should be: **what position does each player occupy, what role does he perform, and how do these positions connect tactically?**
 
 ***
 
@@ -45,7 +44,8 @@ In this structure, France’s left side may become the main attacking channel. T
 On the right side, France can be more flexible. Dembele can move into the right half-space, while Olise holds width. Alternatively, Dembele can stay wide and Olise can move inside. This means France’s right side is not just about crossing. It is a technical combination zone designed to create tempo changes and weak-side attacks.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073614-166f70b3-image.png)
 
-### **France’s 3-2-5 structure in possession. Mbappe moves into the left half-space, Theo Hernandez provides width, and Olise and Dembele create technical variation on the right.**
+### France’s 3-2-5 structure in possession. Mbappe moves into the left half-space, Theo Hernandez provides width, and Olise and Dembele create technical variation on the right.
+
 
 ***
 
@@ -60,8 +60,7 @@ or
 **Left-Sided Transition Forward**
 His value is not simply in holding the touchline. It is in using speed, timing, and acceleration to attack space. Once France create a one-vs-one situation for Mbappe on the left, the opponent’s right-back and right center-back are forced to shift toward him. That opens space for Thuram centrally and for Olise or Dembele on the far side.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073854-92122429-image.png)
-
-### **Mbappe starts wide on the left, attacks one-vs-one, cuts inside into the inside-left shooting zone, and can either shoot, cut back to Thuram, or switch play to Olise.**
+**Mbappe starts wide on the left, attacks one-vs-one, cuts inside into the inside-left shooting zone, and can either shoot, cut back to Thuram, or switch play to Olise.**
 
 ***
 
