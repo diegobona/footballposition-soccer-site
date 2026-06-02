@@ -26,9 +26,8 @@ They have dribbling, creativity, and technical variation on the right through De
 They have central protection through Tchouameni and Kante.
 They have a mobile striker in Thuram, who can occupy center-backs and create space for the wide attackers.
 
-### **Figure 1: France Base Shape: 4-2-3-1**
+### ![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073236-b4e02db8-image.png)
 
-Suggested caption:
 **France’s likely 4-2-3-1 base shape for the 2026 World Cup. Mbappe and Dembele provide wide threat, while Tchouameni and Kante protect the center.**
 
 ***
@@ -45,11 +44,7 @@ The front five occupy the left wing, left half-space, center, right half-space, 
 In this structure, France’s left side may become the main attacking channel. Theo Hernandez can push high and provide width, while Mbappe moves inside into the left half-space as a **Left Half-Space Forward** or **Left Inside Forward**.
 On the right side, France can be more flexible. Dembele can move into the right half-space, while Olise holds width. Alternatively, Dembele can stay wide and Olise can move inside. This means France’s right side is not just about crossing. It is a technical combination zone designed to create tempo changes and weak-side attacks.
 
-### **Figure 2: France In Possession: 3-2-5**
-
-![]() 
-Suggested caption:
-**France’s 3-2-5 structure in possession. Mbappe moves into the left half-space, Theo Hernandez provides width, and Olise and Dembele create technical variation on the right.**
+### **France’s 3-2-5 structure in possession. Mbappe moves into the left half-space, Theo Hernandez provides width, and Olise and Dembele create technical variation on the right.**
 
 ***
 
@@ -64,10 +59,8 @@ or
 **Left-Sided Transition Forward**
 His value is not simply in holding the touchline. It is in using speed, timing, and acceleration to attack space. Once France create a one-vs-one situation for Mbappe on the left, the opponent’s right-back and right center-back are forced to shift toward him. That opens space for Thuram centrally and for Olise or Dembele on the far side.
 
-### **Figure 3: Mbappe as Left Inside Forward**
+### **![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073415-8950d2b0-image.png)**
 
-![]() 
-Suggested caption:
 **Mbappe starts wide on the left, attacks one-vs-one, cuts inside into the inside-left shooting zone, and can either shoot, cut back to Thuram, or switch play to Olise.**
 
 ***
@@ -237,7 +230,7 @@ So the key question is not whether France can counterattack. They can. The bigge
 <br>
 ## **12\. Tactical Focus Against Group Opponents**
 
-France’s group-stage opponents are Senegal, Iraq, and Norway. Deschamps has already warned that France should not think too far ahead and must focus on each group match first. 
+France’s group-stage opponents are Senegal, Iraq, and Norway. Deschamps has already warned that France should not think too far ahead and must focus on each group match first.
 
 ### **Against Senegal: Watch the Physicality and Counterattacks**
 
@@ -270,4 +263,3 @@ The best phrase to describe this France team is:
 **speed with structure.**
 They are fast, but they are not chaotic. They have elite individual quality, but that quality sits inside a clear tactical framework.
 If Deschamps can balance Mbappe’s freedom, right-side creativity, and midfield defensive stability, France will not only be one of the most dangerous counterattacking teams at the 2026 World Cup. They will also be one of the teams with the strongest tactical case for winning it.
- 
