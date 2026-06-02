@@ -43,6 +43,7 @@ Tchouameni and Kante hold the second line in midfield.
 The front five occupy the left wing, left half-space, center, right half-space, and right wing.
 In this structure, France’s left side may become the main attacking channel. Theo Hernandez can push high and provide width, while Mbappe moves inside into the left half-space as a **Left Half-Space Forward** or **Left Inside Forward**.
 On the right side, France can be more flexible. Dembele can move into the right half-space, while Olise holds width. Alternatively, Dembele can stay wide and Olise can move inside. This means France’s right side is not just about crossing. It is a technical combination zone designed to create tempo changes and weak-side attacks.
+![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073614-166f70b3-image.png)
 
 ### **France’s 3-2-5 structure in possession. Mbappe moves into the left half-space, Theo Hernandez provides width, and Olise and Dembele create technical variation on the right.**
 
@@ -58,10 +59,9 @@ That makes him better described as:
 or
 **Left-Sided Transition Forward**
 His value is not simply in holding the touchline. It is in using speed, timing, and acceleration to attack space. Once France create a one-vs-one situation for Mbappe on the left, the opponent’s right-back and right center-back are forced to shift toward him. That opens space for Thuram centrally and for Olise or Dembele on the far side.
+![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073854-92122429-image.png)
 
-### **![image](https://media.footballposition.soccer/uploads/2026/06/20260602-073415-8950d2b0-image.png)**
-
-**Mbappe starts wide on the left, attacks one-vs-one, cuts inside into the inside-left shooting zone, and can either shoot, cut back to Thuram, or switch play to Olise.**
+### **Mbappe starts wide on the left, attacks one-vs-one, cuts inside into the inside-left shooting zone, and can either shoot, cut back to Thuram, or switch play to Olise.**
 
 ***
 
@@ -144,10 +144,8 @@ The back four stay compact.
 The purpose of this defensive shape is not constant all-out pressing. It is central compression. France can allow the opponent to circulate the ball in deeper areas. They can also allow the opponent to move the ball wide. What they cannot allow is easy progression through the middle.
 This is a classic Deschamps principle: France may not always dominate possession, but their defensive block is difficult to break through.
 
-### **Figure 4: France Defensive Shape: 4-4-2 Mid Block**
+### **![image](https://media.footballposition.soccer/uploads/2026/06/20260602-074042-cadf8aa1-image.png)**
 
-![]() 
-Suggested caption:
 **France’s 4-4-2 mid-block out of possession. Mbappe and Dembele drop into wide midfield roles, while Tchouameni and Kante protect the center.**
 
 ***
