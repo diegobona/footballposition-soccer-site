@@ -4,6 +4,8 @@ title: "2026 World Cup Tactical Preview--【France】: Deschamps’ 4-2-3-1, Mba
 _editor_revision: ""
 date: 2026-06-02T15:30:00.000+08:00
 category: 战术预览
+cover:
+  image: /images/uploads/c6771cab578147c59e67848fd00f8a22.webp
 ---
 The 2026 World Cup is approaching, and France remain one of the strongest title contenders. According to Reuters, Didier Deschamps has named his 26-man squad, with Kylian Mbappe, Ousmane Dembele, Michael Olise, Aurelien Tchouameni, N’Golo Kante, William Saliba, Jules Kounde, Theo Hernandez, and Mike Maignan among the key players selected. France are in Group I alongside Senegal, Iraq, and Norway. Deschamps has also warned his players not to look too far ahead, stressing that France must first focus on their group-stage opponents.
 
