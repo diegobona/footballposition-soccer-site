@@ -9,10 +9,6 @@ cover:
 ---
 The 2026 World Cup is approaching, and Spain remain one of the most tactically interesting teams in the tournament. Unlike the older image of Spain as a team built only around short passing and possession, this new Spain combines traditional positional play with more direct wide attacks.
 From the perspective of **footballposition.soccer**, the key question is not simply “Can Spain keep the ball?” The better question is: **how do Spain’s player positions connect, and how does each role help the team create space?**
-This article is based on the following likely main structure:
-Goalkeeper and defence: Unai Simon; Cucurella, Cubarsi, Laporte, Porro.
-Midfield three: Rodri as the deepest midfielder, Pedri as the main creator, and Fabian Ruiz or Gavi as the third midfielder.
-Front three: Nico Williams and Lamine Yamal on the wings, with Oyarzabal or Olmo playing centrally.
 
 ***
 
