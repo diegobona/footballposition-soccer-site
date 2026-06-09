@@ -24,9 +24,8 @@ Defenders: Cucurella, Cubarsi, Laporte, Porro
 Midfielders: Rodri, Pedri, Fabian Ruiz / Gavi
 Forwards: Nico Williams, Oyarzabal / Olmo, Lamine Yamal
 
-### Figure 1: Spain Base Shape: 4-3-3
+### ![image](https://media.footballposition.soccer/uploads/2026/06/20260609-115604-ffc73a1e-image.png)
 
-Spain Base Shape: 4-3-3
 The key point of this 4-3-3 is not that every player stays fixed in one position. The value is that every line has a clear job.
 Rodri is the base of midfield. He controls the tempo and protects the defence.
 Pedri connects midfield and attack.
@@ -47,9 +46,8 @@ Cubarsi, Laporte, and the deeper full-back form the back three.
 Rodri and another midfielder form the second line.
 The front five occupy the left wing, left half-space, central striker zone, right half-space, and right wing.
 
-### Figure 2: Spain In Possession: 3-2-5
+### ![image](https://media.footballposition.soccer/uploads/2026/06/20260609-115647-c4bbed13-image.png)
 
-Spain In Possession: 3-2-5
 The most important part of this diagram is not the number “3-2-5” itself. The key is how Spain occupy the five attacking lanes.
 Left wing: Nico Williams
 Left half-space: Pedri
@@ -112,9 +110,8 @@ Both are wingers, but they do not play the same way.
 Nico is more of a **Wide Winger**. His strengths are pace, acceleration, and outside runs. He can pin the opposition right-back deep and carry the ball quickly in transition.
 Yamal is more of an **Inverted Winger** or a **Creative Wide Forward**. He starts on the right but often comes inside onto his left foot to pass, shoot, or play through balls.
 
-### Figure 3: Spain Wide Attack: Yamal & Nico
+### ![image](https://media.footballposition.soccer/uploads/2026/06/20260609-115739-e7db68a5-image.png)
 
-Spain Wide Attack: Yamal & Nico
 This diagram shows Spain’s wide attacking logic.
 On the left, Nico provides width and one-vs-one threat.
 On the right, Yamal cuts inside and creates.
@@ -165,9 +162,8 @@ Pedri and Fabian Ruiz or Gavi form the central midfield line.
 Rodri stays alone as the defensive midfielder.
 The back four remain compact.
 
-### Figure 4: Spain Out of Possession: 4-1-4-1
+### ![image](https://media.footballposition.soccer/uploads/2026/06/20260609-115808-c1939d22-image.png)
 
-Spain Out of Possession: 4-1-4-1
 The purpose of this defensive shape is central protection.
 Spain are not usually a team that sits deep in their own box. Their more common approach is to keep good distances in midfield, block central passing lanes, and then press the ball when the timing is right.
 Rodri’s position is crucial. He must stand between the defensive line and midfield line, stopping opponents from receiving freely between the lines. If Rodri is pulled out of position, Spain’s centre-backs can become exposed.
