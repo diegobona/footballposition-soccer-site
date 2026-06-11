@@ -4,6 +4,8 @@ title: 2026 World Cup Tactical Preview--【England】:4-2-3-1, Kane’s Link-Up 
 _editor_revision: ""
 date: 2026-06-11T22:57:00.000+08:00
 category: 战术预览
+cover:
+  image: /images/uploads/d94faacbb4bf440c6a942ea9f078d8b7.jpeg
 ---
 The 2026 World Cup is approaching, and England once again enter the tournament with huge expectations. Compared with the Gareth Southgate era, the biggest change is not one individual player, but the arrival of Thomas Tuchel as head coach.
 Looking at the squad, Tuchel’s approach is clear: he has not simply selected the biggest names, but has focused more on balance, role clarity, and tactical suitability. England still have Harry Kane, Jude Bellingham, Bukayo Saka, Declan Rice, John Stones, Marc Guehi, Marcus Rashford, Anthony Gordon, Morgan Rogers, Eberechi Eze, Noni Madueke, Ollie Watkins, and Ivan Toney. But the key question is: how do these players fit into a stable tactical structure?
