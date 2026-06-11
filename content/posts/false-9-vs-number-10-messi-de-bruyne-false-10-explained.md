@@ -1,5 +1,5 @@
 ---
-title: "False 9 vs Number 10: Messi, De Bruyne & False 10 Explained"
+title: Messi, De Bruyne & False 10 Explained
 seo_title: "False 9 vs Number 10: Messi, De Bruyne & False 10"
 meta_description: Compare the False 9, Number 10, and False 10 roles with clear
   tactical examples from Messi and De Bruyne. Learn how each role moves and
