@@ -40,6 +40,10 @@ buildFuture = true
     url = "/tactical-preview/"
     weight = 5
   [[menu.main]]
+    name = "MatchAnalysis"
+    url = "/match-analysis/"
+    weight = 8
+  [[menu.main]]
     name = "PositionsOverview"
     url = "/overview/"
     weight = 10

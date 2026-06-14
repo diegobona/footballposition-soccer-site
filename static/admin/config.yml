@@ -23,7 +23,7 @@ collections:
       - {label: "自定义 URL Slug（可选）", name: "slug", widget: "string", required: false, hint: "只填写 URL 最后一段，例如 false-10-role；不填则按标题自动生成"}
       - {label: "编辑器内部版本（隐藏）", name: "_editor_revision", widget: "hidden", required: false, default: ""}
       - {label: "发布日期 (Date)", name: "date", widget: "datetime"}
-      - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置", "综述", "战术预览"]}
+      - {label: "所属分类 (Level 2 Hub)", name: "category", widget: "select", options: ["防守位置", "中场位置", "进攻位置", "综述", "战术预览", "比赛分析"]}
       - label: "封面图设置 (Cover)"
         name: "cover"
         widget: "object"

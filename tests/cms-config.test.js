@@ -18,4 +18,10 @@ assert.match(
   "CMS should use editorial workflow so entries can be saved as drafts before publishing"
 );
 
+assert.match(
+  config,
+  /options:\s*\[[^\]]*"比赛分析"[^\]]*\]/,
+  "CMS category select should include the new 比赛分析 column"
+);
+
 console.log("cms-config tests passed");

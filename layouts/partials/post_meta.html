@@ -45,6 +45,9 @@
   {{- else if eq $cat "战术预览" -}}
     {{- $name = "TacticalPreview" -}}
     {{- $url = "/tactical-preview/" -}}
+  {{- else if eq $cat "比赛分析" -}}
+    {{- $name = "MatchAnalysis" -}}
+    {{- $url = "/match-analysis/" -}}
   {{- end -}}
 
   {{- if $url -}}
