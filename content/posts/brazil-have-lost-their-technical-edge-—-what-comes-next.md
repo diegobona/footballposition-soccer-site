@@ -10,7 +10,7 @@ cover:
 An expected spell of passivity, but no one expected it to be this passive. Brazil knew they did not have much of an advantage, but they did not expect some players to perform this poorly. In a contest whose intensity was “comparable to a semifinal,” Brazil struggled to draw with Morocco. The North African Lions exposed the scars in Brazil’s squad configuration and tactical setup, and Ancelotti has fallen into his most difficult moment in years. A series of problems now await the five-star general.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-134641-1242ee53-image.png)
 
-**The passive situation had long been foreshadowed**
+### **The passive situation had long been foreshadowed**
 
 Compared with the World Cup qualifiers and warm-up matches, Brazil’s right-side setup and attacking combination both changed significantly. After Wesley Lima was injured, Ancelotti arranged for Ibañez, who has Serie A experience, to guard the right-back position. Paquetá and Raphinha both appeared in the starting lineup, while Luiz Henrique, who offers balance in both attack and defense, was kept in reserve. Also waiting for opportunities on the bench was Cunha, with the tall center-forward Igor Thiago placed at the tip of the formation.
 The overall age of the team is on the older side, the central spine lacks technical quality, and the right flank lacks countermeasures. Brazil’s system has many holes, while Morocco’s overall cohesion is clearly superior.
@@ -18,7 +18,8 @@ After taking charge, Ancelotti built the forward line around Vinicius and Rodryg
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-134714-b31f8907-image.png)
 The starting lineup Ancelotti sent out in this match had an average age close to 30 years old — 29 years and 235 days — and the aging problem in the midfield and back line was especially serious. With the right-side combination completely changed beyond recognition, Ancelotti, in order to ensure attacking firepower, could only leave out the wide midfielder Luiz Henrique and start both Raphinha and Paquetá. This planted the seeds for the team’s passive opening phase.
 
-**The defensive counterattack could not be played, and the “England-based contingent” disappointed**
+### **The defensive counterattack could not be played, and the “England-based contingent” disappointed**
+
 The two sides had met once in a friendly in 2023, when Morocco defeated Brazil at home and continued their habit since the Qatar World Cup of becoming stronger against stronger opponents. That victory gave them a psychological advantage and influenced Wahbi’s lineup choices. It was no accident that Sebbari and Bouaddi were able to replace Kaabi and Amrabat in the starting lineup.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-134740-7e25eb7a-image.png)
 *Wahbi showed considerable boldness by sending the newly “joined” Bouaddi straight into the starting lineup.*
@@ -38,14 +39,16 @@ When Ancelotti first entered coaching, the Premier League was still a “restric
 As Brazilian football has declined, North African players have gradually taken up the banner of technical football. Players such as Bouaddi, El Khannouss and Aynaoui combine physical confrontation with flexibility. Their solid technical ability allows them to switch the mode of the match at any time. When Mazraoui repeatedly used dribbling from an unfamiliar-foot position to break through Brazil’s front-line press, there was already no real protection left in front of Casemiro, Marquinhos and the others.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-135040-3116400d-image.png)
 
-**Ancelotti’s in-game adjustments showed his quality, and future formation changes are worth looking forward to**
+### **Ancelotti’s in-game adjustments showed his quality, and future formation changes are worth looking forward to**
+
 After nearly 20 minutes of suffering, Brazil finally made it to the first-half cooling break, and Ancelotti used this opportunity to complete a tactical adjustment. After the match resumed, the positioning among Brazil’s three midfielders became more compact, Igor Thiago and Raphinha dropped deeper, and Vinicius became the advanced arrowhead on the left. The Real Madrid winger soon equalized through his individual ability.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-135102-ac80e81e-image.png)
 Wary of the opponent’s technical ability and pressing intensity, Ancelotti took off the booked Casemiro and Ibañez at the start of the second half. Soon afterward, he sent on Cunha and Luiz Henrique. This move appeared to be aimed at strengthening the attack, but in reality it was meant to increase the running and energy in midfield and ease the pressure on the defensive line. Ancelotti’s substitutions were “advancing openly while retreating secretly,” which showed that he was prepared to accept a draw.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-135127-245af74e-image.png)
 Since the Italian took charge, Brazil have played 13 matches, with a win rate only barely above 50%. The friendly against Croatia was their only win against a strong opponent. The squad has obvious structural flaws — lacking a right winger, a right-back and a technical defensive midfielder — and the hardness and resilience of the tactical framework do not meet the standard of a title-contending team. Under these circumstances, being able to draw with a team that reached the last World Cup’s semifinals and is ranked in FIFA’s top 10 is already a decent result.
 
-**The 4-4-2 formation is ready to be used, and Ancelotti needs a “comfort zone”**
+### **The 4-4-2 formation is ready to be used, and Ancelotti needs a “comfort zone”**
+
 Before Brazil had even begun their World Cup journey in the United States, Canada and Mexico, Ancelotti had already received a new contract extending to the summer of 2030. The Brazilian Football Confederation does not expect to win immediately. They understand that this team, which has experienced too many failures, needs at least one to two World Cup cycles of upgrading and rebuilding before it can have the strength to challenge for the top. Of course, considering the public pressure borne by Brazil’s head coach, Ancelotti must at least lead the team into the quarterfinals — or even the semifinals — this time in order to create a relatively relaxed public-opinion environment for the rest of his tenure.
 ![image](https://media.footballposition.soccer/uploads/2026/06/20260614-135207-92877c4d-image.png)
 After a difficult draw with Morocco, who are now unbeaten in 30 matches, Brazil will next face weaker opponents Haiti and Scotland. Getting out of the group should not be a major problem, and the formation and personnel used in the opening phase should be enough to complete that task. However, if they want to reach the quarterfinals or semifinals, they will need to win two or three hard battles in the knockout stage. They must rely on a more stable formation structure to make that possible. Brazil had the upper hand in the second half, with two defensive midfielders and four forwards on the pitch. Ancelotti has already prepared to use 4-4-2 and 4-2-2-2 formations against strong opponents.
