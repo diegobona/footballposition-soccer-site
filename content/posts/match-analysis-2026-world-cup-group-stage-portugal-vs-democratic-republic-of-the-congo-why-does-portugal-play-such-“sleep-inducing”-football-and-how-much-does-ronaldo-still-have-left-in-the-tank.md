@@ -5,6 +5,8 @@ title: "[Match Analysis] 2026 World Cup Group Stage: Portugal vs DRC | Why does
 _editor_revision: ""
 date: 2026-06-18T22:14:00.000+08:00
 category: 比赛分析
+cover:
+  image: /images/uploads/图片111.png
 ---
 "Argentina and Spain also failed to win their opening games when they went on to lift the trophy. We have not yet produced the quality we should." -- Roberto Martinez
 ![]() ![image](https://media.footballposition.soccer/uploads/2026/06/20260618-141526-eefef9dc-image.png)
