@@ -32,25 +32,29 @@ During qualifying, Portugal's center-back partnership was Ruben Dias and Inacio.
 ### **2\. Conditions outside Europe are complex; extreme possession was a necessity**
 
 In the opening round of the group stage, Portugal and Spain were the two major powers that disappointed most. Both were held to draws despite obvious superiority, and high possession brought few scoring chances; the performances were more disappointing than the results. Spain's problem lay in injuries, while Portugal's trouble lay in squad composition. They are very similar to the Spain side of more than a decade ago: physically ordinary in the midfield and forward lines, inferior in both speed and duels, and therefore forced to use their technical advantage to wear opponents down.
-![]() 
-Around Cristiano Ronaldo, Portugal's young players have to shoulder extra running and physical duels; the "sleep-inducing" tactics are also a way to protect them.
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143307-e5fab738-image.png)
+*Around Cristiano Ronaldo, Portugal's young players have to shoulder extra running and physical duels; the "sleep-inducing" tactics are also a way to protect them.*
+
 Portugal's performances at the European Championship and the World Cup have differed greatly. Teams that combine a hard edge with technical quality (Uruguay and Morocco) are Portugal's nemeses, and teams with outstanding running capacity (South Korea) can also give the Five Shields serious problems. That situation is unlikely to change much at this tournament. Roberto Martinez has rich coaching experience, and the fragility beneath Portugal's glamorous shell cannot escape his eye.
-![]() 
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143357-d3526b33-image.png)
 Against experienced, tough defenders such as Mbemba, Tuanzebe, Masuaku and Wan-Bissaka, a fast, impact-based approach would only expose Portugal's weaknesses. The wiser course was to seek one lethal opening through slow-tempo possession. Roberto Martinez is not only comparing results with Spain; tactically, he is also learning from Portugal's neighbor.
-![]() 
-128 passes, 121 completed: Vitinha set a World Cup passing record for a player who did not play the full match.
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143426-f05459f6-image.png)
+*128 passes, 121 completed: Vitinha set a World Cup passing record for a player who did not play the full match.*
+
 Portugal completed 783 passes in this match, with a success rate of 92%. Of their 23 crosses, only six found a teammate, and they created just one scoring chance. Del Bosque's team was heavily criticized for having too many "sleep-inducing" matches, while Hierro and Luis Enrique both experienced the pain of "dying by a thousand passes." Roberto Martinez's players are now carrying the same pressure.
-![]() 
-After Francisco Conceicao came on, Portugal's physical shortcomings became even more obvious; Rafael Leao was introduced rather late.
+![]() ![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143612-0c75013c-image.png)
+*After Francisco Conceicao came on, Portugal's physical shortcomings became even more obvious; Rafael Leao was introduced rather late.*
+
 Ten years ago, when they contested the expanded European Championship (2016), Portugal adopted a similar scorched-earth approach. At the time, they had a top center-back pairing (Pepe and Fonte), Ronaldo's efficiency after moving to center forward was also fairly impressive, and the spine contained a large number of workhorse midfielders (Joao Mario, William Carvalho, Andre Gomes and others), making the team highly suited to defensive counterattacking. Now, as they travel to the United States, Canada and Mexico, Portugal's talent structure has been inverted. Center back and center forward have become weaknesses, the technical level of the midfield has risen significantly, and the defensive model has naturally shifted from sitting deep with numbers to circulating the ball in midfield.
-![]() 
-Center forward and center back have become weak spots, while technical midfielders have replaced workhorse players. Portugal's current talent structure is an inversion of the 2016 version, but the defensive-first mindset should not change.
+![]() ![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143651-603b941e-image.png)
+*Center forward and center back have become weak spots, while technical midfielders have replaced workhorse players. Portugal's current talent structure is an inversion of the 2016 version, but the defensive-first mindset should not change.*
 
 ### **3\. Ronaldo is not an unsolvable problem; if Portugal is going to learn\, it must learn thoroughly**
 
 Compared with Spain at its peak, Portugal's biggest weakness is the No. 9 position. Ronaldo has lost the speed and explosiveness of his prime, and his defensive contribution is minimal, yet Portugal still has to rely on him as a starter. Fernando Santos and Roberto Martinez have both given Goncalo Ramos chances, but the Paris forward has drained outside confidence with one poor showing after another.
-![]() 
-Ronaldo had only 25 touches in this match, the lowest total of his World Cup career.
+![]() ![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143746-b84fecb8-image.png)
+*Ronaldo had only 25 touches in this match, the lowest total of his World Cup career.*
+
 Against the double-team of Mbemba and Tuanzebe, Ronaldo managed only 25 touches, and all three of his shots missed the target. His drought at major tournaments (including the Euros) has now stretched to 10 matches. With a powerful midfield and wide players behind them, Torres and Villa could not slice through every opponent back then either, but they stood up at key moments to deliver the decisive blow and keep 1-0 football alive. If Portugal cannot improve the efficiency of the center-forward position, they are bound to repeat the mistakes of the "Golden Generation": the title will be out of reach, and the semi-finals will be the ceiling.
 ![]() 
 Ronaldo's major-tournament goal drought has reached 10 matches, and Roberto Martinez must change the way he is using his center forward.
