@@ -1,7 +1,7 @@
 ---
-title: "[Match Analysis] 2026 World Cup Group Stage: Portugal vs Democratic
-  Republic of the Congo | Why does Portugal play such “sleep-inducing” football,
-  and how much does Ronaldo still have left in the tank?"
+title: "[Match Analysis] 2026 World Cup Group Stage: Portugal vs DRC | Why does
+  Portugal play such “sleep-inducing” football, and how much does Ronaldo still
+  have left in the tank?"
 _editor_revision: ""
 date: 2026-06-18T22:14:00.000+08:00
 category: 比赛分析
@@ -56,16 +56,18 @@ Compared with Spain at its peak, Portugal's biggest weakness is the No. 9 positi
 *Ronaldo had only 25 touches in this match, the lowest total of his World Cup career.*
 
 Against the double-team of Mbemba and Tuanzebe, Ronaldo managed only 25 touches, and all three of his shots missed the target. His drought at major tournaments (including the Euros) has now stretched to 10 matches. With a powerful midfield and wide players behind them, Torres and Villa could not slice through every opponent back then either, but they stood up at key moments to deliver the decisive blow and keep 1-0 football alive. If Portugal cannot improve the efficiency of the center-forward position, they are bound to repeat the mistakes of the "Golden Generation": the title will be out of reach, and the semi-finals will be the ceiling.
-![]() 
-Ronaldo's major-tournament goal drought has reached 10 matches, and Roberto Martinez must change the way he is using his center forward.
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-143915-8a1c94a3-image.png)
+*Ronaldo's major-tournament goal drought has reached 10 matches, and Roberto Martinez must change the way he is using his center forward.*
+
 Ronaldo played 37 matches for Al Nassr this season. Winning the Saudi Pro League gave the veteran confidence, but the physical cost is "irreversible." The expanded World Cup schedule is long, and the champions will need to play eight matches in 39 days; for a 41-year-old veteran, that is almost an impossible task. Since Portugal insists on its "sleep-inducing tactics," it might as well adjust the order in which its two center forwards appear: Goncalo Ramos can start and wear down opponents, while Ronaldo can come off the bench against depleted defenders. At the very least, this would give the Ballon d'Or winner more space to operate.
-![]() 
-In fully benchmarking themselves against Spain, Roberto Martinez should not overlook the value of a "strikerless" system.
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-144220-f2d03a45-image.png)
+*In fully benchmarking themselves against Spain, Roberto Martinez should not overlook the value of a "strikerless" system.*
+
 Back when they pursued possession to the extreme, both Barcelona and the Spain national team used a "strikerless" setup. Since Roberto Martinez wants to benchmark against the world champions, he might also consider such a tactic and take the sleep-inducing approach all the way. Bernardo Silva has played as a "false nine" under Guardiola, and Joao Felix has also operated as the most advanced player. Jota's passing was a major loss for Portugal, but Pedro Neto is likewise a versatile player who can play wide or central; Maresca has already given Roberto Martinez a model in the early part of the 2025/26 season.
-![]()
+![]()![image](https://media.footballposition.soccer/uploads/2026/06/20260618-144242-b6f72b20-image.png)
 
 ### **4\. Only by withstanding pressure can Portugal innovate; it must break with the old to be remade**
 
 Based on past lessons from failure, Portugal has been extremely cautious in preparing for this World Cup. After securing qualification, they began arranging a North American reconnaissance trip, crossing the ocean in March to face Mexico and the United States in order to adapt early to the World Cup venues and climate. During last year's Nations League finals, Portugal's new tactics had already taken shape. The success of the North American trip (one win and one draw) strengthened their conviction, and the draw with DR Congo should not be a reason to waver.
-![]() 
+![]() ![image](https://media.footballposition.soccer/uploads/2026/06/20260618-144315-4fa6e58d-image.png)
 Scolari and Fernando Santos were able to lead the team to strong results because tactical self-denial and pragmatic choices played a decisive role, while favorable timing and circumstances also cannot be ignored. Scolari led the team to the European Championship final on home soil, and the semi-final finish at the 2006 World Cup came on European turf. Fernando Santos seized the moment created by the expansion of the Euros and the birth of the Nations League, winning both trophies. Today Portugal is once again blessed by the timing of events. The moment has arrived to test Roberto Martinez's ability to withstand pressure.
