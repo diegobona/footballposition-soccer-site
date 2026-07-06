@@ -4,6 +4,8 @@ title: "[Match Analysis] 2026 World Cup 1/8:Brazil vs Norway | Brazil’s Old
 _editor_revision: ""
 date: 2026-07-06T22:04:00.000+08:00
 category: 比赛分析
+cover:
+  image: /images/uploads/20260706-141125-9e36e100-image.png
 ---
 The winless record against Norway continues. The record of losing to European teams in the knockout stage continues. The embarrassing title drought continues... If Ancelotti brought anything new to Brazil, it was a tactical idea different from traditional samba football. Unfortunately, his players failed to silence the doubters with a victory. Instead, they left this decorated coach with endless confusion and helplessness.
 ![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-140506-0f769847-image.png)
