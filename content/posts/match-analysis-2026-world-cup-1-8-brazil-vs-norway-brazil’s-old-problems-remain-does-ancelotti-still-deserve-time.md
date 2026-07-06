@@ -24,30 +24,31 @@ In pre-World Cup friendlies, Norway struggled badly when Morocco pressed them co
 *Norway's weaknesses in build-up and progression were obvious, yet Brazil did not attack them directly. Even so, Odegaard still lost possession 16 times.*
 
 Norway did not take many risks in possession, and their wide crossing was limited. Solbakken also knew that his tall defenders could be very uncomfortable when facing Vinicius and Brazil's other attackers. Frequent turnovers threatened to make the match chaotic. However, because Odegaard had so much freedom of movement, Norway's stretched shape left the middle extremely open. In defensive transition they could barely slow Brazil's fast breaks, and were forced to rely on goalkeeper Nyland's superb saves to survive.
-![]() 
-Ancelotti's choice of penalty taker was open to question, and Guimaraes lost his composure after missing from the spot.
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-140838-6feb2617-image.png)
+*Ancelotti's choice of penalty taker was open to question, and Guimaraes lost his composure after missing from the spot.*
+
 With Martinelli and Rayan stretching the flanks and Cunha's movement opening space, Vinicius fully displayed his ability to drive counterattacks. Brazil created a golden chance the first time they entered Norway's penalty area, as Cunha was brought down by Ajer. Unfortunately, Guimaraes wasted the penalty. That failure from 12 yards shook the Newcastle midfielder's confidence: he lost six of his eight duels, had both of his dribbles stopped, and lost possession ten times.
-![]() 
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-140934-a3d37da7-image.png)
 Paqueta made a fatal mistake in the opener against Morocco. Against Japan, Casemiro simply watched Kai Shibato score. This time, it was Guimaraes who broke down. Brazil's midfielders taking turns to make mistakes was no accident. Beyond the players' technical limitations, Ancelotti's tactical setup also magnified the shortcomings of this 'English-style midfield'.
-![]() 
-A defensive-midfield collapse has become Brazil's regular feature on elimination night.
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141030-407bb7b3-image.png)
+*A defensive-midfield collapse has become Brazil's regular feature on elimination night.*
+
 Within the 4-3-3 structure, the three midfielders were very far apart when Brazil had the ball, leaving Casemiro to deal with opposing counterattacks almost alone after turnovers. He became an awkward single pivot. After the switch to 4-4-2, Brazil's midfield had to cover even more ground and fight against stronger opponents. Guimaraes and Casemiro became increasingly strained.
-![]() 
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141100-c87f49c5-image.png)
 At the 2002 World Cup, Scolari also used a pair of workhorse defensive midfielders. Gilberto Silva and Kleberson paid attention to protecting each other on the pitch. Behind them stood a back three of Lucio, Edmilson and Roque Junior, while ahead of them the 3R trio suppressed opponents. Today's Brazilian defensive midfielders not only have no comfort zone; they are constantly exposed in dangerous areas. Across the past four World Cups, Brazil have all been undone by collapses in the holding-midfield position, with Felipe Melo, Fernandinho and Casemiro making decisive errors one after another. On this North American trip, Ancelotti stockpiled a large number of workhorse midfielders. It was a necessity, but it also sealed Brazil's tragedy.
 **No Quality Centre-Forward, No Title**
 With central midfield already on shaky ground, Brazil tried to relieve pressure through wide attacks. Vinicius roamed between the wing and the inside channel, rediscovering the feeling he once had under Ancelotti at Real Madrid. Sadly, Endrick wasted the through ball that came after Vinicius' brilliant dribble.
-![]() 
+![]() ![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141125-9e36e100-image.png)
 Igor Thiago was dropped after the opening match. Cunha's limitations were magnified during the knockout rounds. Endrick wasted a one-on-one chance and became obsessed with long shots. Ancelotti had used up all his options at centre-forward, and Brazil's attack still did not improve much. Against Japan, Brazil completed a comeback through direct aerial play, with Casemiro acting as an emergency centre-forward in a crisis. Norway's central defensive zone contained three players over 1.95 metres tall - the two centre-backs and the defensive midfielder - while both full-backs were also around 1.85 metres. Brazil could not continue their 'small high-ball' approach, and when they fell behind they looked short of ideas. Guimaraes also wasted a rare shooting chance inside the box.
-![]() 
-In the round of 32, Brazil and Japan each played one good half, and the more talented side prevailed. In this match, Brazil and Norway also appeared to trade blows evenly, but once again the side with the greater match-winning talent advanced.
-![]() 
+![]() ![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141203-b6d55131-image.png)
+In the round of 16, Brazil and Japan each played one good half, and the more talented side prevailed. In this match, Brazil and Norway also appeared to trade blows evenly, but once again the side with the greater match-winning talent advanced.
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141235-98c76860-image.png)
 Brazil's expected goals reached 2.73, yet they only scored a penalty in stoppage time. Norway, with an xG of just 0.84, scored twice, as Haaland created something out of nothing through individual quality. First, he beat Gabriel completely in the air and scored the opening goal. Then, after acting as a wide outlet, he drifted to the edge of the box and struck the long-range shot that ended the contest. Haaland gave a perfect demonstration of the power-striker role and exposed one of Brazilian football's deepest wounds.
-![]() 
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141256-7a775483-image.png)
 Luis Fabiano in 2010, Fred in 2014, Gabriel Jesus in 2018, Richarlison in 2022, and now Igor Thiago, Cunha and Endrick... since the post-Ronaldo era began, Brazil have lacked an elite centre-forward. In the knockout rounds of the World Cup, that is a fatal flaw. When so many chances cannot be turned into goals and the forward line's threat keeps declining, the pressure is inevitably transferred to the players behind them.
 **Keep Trusting Ancelotti and Wait for the 'Sixth Star'**
 Ancelotti took a huge risk by adopting a defensive counterattacking approach. He sacrificed control of the match but failed to get the result, so the pressure on him is easy to imagine. As the first foreign coach in the history of the Selecao, Ancelotti arrived with enormous expectations. To prevent other teams from trying to poach him, the Brazilian Football Confederation even completed a contract extension with him before the World Cup. Now Brazil have produced their worst World Cup performance in 36 years, and the resilience of both the federation and the decorated coach is being tested.
-![]() 
+![]() ![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141318-ae245804-image.png)
 There are understandable reasons for Ancelotti's failure. Brazil's injury situation was the worst among the title contenders. Estevao, Rodrygo, Raphinha, Militao and Wesley Lima were injured one after another, causing what had been a powerful right side to collapse completely. The tactical routines rehearsed during the warm-up matches came to nothing, and the squad structure developed defects that could not be repaired. When Norway used substitute Schjelderup to break through Brazil's right side and assist Haaland, Ancelotti experienced the pain of being a national-team coach with too few workable options. He could not avoid any of the holes left by his predecessors.
-![]() 
+![]()![image](https://media.footballposition.soccer/uploads/2026/07/20260706-141335-f148ec20-image.png)
 Brazil's title drought is now 24 years, and Ancelotti and his players had no margin for error to begin with. They not only failed to make a breakthrough; they set a new low. Of course, hitting rock bottom is painful, but it can also become the moment before rebuilding. As Brazil's technical advantage shrinks and the superstar production line stalls, they will have to say goodbye to the era of individual giants and enter a new era built around a star coach refining a collective tactical system. This team has suffered too many failures. It will need at least one or two full World Cup cycles of comprehensive reform before it can return to the summit, and the only coach capable of leading them through this difficult passage is Ancelotti.
- 
