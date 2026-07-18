@@ -32,6 +32,8 @@ faq:
       phases he also showed False 10-like behavior by dropping into midfield,
       linking play, and creating space through movement.
 ---
+If you only want the full explanation of the False 10 role, read: [False 10 in Soccer Explained](https://footballposition.soccer/posts/false-10-explained/)
+
 A False 9, a Number 10 and a False 10 all connect midfield and attack, but they start from different positions and create different problems for defenders.
 
 If you have ever searched for **False 9**, **Number 10**, or **False 10**, you have probably noticed one confusing thing:
@@ -145,5 +147,3 @@ At first glance, these three roles can look similar. In reality, they create ver
 * A **False 9** manipulates the centre-backs.
 * A **Number 10** creates between the lines.
 * A **False 10** manipulates the whole defensive structure through movement.
-
-
