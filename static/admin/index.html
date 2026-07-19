@@ -5,9 +5,14 @@
   <meta name="google" content="notranslate" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Content Manager</title>
+  <link id="cms-config-url" rel="cms-config-url" type="text/yaml" href="./config.yml" />
   <link rel="stylesheet" href="https://uicdn.toast.com/editor/3.2.2/toastui-editor.min.css" />
 
-  <script>window.CMS_MANUAL_INIT = true;</script>
+  <script>
+    var cmsConfigLink = document.getElementById("cms-config-url");
+    cmsConfigLink.href = "./config.yml?v=" + Date.now();
+    window.CMS_MANUAL_INIT = true;
+  </script>
 </head>
 <body translate="no" class="notranslate">
   <div id="nc-root" translate="no" class="notranslate"></div>

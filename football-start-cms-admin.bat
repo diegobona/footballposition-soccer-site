@@ -4,7 +4,7 @@ setlocal
 cd /d "%~dp0"
 
 set "HUGO=%~dp0.tools\hugo-0.152.2\hugo.exe"
-set "ADMIN_URL=http://localhost:1313/admin/"
+set "ADMIN_URL=http://localhost:1313/admin/?v=%RANDOM%%RANDOM%"
 
 if not exist "%HUGO%" (
     echo Hugo was not found:
