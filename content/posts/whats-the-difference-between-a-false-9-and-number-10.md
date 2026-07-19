@@ -6,6 +6,7 @@ meta_description: Discover the tactical differences between a False 9 and Number
   Firmino, Özil, and Götze.
 slug: whats-the-difference-between-a-false-9-and-number-10-old
 date: 2025-12-07T21:18:00.000+08:00
+draft: true
 category: 进攻位置
 cover:
   image: /images/uploads/screenshot_2026-05-05_211646_969.png
