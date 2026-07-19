@@ -20,6 +20,12 @@ assert.match(
 
 assert.match(
   config,
+  /label:\s*"是否从前台隐藏"[\s\S]*?name:\s*"draft"[\s\S]*?widget:\s*"boolean"[\s\S]*?default:\s*false/,
+  "CMS should expose a draft boolean that Hugo uses to hide published entries from the live site"
+);
+
+assert.match(
+  config,
   /options:\s*\[[^\]]*"比赛分析"[^\]]*\]/,
   "CMS category select should include the new 比赛分析 column"
 );
