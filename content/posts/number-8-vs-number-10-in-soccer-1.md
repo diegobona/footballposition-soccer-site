@@ -4,6 +4,8 @@ _editor_revision: ""
 date: 2026-07-20T21:55:00.000+08:00
 draft: false
 category: 中场位置
+cover:
+  image: /images/uploads/65ac2d3c-ee87-4005-b4e1-641705ce6205.png
 ---
 *The Number 8 connects the team. The Number 10 unlocks the defense.*
 
