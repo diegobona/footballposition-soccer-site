@@ -11,7 +11,6 @@ category: 中场位置
 | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |
 
- 
 
 # **Where Do They Play?**
 
@@ -78,8 +77,7 @@ Many strong teams use both: the 8 supplies balance, running and connection; the 
 
 # **Related Soccer Position Guides**
 
-· Number 9 vs Number 10 in Soccer: Striker vs Playmaker Explained
-· False 9 vs Number 10 vs False 10
-· What Is a False 10 in Soccer?
-· Box-to-Box Midfielder: Role, Position and Responsibilities
-
+· [Number 9 vs Number 10 in Soccer: Striker vs Playmaker Explained | Football Position Soccer](https://footballposition.soccer/posts/number-9-vs-number-10-in-soccer-striker-vs-playmaker-explained/)
+· [False 9 vs Number 10 vs False 10: Soccer Roles Explained | Football Position Soccer](https://footballposition.soccer/posts/whats-the-difference-between-a-false-9-and-number-10/)
+· [False 10 in Soccer: Meaning, Role, Examples & Tactics | Football Position Soccer](https://footballposition.soccer/posts/false-10-explained/)
+· [Box-to-Box Midfielder: The Complete Guide to Football's Most Demanding Position | Football Position Soccer](https://footballposition.soccer/posts/box-to-box-midfielder-the-complete-guide-to-footballs-most-demanding-position/)
