@@ -4,6 +4,8 @@ _editor_revision: ""
 date: 2026-07-26T23:29:00.000+08:00
 draft: false
 category: 进攻位置
+cover:
+  image: /images/uploads/b5347b9f-aa76-4fec-9073-3cc57234269f.png
 ---
 
 | **A shadow striker is an attacking player who operates behind the main striker.** He does not spend the whole game dropping deep to organize play, and he does not stay pinned against the center-backs. Instead, he uses the space created by the No. 9 and makes late runs into the box to shoot or deliver the final pass. |
