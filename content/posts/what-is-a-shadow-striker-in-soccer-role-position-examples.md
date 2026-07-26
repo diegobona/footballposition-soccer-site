@@ -7,7 +7,6 @@ category: 进攻位置
 cover:
   image: /images/uploads/b5347b9f-aa76-4fec-9073-3cc57234269f.png
 ---
-
 | **A shadow striker is an attacking player who operates behind the main striker.** He does not spend the whole game dropping deep to organize play, and he does not stay pinned against the center-backs. Instead, he uses the space created by the No. 9 and makes late runs into the box to shoot or deliver the final pass. |
 | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 |
@@ -86,7 +85,7 @@ He does not drop as often as a False 9, and he does not spend most of the game c
 
 # **Related Soccer Position Guides**
 
-· False 9 vs Number 10 vs False 10: Soccer Roles Explained
-· False 10 in Soccer: Meaning, Role, Examples & Tactics
-· Number 9 vs Number 10 in Soccer: Striker vs Playmaker Explained
-· Number 8 vs Number 10 in Soccer
+· [False 9 vs Number 10 vs False 10: Soccer Roles Explained](https://footballposition.soccer/posts/whats-the-difference-between-a-false-9-and-number-10/)
+· [False 10 in Soccer: Meaning, Role, Examples & Tactics](https://footballposition.soccer/posts/false-10-explained/)
+· [Number 9 vs Number 10 in Soccer: Striker vs Playmaker Explained | Football Position Soccer](https://footballposition.soccer/posts/number-9-vs-number-10-in-soccer-striker-vs-playmaker-explained/)
+· [Number 8 vs Number 10 in Soccer | Football Position Soccer](https://footballposition.soccer/posts/number-8-vs-number-10-in-soccer-1/)
