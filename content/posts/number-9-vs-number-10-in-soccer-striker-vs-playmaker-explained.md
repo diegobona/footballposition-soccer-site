@@ -1,5 +1,7 @@
 ---
-title: "Number 9 vs Number 10 in Soccer: Striker vs Playmaker Explained"
+title: "Number 9 vs Number 10 in Soccer: 5 Key Differences + Diagrams"
+meta_description: Compare the Number 9 and Number 10 by position, movement,
+  duties and real-player examples — with simple tactical diagrams.
 _editor_revision: ""
 date: 2026-07-09T00:22:00.000+08:00
 category: 进攻位置
