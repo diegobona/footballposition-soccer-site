@@ -1,5 +1,7 @@
 ---
-title: Soccer Positions and Numbers Explained
+title: "Soccer Position Numbers 1–11: Every Role Explained"
+meta_description: What do numbers 1–11 mean in soccer? See every position on a
+  4-3-3 pitch, plus duties, role differences and modern player examples.
 _editor_revision: ""
 date: 2026-08-09T19:04:00.000+08:00
 draft: false
