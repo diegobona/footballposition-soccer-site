@@ -1,6 +1,8 @@
 ---
-title: "Box-to-Box Midfielder: The Complete Guide to Football's Most Demanding
-  Position"
+title: What Is a Box-to-Box Midfielder? Role & Examples
+meta_description: A box-to-box midfielder covers both ends of the pitch, helping
+  in defense, ball progression and late attacking runs. See the role, position
+  and real-player examples.
 date: 2026-01-11T10:21:00.000+08:00
 category: 中场位置
 cover:
