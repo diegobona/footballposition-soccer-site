@@ -4,7 +4,7 @@ title: "Box-to-Box Midfielder: The Complete Guide to Football's Most Demanding
 date: 2026-01-11T10:21:00.000+08:00
 category: 中场位置
 cover:
-  image: /images/新建-doc-文档-130-.jpg
+  image: /images/uploads/478dd177-3d91-4710-ba0d-9dc1c90e36b8.png
 ---
 | **Quick Answer** |
 | ------------ |
