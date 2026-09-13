@@ -22,5 +22,10 @@ assert.match(
 );
 assert.match(html, /toastui-editor\.min\.css/, "admin html should load Toast UI editor styles");
 assert.match(html, /toastui-editor-all\.min\.js/, "admin html should load Toast UI editor script");
+assert.match(html, /\.\/mammoth\.browser\.min\.js/, "admin html should load the local DOCX parser");
+assert.ok(
+  html.indexOf("./mammoth.browser.min.js") < html.indexOf("./decap-cms.js"),
+  "Mammoth must load before Decap so its browser bundle registers window.mammoth"
+);
 
 console.log("cms-admin-html tests passed");

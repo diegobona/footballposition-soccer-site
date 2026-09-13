@@ -12,6 +12,7 @@
   var mediaPublicBaseUrl = enhancerConfig.mediaPublicBaseUrl || "";
   var mediaObjectFolder = enhancerConfig.mediaObjectFolder || "uploads";
   var maxFileSize = enhancerConfig.maxFileSize || 10 * 1024 * 1024;
+  var maxDocxFileSize = enhancerConfig.maxDocxFileSize || 25 * 1024 * 1024;
   var toastTimer = null;
   var lastEditorSourceContext = null;
   var activeToastUiEditorContext = null;
@@ -386,6 +387,124 @@
     }
 
     return window.btoa(binary);
+  }
+
+  function base64ToUint8Array(value) {
+    var binary = window.atob(String(value || ""));
+    var bytes = new Uint8Array(binary.length);
+
+    for (var index = 0; index < binary.length; index += 1) {
+      bytes[index] = binary.charCodeAt(index);
+    }
+
+    return bytes;
+  }
+
+  function isDocxFile(file) {
+    return Boolean(file && file.name && /\.docx$/i.test(file.name));
+  }
+
+  function getDocxImageExtension(contentType) {
+    var extensions = {
+      "image/png": "png",
+      "image/jpeg": "jpg",
+      "image/gif": "gif",
+      "image/webp": "webp",
+      "image/svg+xml": "svg",
+      "image/bmp": "bmp",
+      "image/tiff": "tiff"
+    };
+
+    return extensions[String(contentType || "").toLowerCase()] || "png";
+  }
+
+  async function createDocxImageFile(image, index, documentName) {
+    if (
+      !image ||
+      (
+        typeof image.readAsArrayBuffer !== "function" &&
+        typeof image.readAsBase64String !== "function" &&
+        typeof image.read !== "function"
+      )
+    ) {
+      throw new Error("Word 文档中的图片数据无效。");
+    }
+
+    var contentType = image.contentType || "image/png";
+    var extension = getDocxImageExtension(contentType);
+    var baseName = sanitizeFileName(documentName || "document");
+    var bytes;
+
+    if (typeof image.readAsArrayBuffer === "function") {
+      bytes = new Uint8Array(await image.readAsArrayBuffer());
+    } else if (typeof image.readAsBase64String === "function") {
+      bytes = base64ToUint8Array(await image.readAsBase64String());
+    } else {
+      bytes = base64ToUint8Array(await image.read("base64"));
+    }
+
+    return new File([bytes], baseName + "-image-" + index + "." + extension, {
+      type: contentType
+    });
+  }
+
+  async function convertDocxToHtml(file, imageUploader) {
+    if (!isDocxFile(file)) {
+      throw new Error("请选择 .docx 格式的 Word 文档。");
+    }
+
+    if (file.size > maxDocxFileSize) {
+      throw new Error("Word 文档过大，当前限制为 25MB。");
+    }
+
+    if (
+      !window.mammoth ||
+      typeof window.mammoth.convertToHtml !== "function" ||
+      !window.mammoth.images ||
+      typeof window.mammoth.images.imgElement !== "function"
+    ) {
+      throw new Error("DOCX 解析组件未加载，请刷新后台页面后重试。");
+    }
+
+    var buffer = await file.arrayBuffer();
+    var signature = new Uint8Array(buffer, 0, Math.min(4, buffer.byteLength));
+    if (signature.length < 4 || signature[0] !== 0x50 || signature[1] !== 0x4b) {
+      throw new Error("Word 文档格式无效，请重新选择有效的 .docx 文件。");
+    }
+
+    var upload = imageUploader || uploadImage;
+    var imageCount = 0;
+    var result = await window.mammoth.convertToHtml(
+      { arrayBuffer: buffer },
+      {
+        styleMap: [
+          "p[style-name='Title'] => h2:fresh",
+          "p[style-name='Heading 1'] => h2:fresh",
+          "p[style-name='Heading 2'] => h3:fresh",
+          "p[style-name='Heading 3'] => h4:fresh"
+        ],
+        convertImage: window.mammoth.images.imgElement(async function (image) {
+          imageCount += 1;
+          var imageFile = await createDocxImageFile(image, imageCount, file.name);
+          var uploadedImage = await upload(imageFile);
+          if (!uploadedImage || !uploadedImage.publicUrl) {
+            throw new Error("Word 文档中的图片上传失败。");
+          }
+
+          return {
+            src: uploadedImage.publicUrl
+          };
+        })
+      }
+    );
+
+    return {
+      html: (result && result.value) || "",
+      imageCount: imageCount,
+      warnings: ((result && result.messages) || []).map(function (message) {
+        return message && message.message ? message.message : String(message || "");
+      }).filter(Boolean)
+    };
   }
 
   function isVisibleElement(element) {
@@ -2324,8 +2443,18 @@
     });
 
     var ToastUiControl = window.createClass({
+      getInitialState: function () {
+        return {
+          importingDocx: false
+        };
+      },
+
       setEditorHost: function (node) {
         this.editorHost = node;
+      },
+
+      setDocxFileInput: function (node) {
+        this.docxFileInput = node;
       },
 
       syncFromEditor: function () {
@@ -2383,6 +2512,79 @@
         });
       },
 
+      handleDocxImportClick: function (event) {
+        if (event && typeof event.preventDefault === "function") {
+          event.preventDefault();
+        }
+
+        if (!this.state.importingDocx && this.docxFileInput && typeof this.docxFileInput.click === "function") {
+          this.docxFileInput.click();
+        }
+      },
+
+      handleDocxFileChange: function (event) {
+        var self = this;
+        var input = event && event.target;
+        var file = input && input.files && input.files[0];
+        if (!file) {
+          return;
+        }
+
+        if (!isDocxFile(file)) {
+          showToast("请选择 .docx 格式的 Word 文档。", "error");
+          input.value = "";
+          return;
+        }
+
+        var currentValue = this.editor && typeof this.editor.getMarkdown === "function"
+          ? normalizeToastUiMarkdown(this.editor.getMarkdown())
+          : normalizeToastUiMarkdown(this.props.value || "");
+        if (currentValue.trim() && !window.confirm("导入 DOCX 将替换当前正文，是否继续？")) {
+          input.value = "";
+          return;
+        }
+
+        if (!this.editor || typeof this.editor.setHTML !== "function") {
+          showToast("正文编辑器尚未准备好，请稍后重试。", "error");
+          input.value = "";
+          return;
+        }
+
+        this.setState({ importingDocx: true });
+        showToast("正在导入 DOCX 并上传文档图片，请稍候。", "info");
+
+        convertDocxToHtml(file)
+          .then(function (result) {
+            self.isSyncingEditorValue = true;
+            self.editor.setHTML(result.html, false);
+            var nextValue = normalizeToastUiMarkdown(self.editor.getMarkdown());
+            self.lastSyncedValue = nextValue;
+            self.props.onChange(nextValue);
+            self.isSyncingEditorValue = false;
+            self.activateEditor();
+            updateRevisionField();
+
+            var warningText = result.warnings.length
+              ? " 另有 " + result.warnings.length + " 条格式提示，请检查预览。"
+              : "";
+            showToast(
+              "DOCX 导入完成，正文及 " + result.imageCount + " 张图片已写入。" + warningText,
+              "success"
+            );
+          })
+          .catch(function (error) {
+            self.isSyncingEditorValue = false;
+            console.error(error);
+            showToast(error && error.message ? error.message : "DOCX 导入失败，请稍后重试。", "error");
+          })
+          .finally(function () {
+            self.setState({ importingDocx: false });
+            if (input) {
+              input.value = "";
+            }
+          });
+      },
+
       componentDidMount: function () {
         if (!this.editorHost || !window.toastui || !window.toastui.Editor) {
           showToast("TOAST UI Editor 加载失败，请刷新后台页面后重试。", "error");
@@ -2404,7 +2606,7 @@
           hideModeSwitch: true,
           usageStatistics: false,
           customHTMLRenderer: getToastUiVideoHtmlRenderer(),
-          placeholder: "粘贴网页图文、直接粘贴图片，或使用下方插入视频按钮。",
+          placeholder: "粘贴网页图文、直接粘贴图片，或使用下方按钮导入 DOCX/插入视频。",
           toolbarItems: [
             ["heading", "bold", "italic", "strike"],
             ["hr", "quote"],
@@ -2501,12 +2703,42 @@
                 style: {
                   display: "flex",
                   alignItems: "center",
-                  justifyContent: "space-between",
+                  flexWrap: "wrap",
                   gap: "12px",
                   marginTop: "10px"
                 }
               },
               [
+                window.h(
+                  "button",
+                  {
+                    key: "docx",
+                    type: "button",
+                    "data-cms-docx-import": "button",
+                    onClick: this.handleDocxImportClick,
+                    disabled: Boolean(this.state && this.state.importingDocx),
+                    style: {
+                      border: "0",
+                      borderRadius: "8px",
+                      background: "#b54708",
+                      color: "#ffffff",
+                      padding: "8px 12px",
+                      font: "700 13px/1.2 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
+                      cursor: this.state && this.state.importingDocx ? "wait" : "pointer"
+                    }
+                  },
+                  this.state && this.state.importingDocx ? "正在导入 DOCX..." : "一键导入 DOCX"
+                ),
+                window.h("input", {
+                  key: "docx-file",
+                  ref: this.setDocxFileInput,
+                  type: "file",
+                  accept: ".docx,application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  onChange: this.handleDocxFileChange,
+                  style: {
+                    display: "none"
+                  }
+                }),
                 window.h(
                   "button",
                   {
@@ -2530,11 +2762,12 @@
                   {
                     key: "hint",
                     style: {
+                      marginLeft: "auto",
                       color: "#475467",
                       font: "12px/1.5 system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
                     }
                   },
-                  "支持富文本粘贴、图片粘贴/上传，保存时自动转成 Markdown。"
+                  "支持 DOCX、富文本粘贴和图片上传，保存时自动转成 Markdown。"
                 )
               ]
             )
