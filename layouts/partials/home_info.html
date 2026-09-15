@@ -1,0 +1,16 @@
+{{- with site.Params.homeInfoParams }}
+<section class="home-info" aria-labelledby="home-info-title">
+    <div class="home-info__copy">
+        <header class="entry-header">
+            <h1 id="home-info-title">{{ .Title | markdownify }}</h1>
+        </header>
+        <div class="entry-content">
+            {{ .Content | markdownify }}
+        </div>
+        <a class="home-info__action" href="/overview/">
+            Explore all positions
+            <span aria-hidden="true">→</span>
+        </a>
+    </div>
+</section>
+{{- end }}

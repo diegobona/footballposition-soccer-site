@@ -1,6 +1,6 @@
 baseURL = 'https://footballposition.soccer/'
 languageCode = 'en-us'
-title = 'Football Position Soccer'
+title = 'Soccer Positions'
 theme = "PaperMod"
 buildFuture = true
 
@@ -18,46 +18,43 @@ buildFuture = true
       unsafe = true
 
 [params]
-  defaultTheme = "dark"
+  defaultTheme = "light"
   description = "Position guides, tactics, and training tips for every football role — from goalkeeper to false nine."
   keywords = ["football positions", "soccer positions", "tactical roles", "position guides", "training drills", "player development", "defensive positions in soccer", "defensive positions"]
   mainSections = ["posts"]
+  ShowPageNums = true
 
   [params.assets]
-    favicon = "icon.png"
-    favicon16x16 = "icon.png"
-    favicon32x32 = "icon.png"
-    apple_touch_icon = "icon.png"
+    favicon = "favicon.svg"
+    favicon16x16 = "favicon-16x16.png"
+    favicon32x32 = "favicon-32x32.png"
+    apple_touch_icon = "apple-touch-icon.png"
+    safari_pinned_tab = "safari-pinned-tab.svg"
+    theme_color = "#0B5D3B"
+    msapplication_TileColor = "#0B5D3B"
+
+  [params.label]
+    text = "Soccer Positions"
+    icon = "brand/football-position-mark.svg"
+    iconHeight = 36
 
   #开启 PaperMod 的 Home Info 块（没有文章也能展示）
   [params.homeInfoParams]
-    Title = " FootballPosition.soccer – Master Every Role on the Pitch | Position Guides, Drills & Pro Tips"
+    Title = "Soccer Positions – Master Every Role on the Pitch | Position Guides, Drills & Pro Tips"
     Content = "From goalkeeper to false nine, FootballPosition.soccer breaks down every football position’s duties, skill-set, tactical role and weekly training plans. Learn how to read the game, choose your gear and level up with position-specific drills used by pro clubs—all in clear, concise language for players, coaches and fans."
 
 [menu]
   [[menu.main]]
-    name = "TacticalPreview"
-    url = "/tactical-preview/"
+    name = "Positions"
+    url = "/overview/"
     weight = 5
   [[menu.main]]
-    name = "MatchAnalysis"
-    url = "/match-analysis/"
-    weight = 8
-  [[menu.main]]
-    name = "PositionsOverview"
-    url = "/overview/"
+    name = "Tactical Previews"
+    url = "/tactical-preview/"
     weight = 10
   [[menu.main]]
-    name = "AttackingPositions"
-    url = "/attacking-positions/"
+    name = "Match Analysis"
+    url = "/match-analysis/"
     weight = 20
-  [[menu.main]]
-    name = "MidfieldPositions"
-    url = "/midfield-positions/"
-    weight = 30
-  [[menu.main]]
-    name = "DefensivePositions"
-    url = "/defensive-positions/"
-    weight = 40
 
 

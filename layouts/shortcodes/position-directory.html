@@ -1,0 +1,15 @@
+{{- $current := .Get "current" | default "overview" -}}
+{{- $items := slice
+  (dict "key" "overview" "url" "/overview/" "label" "Position Overview" "description" "All roles and cross-position guides")
+  (dict "key" "attacking" "url" "/attacking-positions/" "label" "Attacking Position" "description" "Strikers, wingers and creative roles")
+  (dict "key" "midfield" "url" "/midfield-positions/" "label" "Midfield Position" "description" "Holding, central and advanced roles")
+  (dict "key" "defensive" "url" "/defensive-positions/" "label" "Defensive Position" "description" "Goalkeepers, full-backs and centre-backs")
+-}}
+<nav class="position-directory" aria-label="Position sections">
+  {{- range $items }}
+  <a href="{{ .url }}"{{ if eq $current .key }} class="is-current" aria-current="page"{{ end }}>
+    <strong>{{ .label }}</strong>
+    <span>{{ .description }}</span>
+  </a>
+  {{- end }}
+</nav>

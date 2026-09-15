@@ -3,6 +3,6 @@ title: Midfield Positions
 slug: midfield-positions
 ---
 
-Here is the content related to the midfield positions.
+{{< position-directory current="midfield" >}}
 
 {{< list-by-category "中场位置" >}}

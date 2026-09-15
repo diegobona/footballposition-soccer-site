@@ -16,6 +16,9 @@
 {{- if .IsHome -}}
 {{- print " home" -}}
 {{- end -}}
+{{- if .Section -}}
+{{- printf " section-%s" .Section -}}
+{{- end -}}
 {{- if eq site.Params.defaultTheme `dark` -}}
 {{- print " dark" }}
 {{- end -}}
@@ -28,4 +31,4 @@
 </body>
 
 </html>
-
+
