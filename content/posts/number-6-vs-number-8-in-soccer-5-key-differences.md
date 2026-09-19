@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-09-19T00:00:00+08:00
 title: "Number 6 vs Number 8 in Soccer: 5 Key Differences"
 _editor_revision: ""
 date: 2026-09-15T13:01:00.000+08:00
@@ -7,6 +8,9 @@ category: 中场位置
 cover:
   image: /images/uploads/b719aaa6-554a-463a-8ba4-29a366ce4fd5.png
 ---
+
+For the running, recovery and attacking duties of an adventurous No. 8, see our [box-to-box midfielder role guide](/posts/box-to-box-midfielder-the-complete-guide-to-footballs-most-demanding-position/). A No. 8 can also be a possession-focused player; the label does not always imply end-to-end runs.
+
 *What is the difference between a No. 6 and a No. 8?*
 
 | **Quick Answer** |

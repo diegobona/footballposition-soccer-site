@@ -226,6 +226,24 @@ body.home .home-info__action:focus-visible {
     outline-offset: 3px;
 }
 
+body.home .home-info__guides {
+    margin-top: 14px;
+    color: #dbe9e0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+body.home .home-info__guides a {
+    color: #ffffff;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+body.home .home-info__guides a:focus-visible {
+    outline: 3px solid #f4ce6a;
+    outline-offset: 3px;
+}
+
 body.home .post-entry,
 .grid-entry,
 body.list:not(.home) .post-entry {

@@ -1,4 +1,5 @@
 ---
+lastmod: 2026-09-19T00:00:00+08:00
 title: "Soccer Position Numbers 1–11: Every Role Explained"
 meta_description: What do numbers 1–11 mean in soccer? See every position on a
   4-3-3 pitch, plus duties, role differences and modern player examples.
@@ -9,6 +10,9 @@ category: 综述
 cover:
   image: /images/uploads/7e0100d7-62d8-486d-b803-e82e991b334b.png
 ---
+
+For a practical example of how a role number works, read [No. 8 and the box-to-box midfielder role](/posts/box-to-box-midfielder-the-complete-guide-to-footballs-most-demanding-position/). It explains why wearing the number 8 shirt and performing box-to-box duties are different things.
+
 | **Quick Answer** |
 | ------------ |
 | The numbers 1–11 are not just shirt numbers. They grew out of traditional position numbering and are now a common football language. The simplest version is: 1 goalkeeper, 2 right back, 3 left back, 4/5 center backs, 6 holding midfielder, 7 right winger, 8 central midfielder, 9 striker, 10 attacking midfielder and 11 left winger. In modern soccer, a player can wear No. 17 and still play as a “No. 8”, so positioning and responsibility matter more than the number on the shirt. |
@@ -22,7 +26,7 @@ There is one important warning, though: numbering traditions have never been per
 ## **Positions 1–11 in a classic 4-3-3**
 
 A 4-3-3 is the easiest way to visualize the traditional 1–11 structure. The attacking direction in the diagram is upward: No. 1 protects the goal, Nos. 2–5 form the defensive line, 6–8–10 shape midfield, and 7–9–11 make up the front line.
-![]() ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110541-39107c86-image.png)
+ ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110541-39107c86-image.png)
 *The traditional 1–11 layout in a 4-3-3. The exact left/right use of 7 and 11 can vary between teams.*
 
 ## **What does each number do?**
@@ -46,14 +50,14 @@ This table keeps things practical. Instead of turning every position into a long
 ## **The most commonly confused roles: 6, 8 and 10**
 
 In modern football talk, these three numbers are often used almost like role names. The easiest memory trick is this: the No. 6 stabilizes the team, the No. 8 links different phases together, and the No. 10 creates in advanced areas.
-![]() ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110605-291c7484-image.png)
+ ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110605-291c7484-image.png)
 *The No. 6 plays deepest, the No. 8 covers the biggest range, and the No. 10 works closest to the striker and the opponent’s box.*
 A No. 6 is not automatically just a destroyer. The best ones also receive under pressure and move the ball safely out of the back line. A No. 8 usually has the broadest workload: defending, carrying, covering and arriving late in the box. A No. 10 plays closer to the forwards and creates danger through movement, final passes and direct attacking actions.
 
 ## **Is a shirt number the same as a role number?**
 
 No — and this is one of the most important things to understand. Modern shirt numbers are flexible, but “No. 6”, “No. 8” and “No. 10” are still part of the tactical language.
-![]() ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110616-2ec74c47-image.png)
+ ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110616-2ec74c47-image.png)
 *The number on the back identifies the player. The tactical “role number” explains the function.*
 That means a player wearing No. 17 can still be a No. 8 in tactical terms. Likewise, a forward wearing No. 10 does not automatically play as a classic playmaker.
 
@@ -81,7 +85,7 @@ For example, a player might wear No. 17 but spend the game covering ground in ce
 ## **Typical role examples**
 
 Below is the player-image panel placed in the matching section of the article.
-![]() ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110631-482387f1-image.png)
+ ![image](https://media.footballposition.soccer/uploads/2026/08/20260809-110631-482387f1-image.png)
 *Typical role examples: representative players for common position numbers and roles.*
 · No. 6 / Holding Midfielder: Sergio Busquets and Rodri are classic examples of deep central controllers who protect the defense and set the tempo.
 · No. 8 / Central Midfielder: Steven Gerrard and Jude Bellingham show two versions of the all-action midfielder who connects phases and influences both boxes.

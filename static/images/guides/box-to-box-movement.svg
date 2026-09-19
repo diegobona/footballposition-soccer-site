@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="720" height="720" viewBox="0 0 720 720" role="img" aria-labelledby="title desc">
+  <title id="title">Box-to-box midfielder movement in a 4-3-3</title>
+  <desc id="desc">An illustrative sequence: the number 8 supports the number 6, progresses through midfield, arrives near the opposing box, and recovers centrally. The number 6 stays behind the attack. Arrows show successive actions, not simultaneous positions.</desc>
+  <defs><marker id="arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0 0L8 4L0 8Z" fill="#ffe39b"/></marker></defs>
+  <rect width="720" height="720" rx="16" fill="#103c30"/>
+  <g fill="none" stroke="#a1c1b1" stroke-width="2"><rect x="40" y="90" width="640" height="530"/><path d="M40 355H680M215 90V175H505V90M215 620V535H505V620"/><circle cx="360" cy="355" r="60"/><path d="M315 90V65H405V90M315 620V645H405V620"/></g>
+  <g fill="#fff" font-family="Arial,sans-serif" text-anchor="middle"><text x="360" y="35" font-size="24">The No. 8: connect both ends</text><text x="360" y="58" font-size="16">Attack toward the top • illustrative sequence</text></g>
+  <g fill="none" stroke="#ffe39b" stroke-width="5" marker-end="url(#arrow)"><path d="M290 467Q220 402 248 330"/><path d="M270 292Q290 218 358 190"/><path d="M402 198Q570 340 332 482" stroke-dasharray="10 8"/></g>
+  <g stroke="#fff" stroke-width="2" fill="#e9b34e"><circle cx="285" cy="490" r="24"/><circle cx="257" cy="307" r="24"/><circle cx="383" cy="181" r="24"/></g>
+  <circle cx="408" cy="453" r="24" fill="#dcebe4"/>
+  <g fill="#143b2e" font-family="Arial,sans-serif" font-size="24" text-anchor="middle" font-weight="bold"><text x="285" y="498">8</text><text x="257" y="315">8</text><text x="383" y="189">8</text><text x="408" y="461">6</text></g>
+  <g fill="#fff" font-family="Arial,sans-serif" font-size="20"><text x="70" y="530">1. Support</text><text x="70" y="282">2. Progress</text><text x="423" y="155">3. Arrive late</text><text x="490" y="373">4. Recover</text><text x="440" y="490">6 holds cover</text></g>
+  <g fill="#fff" font-family="Arial,sans-serif" font-size="17" text-anchor="middle"><text x="360" y="678">Go forward when a teammate can cover the centre.</text><text x="360" y="703">If cover is missing, hold your position.</text></g>
+</svg>
